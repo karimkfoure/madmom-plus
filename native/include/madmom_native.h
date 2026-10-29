@@ -69,6 +69,13 @@ MM_EXPORT void *mm_frontend_create(const double *window,
                                    const float *filterbank, size_t difference_lag);
 MM_EXPORT void mm_frontend_destroy(void *handle);
 MM_EXPORT int mm_frontend_reset(void *handle);
+/* Replace only the difference history from (count,81) logarithmic rows,
+ * oldest first; count must not exceed the configured lag. Leading rows made
+ * entirely of +infinity represent upstream missing-history padding and are
+ * skipped. Other rows must be finite. Invalid input preserves prior state.
+ */
+MM_EXPORT int mm_frontend_history(void *handle, const float *log_features,
+                                  size_t count);
 MM_EXPORT int mm_frontend_process(void *handle, const float *frames,
                                   size_t count, float *output);
 

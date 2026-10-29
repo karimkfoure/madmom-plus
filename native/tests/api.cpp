@@ -69,6 +69,33 @@ void test_frontend(const char* asset) {
     require(mm_frontend_process(frontend, input.data(), rows, output.data()) == 0,
             "Reset frontend processing failed");
     require(output == expected, "Frontend reset must restore difference history");
+    std::vector<float> seeded(lag * 81);
+    for (size_t i = 0; i < lag; ++i) {
+        std::copy(expected.begin() + i * 162, expected.begin() + i * 162 + 81,
+                  seeded.begin() + i * 81);
+    }
+    require(mm_frontend_history(frontend, seeded.data(), lag) == 0,
+            "Frontend history seeding failed");
+    require(mm_frontend_process(frontend, input.data() + lag * 2048, rows - lag,
+                                output.data() + lag * 162) == 0,
+            "Seeded frontend continuation failed");
+    require(output == expected, "Seeded frontend history changed continuation");
+    std::fill(seeded.begin(), seeded.end(), std::numeric_limits<float>::infinity());
+    require(mm_frontend_history(frontend, seeded.data(), lag) == 0,
+            "Frontend missing-history padding must be accepted");
+    require(mm_frontend_process(frontend, input.data(), rows, output.data()) == 0,
+            "Padded-history frontend processing failed");
+    require(output == expected, "Missing-history padding must retain initial zero differences");
+    require(mm_frontend_history(frontend, NULL, 0) == 0,
+            "Empty history must reset the frontend difference state");
+    require(mm_frontend_history(frontend, seeded.data(), lag + 1) == -1,
+            "History beyond the configured lag must fail");
+    seeded[0] = std::numeric_limits<float>::quiet_NaN();
+    require(mm_frontend_history(frontend, seeded.data(), lag) == -1,
+            "Invalid frontend history must fail");
+    require(mm_frontend_process(frontend, input.data(), rows, output.data()) == 0,
+            "Frontend processing after rejected history failed");
+    require(output == expected, "Rejected history must preserve prior difference state");
     mm_frontend_destroy(frontend);
     require(mm_frontend_create(NULL, bank.data(), lag) == NULL,
             "Missing frontend window must fail");

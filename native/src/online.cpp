@@ -213,6 +213,36 @@ struct Frontend {
         history_count = history_cursor = 0;
     }
 
+    void seed(const float* values, size_t count) {
+        if (count > history.size() || (count && !values)) {
+            throw std::runtime_error("Invalid native frontend history count or buffer");
+        }
+        size_t padding = 0;
+        bool finite_seen = false;
+        for (size_t i = 0; i < count; ++i) {
+            bool all_finite = true, all_padding = true;
+            for (size_t j = 0; j < num_bands; ++j) {
+                const float value = values[i * num_bands + j];
+                all_finite = all_finite && std::isfinite(value);
+                all_padding = all_padding && std::isinf(value) && value > 0;
+            }
+            if (all_padding && !finite_seen) {
+                ++padding;
+            } else if (all_finite) {
+                finite_seen = true;
+            } else {
+                throw std::runtime_error("Invalid native frontend history values");
+            }
+        }
+        reset();
+        for (size_t i = padding; i < count; ++i) {
+            std::copy(values + i * num_bands, values + (i + 1) * num_bands,
+                      history[history_cursor].begin());
+            ++history_count;
+            history_cursor = (history_cursor + 1) % history.size();
+        }
+    }
+
     void features(const float* frame, float* result) {
         float magnitude[frame_size / 2];
         fft.magnitudes(frame, window, magnitude);
@@ -612,6 +642,13 @@ void mm_frontend_destroy(void* handle) {
 int mm_frontend_reset(void* handle) {
     return component_guard(static_cast<Frontend*>(handle), [](Frontend& frontend) {
         frontend.reset();
+        return 0;
+    });
+}
+
+int mm_frontend_history(void* handle, const float* values, size_t count) {
+    return component_guard(static_cast<Frontend*>(handle), [&](Frontend& frontend) {
+        frontend.seed(values, count);
         return 0;
     });
 }

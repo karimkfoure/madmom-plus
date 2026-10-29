@@ -1,7 +1,9 @@
 Local native-core wheels
 ========================
 
-The Linux wheels from this host require glibc 2.38 or newer. ``auditwheel`` selects that minimum because the native core refers to ``fmod@GLIBC_2.38`` in the system math library. An older Linux system needs a wheel built against an older system library set, or a source build with its local libraries.
+The current Linux artifacts are built against glibc 2.28 with GCC 8 in AlmaLinux 8 root filesystems, then checked in AlmaLinux 8 and Debian 12 Bookworm. See `Wheels for older Linux systems <container-wheels.rst>`_ for the current build method, artifact hashes, and verification results.
+
+The remaining sections preserve the first host-only wheel checks for the earlier core. Those wheels required glibc 2.38 because they referred to ``fmod@GLIBC_2.38`` in the host math library. Their recorded hashes and test counts describe that earlier build. The newer container builds use old system libraries and replace those artifacts for Bookworm use.
 
 The wheels include the required C++ core and the four existing Cython extensions. The import name remains ``madmom``. All 92 model files must match the pinned source files byte for byte, and their separate model licence remains included.
 

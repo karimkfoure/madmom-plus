@@ -1,0 +1,1188 @@
+{
+  "schema_version": 1,
+  "runtime_revision": "20e6bc16a33a007166db398beff047e478254803",
+  "metadata_revision": "f30b211188862ad112415f3a368efedf68d0cf04",
+  "method": "Native GCC builds inside digest-pinned AlmaLinux 8 OCI root filesystems, executed by PRoot; ARM compiler and tests execute through QEMU.",
+  "kernel_namespace_isolation": false,
+  "host_namespace_constraint": "unshare and bubblewrap UID-map setup rejected by the host policy",
+  "system_libraries_bound_from_host": false,
+  "build": {
+    "gcc_gxx": "8.5.0",
+    "glibc": "2.28",
+    "python": [
+      "3.11.15",
+      "3.12.13"
+    ],
+    "numpy_headers": "2.4.6",
+    "cython": "3.3.0",
+    "setuptools": "84.2.1",
+    "wheel": "0.48.0",
+    "cflags": "-O3 -DNDEBUG -g0",
+    "cxxflags": "-O3 -DNDEBUG -g0 -std=c++17 -O3 -ffp-contract=off",
+    "maximum_workers": 2,
+    "build_cpu_affinity": [
+      0,
+      1
+    ]
+  },
+  "tools": {
+    "proot": {
+      "version": "5.5.0-25dc6a31",
+      "author": "PRoot contributors",
+      "source": "https://github.com/proot-me/proot/tree/25dc6a3134891f98a79f57ce1c2c1b23ff15cad1",
+      "binary_url": "https://github.com/proot-me/proot/releases/download/v5.5.0/proot",
+      "sha256": "db185300a9daabbce86aca7632d8c7fdc4249f6f153171954013b70c5f491ec0",
+      "verified_upstream_sha256sums": true
+    },
+    "skopeo": {
+      "version": "1.13.3",
+      "package": "1.13.3+ds1-2ubuntu0.24.04.3",
+      "source": "https://github.com/containers/skopeo"
+    },
+    "umoci": {
+      "version": "0.4.7",
+      "package": "0.4.7+ds-4ubuntu0.24.04.3",
+      "source": "https://github.com/opencontainers/umoci"
+    },
+    "qemu": {
+      "version": "8.2.2",
+      "source": "https://www.qemu.org/"
+    },
+    "auditwheel": {
+      "version": "6.8.2",
+      "source": "https://github.com/pypa/auditwheel"
+    }
+  },
+  "images": [
+    {
+      "role": "build and baseline test",
+      "distribution": "AlmaLinux 8.10",
+      "glibc": "2.28",
+      "architecture": "amd64",
+      "reference": "docker.io/library/almalinux@sha256:0e1d3a40acf7d9e24e7b7bc2ff3f0fd32955adb069b38c45428b628f14664532",
+      "manifest_digest": "sha256:0e1d3a40acf7d9e24e7b7bc2ff3f0fd32955adb069b38c45428b628f14664532",
+      "config_digest": "sha256:f8e4727969e49aefe470721dbdf3a853f48dfc11f483488bbc0896a541e93d58",
+      "layer_digests": [
+        "sha256:84f9ac7237f65762f0f5de59fb6b183185b92b8b0af4ac591699accb6e8ee255"
+      ],
+      "compressed_cache_removed_after_extraction": true
+    },
+    {
+      "role": "build and baseline test",
+      "distribution": "AlmaLinux 8.10",
+      "glibc": "2.28",
+      "architecture": "arm64",
+      "reference": "docker.io/library/almalinux@sha256:86d6a54ac3069de11423477832b81824d5b3a22566ddfbf009f15461a66210d7",
+      "manifest_digest": "sha256:86d6a54ac3069de11423477832b81824d5b3a22566ddfbf009f15461a66210d7",
+      "config_digest": "sha256:4ef8d28ff501fa45bfbfb1356d866845c1d50170dbb2e9b8b233b36e51a9682c",
+      "layer_digests": [
+        "sha256:a2835ca3a6234b31d8306d48f08ee647cddb615ec96bf094fe73161e07a53906"
+      ],
+      "compressed_cache_removed_after_extraction": true
+    },
+    {
+      "role": "Bookworm compatibility test",
+      "distribution": "Debian 12 Bookworm",
+      "glibc": "2.36",
+      "architecture": "amd64",
+      "reference": "docker.io/library/debian@sha256:a3bba7dc7dbcc1f37c2856c51fc9a7fac96608f50cb87b1b4e4d8b8c85ae988e",
+      "manifest_digest": "sha256:a3bba7dc7dbcc1f37c2856c51fc9a7fac96608f50cb87b1b4e4d8b8c85ae988e",
+      "config_digest": "sha256:354cdc53abb843ea02e9a72c153b000c290014d8a90aba62897c143710a5667f",
+      "layer_digests": [
+        "sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc"
+      ],
+      "compressed_cache_removed_after_extraction": true
+    },
+    {
+      "role": "Bookworm compatibility test",
+      "distribution": "Debian 12 Bookworm",
+      "glibc": "2.36",
+      "architecture": "arm64",
+      "reference": "docker.io/library/debian@sha256:7ccb8b5b60c7654f5b795d94ee7d751cd0811500803f0b09cefcd555e755a55a",
+      "manifest_digest": "sha256:7ccb8b5b60c7654f5b795d94ee7d751cd0811500803f0b09cefcd555e755a55a",
+      "config_digest": "sha256:6c51fdfbb33b6cf6dc1d727bd44cb92b7a51299ec66e54d3e7b0f844989adde0",
+      "layer_digests": [
+        "sha256:f791e47cf52abf7b364878f2141547e3781072e437f599f6632849d88fca8ca4"
+      ],
+      "compressed_cache_removed_after_extraction": true
+    }
+  ],
+  "test_audio_tools": {
+    "amd64": {
+      "url": "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz",
+      "archive_sha256": "abda8d77ce8309141f83ab8edf0596834087c52467f6badf376a6a2a4c87cf67",
+      "archive_size_bytes": 41888096,
+      "binary_sha256": "e7e7fb30477f717e6f55f9180a70386c62677ef8a4d4d1a5d948f4098aa3eb99",
+      "ffprobe_sha256": "4f231a1960d83e403d08f7971e271707bec278a9ae18e21b8b5b03186668450d",
+      "author": "John Van Sickle",
+      "reported_version": "7.0.2",
+      "build_site": "https://johnvansickle.com/ffmpeg/",
+      "corresponding_upstream_tag_commit": "e3a61e91030696348b56361bdf80ea358aef4a19",
+      "upstream_tag": "n7.0.2",
+      "bundled_in_wheel": false,
+      "ffmpeg_statically_linked": true,
+      "ffprobe_statically_linked": true
+    },
+    "arm64": {
+      "url": "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-arm64-static.tar.xz",
+      "archive_sha256": "f4149bb2b0784e30e99bdda85471c9b5930d3402014e934a5098b41d0f7201b1",
+      "archive_size_bytes": 19337412,
+      "binary_sha256": "6bb182d0d75d23028db82e9e4f723ca69b853d055698486e6984ddb2c06fb8ce",
+      "ffprobe_sha256": "d17ae9b4c297d48e2521ba14e417bb0537c6ff77c584cdbcd6bb0d8d0307a2e8",
+      "author": "John Van Sickle",
+      "reported_version": "7.0.2",
+      "build_site": "https://johnvansickle.com/ffmpeg/",
+      "corresponding_upstream_tag_commit": "e3a61e91030696348b56361bdf80ea358aef4a19",
+      "upstream_tag": "n7.0.2",
+      "bundled_in_wheel": false,
+      "ffmpeg_statically_linked": true,
+      "ffprobe_statically_linked": true
+    }
+  },
+  "source_sha256": {
+    "README.rst": "fd5ab3538af1651bb901e5c09f2589cf5b8a514575bf42b9a0ef86dc4af69825",
+    "CHANGES.rst": "bf81f8b666938ca13494d9380ae1342d6818097914b26e892035a216137252ce",
+    "MANIFEST.in": "0f9950116a6931e742a321a1b6b76e934e6a51ce841ac2107193dd4eb4bff4d0",
+    "SCOPE.md": "0a1c04b361e2df36378f80157d160a4a804ea29a752e926adf8465de1ed2f20e",
+    "setup.py": "1480eb76271d0cfc3103e7bf799673edc6a73659b8aa217e577e4b89cf40afda",
+    "pyproject.toml": "8a3e54433ecb4cf087e5c1cb977f7b43b4f46a00ba9dca0f47230b02297406b2",
+    "madmom/native.py": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+    "madmom/audio/_native.py": "812ab51238f93937bd8aeb03706ffd76df91927fde95fc8f3693cfd4d0025b87",
+    "madmom/_native_decoders.py": "56eefc012960cf3a71aee78a5c4a44a3c3d103ef271e60c0b6876ce5ce638ed8",
+    "madmom/features/beats.py": "564fa9e7009282e40ef7564df9cbf4fd836d8dd97e9b960ed176c7abb2eb95a7",
+    "madmom/features/downbeats.py": "c11f65452ac8d2bc68f00bfb73b9aa967c365e558241841b108ffd598c3ae7be",
+    "madmom/features/onsets.py": "59b13ea385ff7cb3e06c1402ccce7316716624f872ad84d71e5d9ac121280731",
+    "madmom/ml/hmm.pyx": "f027648eedab2b15096580e847334c51196ad9f674e01567e71e0b6231dc6736",
+    "madmom/ml/nn/__init__.py": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+    "madmom/ml/nn/_native.py": "b1343259304ebfb0408c1782572d2056d71ca907c7a5532756124f64a6b5434d",
+    "madmom/ml/nn/layers.py": "9465ed901ba5244086f6c670432732d501be72f2b85d1acf92348eaa7b84e88b",
+    "native/README.md": "82c7550574cdf47fcde042ac014ddbf7f4816df3d7269bc991ea89f609405459",
+    "tools/container_wheels.py": "d7f8d0d8edf8c022a112d8e38f91032baac163ad6da755e81d43b3322f584d85",
+    "tools/verify_container_wheel.py": "aa97b6a24b3445d77a7fbeaed71ad3cfa6c8348d8f4f47b9553739227b7bf7f3",
+    "native/src/bindings.cpp": "b75d153e301794745dd71f3f4e2286eadb991ead067d85f969d71391c5150e09",
+    "native/src/decoders.cpp": "3409028b863f7b33499419cb13ed26b95e6de581af6cc412d9c71a8650e31c73",
+    "native/src/nn.cpp": "0c39659fd087cb79854497b4a87e17aac45e85d7ec41762d5b1e70a25442860f",
+    "native/src/nn_bindings.cpp": "54b6189ebc5afa92d638e1e3aa2ad56fb01a0ccb4f4ffc5c250304b26573a84a",
+    "native/src/online.cpp": "8d486bf13a81feea0bee9564d316a15ebc26f0dd319519846ddc46c3d9e6a0f7",
+    "native/include/madmom_decoders.h": "6c0e88c885fb95b2a46a30fe7120c3a2de3aad65092261054ade0557ef0e2c12",
+    "native/include/madmom_engine.h": "f1e4eb91cdc21962de896b80b680afec8553ee4cc437284c3f5e6e247d0dbd70",
+    "native/include/madmom_exports.h": "dbc41b7b0db9ea74ca1c34d4c5c7aad21e8271ee778aa447f6666172cbc65a93",
+    "native/include/madmom_native.h": "3816498f67b0ba9b5fb880e8a009073f7b4c679ff2fa1baf8e4705e1d094b342",
+    "native/include/madmom_nn.h": "f36a24a351f566d97082c1c7dd77746cb0ee8adf34685caa53567a9ee9e5cb4a",
+    "native/include/madmom_nn_bindings.h": "605328d57fa28585bf4b53d2d02740a80ce062efaa0664142a0f3f799235fb5c"
+  },
+  "wheels": [
+    {
+      "filename": "madmom_plus-0.17.0.dev1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "80f688cf959f85806fe9ea31d8b4b5514f77332b22651a313b7f027aa39088cb",
+      "size_bytes": 30384010,
+      "architecture": "x86_64",
+      "python_tag": "cp311",
+      "maximum_required_glibc": "GLIBC_2.27",
+      "maximum_required_glibcxx": "GLIBCXX_3.4.21",
+      "required_symbol_versions": [
+        "CXXABI_1.3",
+        "CXXABI_1.3.7",
+        "CXXABI_1.3.9",
+        "GCC_3.0",
+        "GLIBCXX_3.4",
+        "GLIBCXX_3.4.21",
+        "GLIBC_2.14",
+        "GLIBC_2.2.5",
+        "GLIBC_2.27",
+        "GLIBC_2.3"
+      ],
+      "extensions": [
+        {
+          "filename": "madmom/_native.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "e0792f3f5f885026fdd185552d11d5865b852bac3ae0d07219bb0e5dd163779f"
+        },
+        {
+          "filename": "madmom/audio/comb_filters.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "56c8b2bd24140ffc646c6e4036cd2f3083a35021ccb5e7863b4820bc068db059"
+        },
+        {
+          "filename": "madmom/features/beats_crf.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "12c158d09bc10f59f2b361ce2223d974d47c71e80b839dec9ccf8560f37e71ff"
+        },
+        {
+          "filename": "madmom/ml/hmm.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "f79c6936f5d49ada5a7cedfabef2c33a130454151033852afdefac27e44e8bb7"
+        },
+        {
+          "filename": "madmom/ml/nn/layers.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "f4d88721616d092632dac321d5f20a129e3aa56229f725158ddf71749317f51a"
+        }
+      ],
+      "models_count": 92,
+      "model_bytes_match_source": true,
+      "python_sources_match_current_tree": true,
+      "metadata_matches_final_readme_and_changes": true,
+      "private_build_path_files": [],
+      "tested_runtime_manifest_sha256": "863afc0277deb1e08d1aa874bcd24328c5a8c4203f17ede00e8ef4d1f430a246",
+      "tested_payload_preserved_after_metadata_refresh": true,
+      "verification": [
+        {
+          "container_method": "OCI rootfs with PRoot filesystem virtualization",
+          "kernel_namespace_isolation": false,
+          "runtime": {
+            "architecture": "x86_64",
+            "distribution": {
+              "ALMALINUX_MANTISBT_PROJECT": "AlmaLinux-8",
+              "ALMALINUX_MANTISBT_PROJECT_VERSION": "8.10",
+              "ANSI_COLOR": "0;34",
+              "BUG_REPORT_URL": "https://bugs.almalinux.org/",
+              "CPE_NAME": "cpe:/o:almalinux:almalinux:8::baseos",
+              "DOCUMENTATION_URL": "https://wiki.almalinux.org/",
+              "HOME_URL": "https://almalinux.org/",
+              "ID": "almalinux",
+              "ID_LIKE": "rhel centos fedora",
+              "LOGO": "fedora-logo-icon",
+              "NAME": "AlmaLinux",
+              "PLATFORM_ID": "platform:el8",
+              "PRETTY_NAME": "AlmaLinux 8.10 (Cerulean Leopard)",
+              "REDHAT_SUPPORT_PRODUCT": "AlmaLinux",
+              "REDHAT_SUPPORT_PRODUCT_VERSION": "8.10",
+              "SUPPORT_END": "2029-06-01",
+              "VERSION": "8.10 (Cerulean Leopard)",
+              "VERSION_ID": "8.10"
+            },
+            "engine_smoke": {
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true,
+              "samples_accepted": 442
+            },
+            "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+            "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+            "getconf": "glibc 2.28",
+            "glibc": "2.28",
+            "model_count": 92,
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-311-x86_64-linux-gnu.so",
+            "numpy": "2.4.6",
+            "package_from_wheel": true,
+            "python": "3.11.15",
+            "scipy": "1.17.1"
+          },
+          "test_files": [
+            "tests/test_audio_comb_filters.py",
+            "tests/test_ml_hmm.py",
+            "tests/test_ml_nn.py",
+            "tests/test_features_beats.py",
+            "tests/test_features_beats_online.py",
+            "tests/test_features_onsets.py",
+            "tests/test_features_downbeats.py",
+            "tests/test_features_downbeats_online.py",
+            "tests/test_features_downbeats_priors.py",
+            "tests/test_features_downbeats_window.py",
+            "tests/test_pickle_compat.py",
+            "tests/test_online_defaults.py",
+            "tests/test_native.py",
+            "tests/test_native_bindings.py",
+            "tests/test_native_decoders.py",
+            "tests/test_native_fft.py",
+            "tests/test_native_frontend.py",
+            "tests/test_native_frontend_compat.py",
+            "tests/test_native_nn.py",
+            "tests/test_native_nn_bindings.py",
+            "tests/test_native_reference.py"
+          ],
+          "test_exit_code": 0,
+          "proot_version": "5.5.0-25dc6a31",
+          "wheel": "madmom_plus-0.17.0.dev1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "wheel_sha256": "3444900b1c21a11b11434759d96eaf8feeff28a04303dcf67f23f9271a30fe1c",
+          "test_source_sha256": {
+            "tests/test_audio_comb_filters.py": "e4881052f1f6ee50312374b432df4e72ef2cfbdcef5e7497c0b7e227592eeb6f",
+            "tests/test_ml_hmm.py": "2da5f1d0d68445fb216b702dfa2dfe125e114b9e6ef695d36fd151bf4d24490f",
+            "tests/test_ml_nn.py": "a1b0183a1a34136a9be40c2b53579d8f0cc33a65bc1a885af38e9503f974d686",
+            "tests/test_features_beats.py": "66e424e71bb43ea907b77dfb3d7956368e9f4f62ff673c4ea181c0ac70b67ce2",
+            "tests/test_features_beats_online.py": "b308e13879b1b458e547f80984a18d0cdaeaec72279793790136724f91fd647b",
+            "tests/test_features_onsets.py": "2a6f8fbd0a052688febf2bd30ea5bd66f6cc15b79aa93de902542b9fe5512e54",
+            "tests/test_features_downbeats.py": "756ce6f67e87979085361e996c2ad954ae4d14540af19bf08a814e18d4c4cefc",
+            "tests/test_features_downbeats_online.py": "a58bc753f96ff9d18390904079bc9bc8a269c78a8cb7be8b508202db2012664d",
+            "tests/test_features_downbeats_priors.py": "f570143ba7f5d7caaa87fd2198cc76de50077583b39f8680653ef9ad28697577",
+            "tests/test_features_downbeats_window.py": "d6e81c42a1fbffb60dc864203799ef2d78fc404323e252d76755f3cc81c247b2",
+            "tests/test_pickle_compat.py": "671ff23723db9a4e7f39cc430a2ddad7a4e08498f4700a64000d67bdf08bab24",
+            "tests/test_online_defaults.py": "04d310d584bd47492cb024f78625e2b5fc0e519c60750fe66f3ed4ed705b9655",
+            "tests/test_native.py": "2a3d5e9722a3c0a553201e29dab762c9d912ab37505b8430a0e2a5faeee36632",
+            "tests/test_native_bindings.py": "bc1d743294e7d7a6527157db805cc15779150c4309e4df0ef627d1b8baf8704e",
+            "tests/test_native_decoders.py": "013646eb3a1d705b6d2cba1913a76eabd62da412506d834e5ccd6f7788e91ad9",
+            "tests/test_native_fft.py": "b991d0d35f516b9790371fe4da8bd325b90c05c61662dd291635f57df893578e",
+            "tests/test_native_frontend.py": "e2a20ee27dd300f1ec612663ae312c93e12aa3fa6ddaa787ce78cd25e8fce2f0",
+            "tests/test_native_frontend_compat.py": "6a52da640ffcb4f30d9c29cbc34e9e15da249a07a5e965b4d2cfa125b0e5160a",
+            "tests/test_native_nn.py": "b51394bb74a704c54d2f64012a24d869b0306ba71d924aa96688d10a6398336e",
+            "tests/test_native_nn_bindings.py": "a75b196abf7b9ef9118d9106fafd21e696a6a53bad985a3accb76853d8319851",
+            "tests/test_native_reference.py": "42ca8bf3598db1a7bf1c7f222a490b014da4838e3b0c9dc3cbdeb27465d73cfa"
+          },
+          "test_log_sha256": "ec406bb7ca773fad0dc5c73a51cd5bb50198ae78f9a1de37970e519002bf1404",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 14.60s",
+          "tests_passed": 377,
+          "subtests_passed": 189,
+          "wall_seconds": 14.6,
+          "report_file": "build/containers/alma8-amd64-final.json"
+        },
+        {
+          "container_method": "OCI rootfs with PRoot filesystem virtualization",
+          "kernel_namespace_isolation": false,
+          "runtime": {
+            "architecture": "x86_64",
+            "distribution": {
+              "BUG_REPORT_URL": "https://bugs.debian.org/",
+              "HOME_URL": "https://www.debian.org/",
+              "ID": "debian",
+              "NAME": "Debian GNU/Linux",
+              "PRETTY_NAME": "Debian GNU/Linux 12 (bookworm)",
+              "SUPPORT_URL": "https://www.debian.org/support",
+              "VERSION": "12 (bookworm)",
+              "VERSION_CODENAME": "bookworm",
+              "VERSION_ID": "12"
+            },
+            "engine_smoke": {
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true,
+              "samples_accepted": 442
+            },
+            "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+            "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+            "getconf": "glibc 2.36",
+            "glibc": "2.36",
+            "model_count": 92,
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-311-x86_64-linux-gnu.so",
+            "numpy": "2.4.6",
+            "package_from_wheel": true,
+            "python": "3.11.15",
+            "scipy": "1.17.1"
+          },
+          "test_files": [
+            "tests/test_audio_comb_filters.py",
+            "tests/test_ml_hmm.py",
+            "tests/test_ml_nn.py",
+            "tests/test_features_beats.py",
+            "tests/test_features_beats_online.py",
+            "tests/test_features_onsets.py",
+            "tests/test_features_downbeats.py",
+            "tests/test_features_downbeats_online.py",
+            "tests/test_features_downbeats_priors.py",
+            "tests/test_features_downbeats_window.py",
+            "tests/test_pickle_compat.py",
+            "tests/test_online_defaults.py",
+            "tests/test_native.py",
+            "tests/test_native_bindings.py",
+            "tests/test_native_decoders.py",
+            "tests/test_native_fft.py",
+            "tests/test_native_frontend.py",
+            "tests/test_native_frontend_compat.py",
+            "tests/test_native_nn.py",
+            "tests/test_native_nn_bindings.py",
+            "tests/test_native_reference.py"
+          ],
+          "test_exit_code": 0,
+          "proot_version": "5.5.0-25dc6a31",
+          "wheel": "madmom_plus-0.17.0.dev1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "wheel_sha256": "3444900b1c21a11b11434759d96eaf8feeff28a04303dcf67f23f9271a30fe1c",
+          "test_source_sha256": {
+            "tests/test_audio_comb_filters.py": "e4881052f1f6ee50312374b432df4e72ef2cfbdcef5e7497c0b7e227592eeb6f",
+            "tests/test_ml_hmm.py": "2da5f1d0d68445fb216b702dfa2dfe125e114b9e6ef695d36fd151bf4d24490f",
+            "tests/test_ml_nn.py": "a1b0183a1a34136a9be40c2b53579d8f0cc33a65bc1a885af38e9503f974d686",
+            "tests/test_features_beats.py": "66e424e71bb43ea907b77dfb3d7956368e9f4f62ff673c4ea181c0ac70b67ce2",
+            "tests/test_features_beats_online.py": "b308e13879b1b458e547f80984a18d0cdaeaec72279793790136724f91fd647b",
+            "tests/test_features_onsets.py": "2a6f8fbd0a052688febf2bd30ea5bd66f6cc15b79aa93de902542b9fe5512e54",
+            "tests/test_features_downbeats.py": "756ce6f67e87979085361e996c2ad954ae4d14540af19bf08a814e18d4c4cefc",
+            "tests/test_features_downbeats_online.py": "a58bc753f96ff9d18390904079bc9bc8a269c78a8cb7be8b508202db2012664d",
+            "tests/test_features_downbeats_priors.py": "f570143ba7f5d7caaa87fd2198cc76de50077583b39f8680653ef9ad28697577",
+            "tests/test_features_downbeats_window.py": "d6e81c42a1fbffb60dc864203799ef2d78fc404323e252d76755f3cc81c247b2",
+            "tests/test_pickle_compat.py": "671ff23723db9a4e7f39cc430a2ddad7a4e08498f4700a64000d67bdf08bab24",
+            "tests/test_online_defaults.py": "04d310d584bd47492cb024f78625e2b5fc0e519c60750fe66f3ed4ed705b9655",
+            "tests/test_native.py": "2a3d5e9722a3c0a553201e29dab762c9d912ab37505b8430a0e2a5faeee36632",
+            "tests/test_native_bindings.py": "bc1d743294e7d7a6527157db805cc15779150c4309e4df0ef627d1b8baf8704e",
+            "tests/test_native_decoders.py": "013646eb3a1d705b6d2cba1913a76eabd62da412506d834e5ccd6f7788e91ad9",
+            "tests/test_native_fft.py": "b991d0d35f516b9790371fe4da8bd325b90c05c61662dd291635f57df893578e",
+            "tests/test_native_frontend.py": "e2a20ee27dd300f1ec612663ae312c93e12aa3fa6ddaa787ce78cd25e8fce2f0",
+            "tests/test_native_frontend_compat.py": "6a52da640ffcb4f30d9c29cbc34e9e15da249a07a5e965b4d2cfa125b0e5160a",
+            "tests/test_native_nn.py": "b51394bb74a704c54d2f64012a24d869b0306ba71d924aa96688d10a6398336e",
+            "tests/test_native_nn_bindings.py": "a75b196abf7b9ef9118d9106fafd21e696a6a53bad985a3accb76853d8319851",
+            "tests/test_native_reference.py": "42ca8bf3598db1a7bf1c7f222a490b014da4838e3b0c9dc3cbdeb27465d73cfa"
+          },
+          "test_log_sha256": "f5e8e34aa0fb503be19bd9014cd88626258c73c40ad7e08fe56f889716e69d4d",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 13.91s",
+          "tests_passed": 377,
+          "subtests_passed": 189,
+          "wall_seconds": 13.91,
+          "report_file": "build/containers/bookworm-amd64-final.json"
+        }
+      ],
+      "fresh_final_artifact_smoke": []
+    },
+    {
+      "filename": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_aarch64.whl",
+      "sha256": "33ed40c8a35cb850350ea001c4992912e379dabc9fd2b168645bcfd348f87ac3",
+      "size_bytes": 30329546,
+      "architecture": "aarch64",
+      "python_tag": "cp312",
+      "maximum_required_glibc": "GLIBC_2.27",
+      "maximum_required_glibcxx": "GLIBCXX_3.4.21",
+      "required_symbol_versions": [
+        "CXXABI_1.3",
+        "CXXABI_1.3.7",
+        "CXXABI_1.3.9",
+        "GCC_3.0",
+        "GLIBCXX_3.4",
+        "GLIBCXX_3.4.21",
+        "GLIBC_2.17",
+        "GLIBC_2.27"
+      ],
+      "extensions": [
+        {
+          "filename": "madmom/_native.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "096c8f90fcc3c6685f91ecb1458c9adb6e83e9fea9c68a99fe7eea6706f65aaa"
+        },
+        {
+          "filename": "madmom/audio/comb_filters.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "ade632cab0ae55adf4b0c5be8b5ff897e0b7d89b4608ed26f5767a68d2c0e658"
+        },
+        {
+          "filename": "madmom/features/beats_crf.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "8f24df750a6f3a1cdc41e406d53fe796bb653b0f3a2c30fd3f3f6afd3c7bf7ba"
+        },
+        {
+          "filename": "madmom/ml/hmm.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "1a0d1b035d0c5ffd2eae5f786115ecd31d627e616c7a2a62ab693a9b4400ad64"
+        },
+        {
+          "filename": "madmom/ml/nn/layers.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "549993a100c299c5d33dac740a880d4183893cfa63df7d91da18ebea7b828884"
+        }
+      ],
+      "models_count": 92,
+      "model_bytes_match_source": true,
+      "python_sources_match_current_tree": true,
+      "metadata_matches_final_readme_and_changes": true,
+      "private_build_path_files": [],
+      "tested_runtime_manifest_sha256": "009a8c81e95a2906d5e62c009d2b8c1ba0c16312b71419690d9167bd67a721fc",
+      "tested_payload_preserved_after_metadata_refresh": true,
+      "verification": [
+        {
+          "container_method": "OCI rootfs with PRoot filesystem virtualization",
+          "kernel_namespace_isolation": false,
+          "runtime": {
+            "architecture": "aarch64",
+            "distribution": {
+              "ALMALINUX_MANTISBT_PROJECT": "AlmaLinux-8",
+              "ALMALINUX_MANTISBT_PROJECT_VERSION": "8.10",
+              "ANSI_COLOR": "0;34",
+              "BUG_REPORT_URL": "https://bugs.almalinux.org/",
+              "CPE_NAME": "cpe:/o:almalinux:almalinux:8::baseos",
+              "DOCUMENTATION_URL": "https://wiki.almalinux.org/",
+              "HOME_URL": "https://almalinux.org/",
+              "ID": "almalinux",
+              "ID_LIKE": "rhel centos fedora",
+              "LOGO": "fedora-logo-icon",
+              "NAME": "AlmaLinux",
+              "PLATFORM_ID": "platform:el8",
+              "PRETTY_NAME": "AlmaLinux 8.10 (Cerulean Leopard)",
+              "REDHAT_SUPPORT_PRODUCT": "AlmaLinux",
+              "REDHAT_SUPPORT_PRODUCT_VERSION": "8.10",
+              "SUPPORT_END": "2029-06-01",
+              "VERSION": "8.10 (Cerulean Leopard)",
+              "VERSION_ID": "8.10"
+            },
+            "engine_smoke": {
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true,
+              "samples_accepted": 442
+            },
+            "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+            "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+            "getconf": "glibc 2.28",
+            "glibc": "2.28",
+            "model_count": 92,
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-312-aarch64-linux-gnu.so",
+            "numpy": "2.4.6",
+            "package_from_wheel": true,
+            "python": "3.12.13",
+            "scipy": "1.18.1"
+          },
+          "test_files": [
+            "tests/test_audio_comb_filters.py",
+            "tests/test_ml_hmm.py",
+            "tests/test_ml_nn.py",
+            "tests/test_features_beats.py",
+            "tests/test_features_beats_online.py",
+            "tests/test_features_onsets.py",
+            "tests/test_features_downbeats.py",
+            "tests/test_features_downbeats_online.py",
+            "tests/test_features_downbeats_priors.py",
+            "tests/test_features_downbeats_window.py",
+            "tests/test_pickle_compat.py",
+            "tests/test_online_defaults.py",
+            "tests/test_native.py",
+            "tests/test_native_bindings.py",
+            "tests/test_native_decoders.py",
+            "tests/test_native_fft.py",
+            "tests/test_native_frontend.py",
+            "tests/test_native_frontend_compat.py",
+            "tests/test_native_nn.py",
+            "tests/test_native_nn_bindings.py",
+            "tests/test_native_reference.py"
+          ],
+          "test_exit_code": 0,
+          "proot_version": "5.5.0-25dc6a31",
+          "qemu_version": "qemu-aarch64 version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+          "wheel": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_aarch64.whl",
+          "wheel_sha256": "c36ebf121546cf37ed16ec671c0e5629394307387aa94ad54def67af8b38e223",
+          "test_source_sha256": {
+            "tests/test_audio_comb_filters.py": "e4881052f1f6ee50312374b432df4e72ef2cfbdcef5e7497c0b7e227592eeb6f",
+            "tests/test_ml_hmm.py": "2da5f1d0d68445fb216b702dfa2dfe125e114b9e6ef695d36fd151bf4d24490f",
+            "tests/test_ml_nn.py": "a1b0183a1a34136a9be40c2b53579d8f0cc33a65bc1a885af38e9503f974d686",
+            "tests/test_features_beats.py": "66e424e71bb43ea907b77dfb3d7956368e9f4f62ff673c4ea181c0ac70b67ce2",
+            "tests/test_features_beats_online.py": "b308e13879b1b458e547f80984a18d0cdaeaec72279793790136724f91fd647b",
+            "tests/test_features_onsets.py": "2a6f8fbd0a052688febf2bd30ea5bd66f6cc15b79aa93de902542b9fe5512e54",
+            "tests/test_features_downbeats.py": "756ce6f67e87979085361e996c2ad954ae4d14540af19bf08a814e18d4c4cefc",
+            "tests/test_features_downbeats_online.py": "a58bc753f96ff9d18390904079bc9bc8a269c78a8cb7be8b508202db2012664d",
+            "tests/test_features_downbeats_priors.py": "f570143ba7f5d7caaa87fd2198cc76de50077583b39f8680653ef9ad28697577",
+            "tests/test_features_downbeats_window.py": "d6e81c42a1fbffb60dc864203799ef2d78fc404323e252d76755f3cc81c247b2",
+            "tests/test_pickle_compat.py": "671ff23723db9a4e7f39cc430a2ddad7a4e08498f4700a64000d67bdf08bab24",
+            "tests/test_online_defaults.py": "04d310d584bd47492cb024f78625e2b5fc0e519c60750fe66f3ed4ed705b9655",
+            "tests/test_native.py": "2a3d5e9722a3c0a553201e29dab762c9d912ab37505b8430a0e2a5faeee36632",
+            "tests/test_native_bindings.py": "bc1d743294e7d7a6527157db805cc15779150c4309e4df0ef627d1b8baf8704e",
+            "tests/test_native_decoders.py": "013646eb3a1d705b6d2cba1913a76eabd62da412506d834e5ccd6f7788e91ad9",
+            "tests/test_native_fft.py": "b991d0d35f516b9790371fe4da8bd325b90c05c61662dd291635f57df893578e",
+            "tests/test_native_frontend.py": "e2a20ee27dd300f1ec612663ae312c93e12aa3fa6ddaa787ce78cd25e8fce2f0",
+            "tests/test_native_frontend_compat.py": "6a52da640ffcb4f30d9c29cbc34e9e15da249a07a5e965b4d2cfa125b0e5160a",
+            "tests/test_native_nn.py": "b51394bb74a704c54d2f64012a24d869b0306ba71d924aa96688d10a6398336e",
+            "tests/test_native_nn_bindings.py": "a75b196abf7b9ef9118d9106fafd21e696a6a53bad985a3accb76853d8319851",
+            "tests/test_native_reference.py": "42ca8bf3598db1a7bf1c7f222a490b014da4838e3b0c9dc3cbdeb27465d73cfa"
+          },
+          "test_log_sha256": "b6120974e741626723e5517dab020505849c464b22063201b5cd69022d275abf",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 290.72s (0:04:50)",
+          "tests_passed": 377,
+          "subtests_passed": 189,
+          "wall_seconds": 290.72,
+          "report_file": "build/containers/alma8-arm64-final.json"
+        },
+        {
+          "container_method": "OCI rootfs with PRoot filesystem virtualization",
+          "kernel_namespace_isolation": false,
+          "runtime": {
+            "architecture": "aarch64",
+            "distribution": {
+              "BUG_REPORT_URL": "https://bugs.debian.org/",
+              "HOME_URL": "https://www.debian.org/",
+              "ID": "debian",
+              "NAME": "Debian GNU/Linux",
+              "PRETTY_NAME": "Debian GNU/Linux 12 (bookworm)",
+              "SUPPORT_URL": "https://www.debian.org/support",
+              "VERSION": "12 (bookworm)",
+              "VERSION_CODENAME": "bookworm",
+              "VERSION_ID": "12"
+            },
+            "engine_smoke": {
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true,
+              "samples_accepted": 442
+            },
+            "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+            "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+            "getconf": "glibc 2.36",
+            "glibc": "2.36",
+            "model_count": 92,
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-312-aarch64-linux-gnu.so",
+            "numpy": "2.4.6",
+            "package_from_wheel": true,
+            "python": "3.12.13",
+            "scipy": "1.18.1"
+          },
+          "test_files": [
+            "tests/test_audio_comb_filters.py",
+            "tests/test_ml_hmm.py",
+            "tests/test_ml_nn.py",
+            "tests/test_features_beats.py",
+            "tests/test_features_beats_online.py",
+            "tests/test_features_onsets.py",
+            "tests/test_features_downbeats.py",
+            "tests/test_features_downbeats_online.py",
+            "tests/test_features_downbeats_priors.py",
+            "tests/test_features_downbeats_window.py",
+            "tests/test_pickle_compat.py",
+            "tests/test_online_defaults.py",
+            "tests/test_native.py",
+            "tests/test_native_bindings.py",
+            "tests/test_native_decoders.py",
+            "tests/test_native_fft.py",
+            "tests/test_native_frontend.py",
+            "tests/test_native_frontend_compat.py",
+            "tests/test_native_nn.py",
+            "tests/test_native_nn_bindings.py",
+            "tests/test_native_reference.py"
+          ],
+          "test_exit_code": 0,
+          "proot_version": "5.5.0-25dc6a31",
+          "qemu_version": "qemu-aarch64 version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+          "wheel": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_aarch64.whl",
+          "wheel_sha256": "c36ebf121546cf37ed16ec671c0e5629394307387aa94ad54def67af8b38e223",
+          "test_source_sha256": {
+            "tests/test_audio_comb_filters.py": "e4881052f1f6ee50312374b432df4e72ef2cfbdcef5e7497c0b7e227592eeb6f",
+            "tests/test_ml_hmm.py": "2da5f1d0d68445fb216b702dfa2dfe125e114b9e6ef695d36fd151bf4d24490f",
+            "tests/test_ml_nn.py": "a1b0183a1a34136a9be40c2b53579d8f0cc33a65bc1a885af38e9503f974d686",
+            "tests/test_features_beats.py": "66e424e71bb43ea907b77dfb3d7956368e9f4f62ff673c4ea181c0ac70b67ce2",
+            "tests/test_features_beats_online.py": "b308e13879b1b458e547f80984a18d0cdaeaec72279793790136724f91fd647b",
+            "tests/test_features_onsets.py": "2a6f8fbd0a052688febf2bd30ea5bd66f6cc15b79aa93de902542b9fe5512e54",
+            "tests/test_features_downbeats.py": "756ce6f67e87979085361e996c2ad954ae4d14540af19bf08a814e18d4c4cefc",
+            "tests/test_features_downbeats_online.py": "a58bc753f96ff9d18390904079bc9bc8a269c78a8cb7be8b508202db2012664d",
+            "tests/test_features_downbeats_priors.py": "f570143ba7f5d7caaa87fd2198cc76de50077583b39f8680653ef9ad28697577",
+            "tests/test_features_downbeats_window.py": "d6e81c42a1fbffb60dc864203799ef2d78fc404323e252d76755f3cc81c247b2",
+            "tests/test_pickle_compat.py": "671ff23723db9a4e7f39cc430a2ddad7a4e08498f4700a64000d67bdf08bab24",
+            "tests/test_online_defaults.py": "04d310d584bd47492cb024f78625e2b5fc0e519c60750fe66f3ed4ed705b9655",
+            "tests/test_native.py": "2a3d5e9722a3c0a553201e29dab762c9d912ab37505b8430a0e2a5faeee36632",
+            "tests/test_native_bindings.py": "bc1d743294e7d7a6527157db805cc15779150c4309e4df0ef627d1b8baf8704e",
+            "tests/test_native_decoders.py": "013646eb3a1d705b6d2cba1913a76eabd62da412506d834e5ccd6f7788e91ad9",
+            "tests/test_native_fft.py": "b991d0d35f516b9790371fe4da8bd325b90c05c61662dd291635f57df893578e",
+            "tests/test_native_frontend.py": "e2a20ee27dd300f1ec612663ae312c93e12aa3fa6ddaa787ce78cd25e8fce2f0",
+            "tests/test_native_frontend_compat.py": "6a52da640ffcb4f30d9c29cbc34e9e15da249a07a5e965b4d2cfa125b0e5160a",
+            "tests/test_native_nn.py": "b51394bb74a704c54d2f64012a24d869b0306ba71d924aa96688d10a6398336e",
+            "tests/test_native_nn_bindings.py": "a75b196abf7b9ef9118d9106fafd21e696a6a53bad985a3accb76853d8319851",
+            "tests/test_native_reference.py": "42ca8bf3598db1a7bf1c7f222a490b014da4838e3b0c9dc3cbdeb27465d73cfa"
+          },
+          "test_log_sha256": "25aec245e3047a313acb455a62a22bed5dcb77b8930ea817335ef8b8f58955fb",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 293.07s (0:04:53)",
+          "tests_passed": 377,
+          "subtests_passed": 189,
+          "wall_seconds": 293.07,
+          "report_file": "build/containers/bookworm-arm64-final.json"
+        },
+        {
+          "container_method": "OCI rootfs with PRoot filesystem virtualization",
+          "kernel_namespace_isolation": false,
+          "runtime": {
+            "architecture": "aarch64",
+            "distribution": {
+              "ALMALINUX_MANTISBT_PROJECT": "AlmaLinux-8",
+              "ALMALINUX_MANTISBT_PROJECT_VERSION": "8.10",
+              "ANSI_COLOR": "0;34",
+              "BUG_REPORT_URL": "https://bugs.almalinux.org/",
+              "CPE_NAME": "cpe:/o:almalinux:almalinux:8::baseos",
+              "DOCUMENTATION_URL": "https://wiki.almalinux.org/",
+              "HOME_URL": "https://almalinux.org/",
+              "ID": "almalinux",
+              "ID_LIKE": "rhel centos fedora",
+              "LOGO": "fedora-logo-icon",
+              "NAME": "AlmaLinux",
+              "PLATFORM_ID": "platform:el8",
+              "PRETTY_NAME": "AlmaLinux 8.10 (Cerulean Leopard)",
+              "REDHAT_SUPPORT_PRODUCT": "AlmaLinux",
+              "REDHAT_SUPPORT_PRODUCT_VERSION": "8.10",
+              "SUPPORT_END": "2029-06-01",
+              "VERSION": "8.10 (Cerulean Leopard)",
+              "VERSION_ID": "8.10"
+            },
+            "engine_smoke": {
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true,
+              "samples_accepted": 442
+            },
+            "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+            "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+            "getconf": "glibc 2.28",
+            "glibc": "2.28",
+            "model_count": 92,
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-312-aarch64-linux-gnu.so",
+            "numpy": "1.26.4",
+            "package_from_wheel": true,
+            "python": "3.12.13",
+            "scipy": "1.13.1"
+          },
+          "test_files": [
+            "tests/test_native_nn.py",
+            "tests/test_native_nn_bindings.py",
+            "tests/test_native_reference.py",
+            "tests/test_native_frontend.py",
+            "tests/test_native_bindings.py"
+          ],
+          "test_exit_code": 0,
+          "proot_version": "5.5.0-25dc6a31",
+          "qemu_version": "qemu-aarch64 version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+          "wheel": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_aarch64.whl",
+          "wheel_sha256": "c36ebf121546cf37ed16ec671c0e5629394307387aa94ad54def67af8b38e223",
+          "test_source_sha256": {
+            "tests/test_native_nn.py": "b51394bb74a704c54d2f64012a24d869b0306ba71d924aa96688d10a6398336e",
+            "tests/test_native_nn_bindings.py": "a75b196abf7b9ef9118d9106fafd21e696a6a53bad985a3accb76853d8319851",
+            "tests/test_native_reference.py": "42ca8bf3598db1a7bf1c7f222a490b014da4838e3b0c9dc3cbdeb27465d73cfa",
+            "tests/test_native_frontend.py": "e2a20ee27dd300f1ec612663ae312c93e12aa3fa6ddaa787ce78cd25e8fce2f0",
+            "tests/test_native_bindings.py": "bc1d743294e7d7a6527157db805cc15779150c4309e4df0ef627d1b8baf8704e"
+          },
+          "test_log_sha256": "472e4af663d1aec09a190b868e2541ee0bd757b55aa120be54fdbcf1cfaed874",
+          "pytest_summary": "35 passed, 10 subtests passed in 27.09s",
+          "tests_passed": 35,
+          "subtests_passed": 10,
+          "wall_seconds": 27.09,
+          "report_file": "build/containers/alma8-arm64-numpy126-final.json"
+        }
+      ],
+      "fresh_final_artifact_smoke": [
+        {
+          "architecture": "aarch64",
+          "distribution": {
+            "ALMALINUX_MANTISBT_PROJECT": "AlmaLinux-8",
+            "ALMALINUX_MANTISBT_PROJECT_VERSION": "8.10",
+            "ANSI_COLOR": "0;34",
+            "BUG_REPORT_URL": "https://bugs.almalinux.org/",
+            "CPE_NAME": "cpe:/o:almalinux:almalinux:8::baseos",
+            "DOCUMENTATION_URL": "https://wiki.almalinux.org/",
+            "HOME_URL": "https://almalinux.org/",
+            "ID": "almalinux",
+            "ID_LIKE": "rhel centos fedora",
+            "LOGO": "fedora-logo-icon",
+            "NAME": "AlmaLinux",
+            "PLATFORM_ID": "platform:el8",
+            "PRETTY_NAME": "AlmaLinux 8.10 (Cerulean Leopard)",
+            "REDHAT_SUPPORT_PRODUCT": "AlmaLinux",
+            "REDHAT_SUPPORT_PRODUCT_VERSION": "8.10",
+            "SUPPORT_END": "2029-06-01",
+            "VERSION": "8.10 (Cerulean Leopard)",
+            "VERSION_ID": "8.10"
+          },
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+          "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+          "getconf": "glibc 2.28",
+          "glibc": "2.28",
+          "model_count": 92,
+          "native_abi_version": 65536,
+          "native_filename": "_native.cpython-312-aarch64-linux-gnu.so",
+          "numpy": "2.4.6",
+          "package_from_wheel": true,
+          "python": "3.12.13",
+          "scipy": "1.18.1"
+        },
+        {
+          "architecture": "aarch64",
+          "distribution": {
+            "BUG_REPORT_URL": "https://bugs.debian.org/",
+            "HOME_URL": "https://www.debian.org/",
+            "ID": "debian",
+            "NAME": "Debian GNU/Linux",
+            "PRETTY_NAME": "Debian GNU/Linux 12 (bookworm)",
+            "SUPPORT_URL": "https://www.debian.org/support",
+            "VERSION": "12 (bookworm)",
+            "VERSION_CODENAME": "bookworm",
+            "VERSION_ID": "12"
+          },
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+          "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+          "getconf": "glibc 2.36",
+          "glibc": "2.36",
+          "model_count": 92,
+          "native_abi_version": 65536,
+          "native_filename": "_native.cpython-312-aarch64-linux-gnu.so",
+          "numpy": "2.4.6",
+          "package_from_wheel": true,
+          "python": "3.12.13",
+          "scipy": "1.18.1"
+        }
+      ]
+    },
+    {
+      "filename": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "499a72c264d1034474bed82847151c8b4763d1bcdf1c4e792f57e26c550f62b5",
+      "size_bytes": 30366597,
+      "architecture": "x86_64",
+      "python_tag": "cp312",
+      "maximum_required_glibc": "GLIBC_2.27",
+      "maximum_required_glibcxx": "GLIBCXX_3.4.21",
+      "required_symbol_versions": [
+        "CXXABI_1.3",
+        "CXXABI_1.3.7",
+        "CXXABI_1.3.9",
+        "GCC_3.0",
+        "GLIBCXX_3.4",
+        "GLIBCXX_3.4.21",
+        "GLIBC_2.14",
+        "GLIBC_2.2.5",
+        "GLIBC_2.27",
+        "GLIBC_2.3"
+      ],
+      "extensions": [
+        {
+          "filename": "madmom/_native.cpython-312-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "bcd6307ed251fdb1fd4f2828bdbbe1280b5d43589a782459839107c35514bf86"
+        },
+        {
+          "filename": "madmom/audio/comb_filters.cpython-312-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "a780050ec83320ccdbd80e5692cb1a8b9e2b4c99395dbbf9bb27b9fbb31f1cd3"
+        },
+        {
+          "filename": "madmom/features/beats_crf.cpython-312-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "e7629b4195259c1df4894696bea152c450fc693f2a570cd1bd32e8d919882eab"
+        },
+        {
+          "filename": "madmom/ml/hmm.cpython-312-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "ff595d26c16c7b54e0c160d8e06df27662b5e41cb19462b02679cbff869524a9"
+        },
+        {
+          "filename": "madmom/ml/nn/layers.cpython-312-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "e772d07d4232367d59c9a2ebf6b79bf20fe2742efd2db6c58cda6ba963204369"
+        }
+      ],
+      "models_count": 92,
+      "model_bytes_match_source": true,
+      "python_sources_match_current_tree": true,
+      "metadata_matches_final_readme_and_changes": true,
+      "private_build_path_files": [],
+      "tested_runtime_manifest_sha256": "ea1782a3d5a255eefb6bc79140c5776c1a2b509948e51037927ec40ee270297b",
+      "tested_payload_preserved_after_metadata_refresh": true,
+      "verification": [
+        {
+          "container_method": "OCI rootfs with PRoot filesystem virtualization",
+          "kernel_namespace_isolation": false,
+          "runtime": {
+            "architecture": "x86_64",
+            "distribution": {
+              "ALMALINUX_MANTISBT_PROJECT": "AlmaLinux-8",
+              "ALMALINUX_MANTISBT_PROJECT_VERSION": "8.10",
+              "ANSI_COLOR": "0;34",
+              "BUG_REPORT_URL": "https://bugs.almalinux.org/",
+              "CPE_NAME": "cpe:/o:almalinux:almalinux:8::baseos",
+              "DOCUMENTATION_URL": "https://wiki.almalinux.org/",
+              "HOME_URL": "https://almalinux.org/",
+              "ID": "almalinux",
+              "ID_LIKE": "rhel centos fedora",
+              "LOGO": "fedora-logo-icon",
+              "NAME": "AlmaLinux",
+              "PLATFORM_ID": "platform:el8",
+              "PRETTY_NAME": "AlmaLinux 8.10 (Cerulean Leopard)",
+              "REDHAT_SUPPORT_PRODUCT": "AlmaLinux",
+              "REDHAT_SUPPORT_PRODUCT_VERSION": "8.10",
+              "SUPPORT_END": "2029-06-01",
+              "VERSION": "8.10 (Cerulean Leopard)",
+              "VERSION_ID": "8.10"
+            },
+            "engine_smoke": {
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true,
+              "samples_accepted": 442
+            },
+            "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+            "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+            "getconf": "glibc 2.28",
+            "glibc": "2.28",
+            "model_count": 92,
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-312-x86_64-linux-gnu.so",
+            "numpy": "2.4.6",
+            "package_from_wheel": true,
+            "python": "3.12.13",
+            "scipy": "1.18.1"
+          },
+          "test_files": [
+            "tests/test_audio_comb_filters.py",
+            "tests/test_ml_hmm.py",
+            "tests/test_ml_nn.py",
+            "tests/test_features_beats.py",
+            "tests/test_features_beats_online.py",
+            "tests/test_features_onsets.py",
+            "tests/test_features_downbeats.py",
+            "tests/test_features_downbeats_online.py",
+            "tests/test_features_downbeats_priors.py",
+            "tests/test_features_downbeats_window.py",
+            "tests/test_pickle_compat.py",
+            "tests/test_online_defaults.py",
+            "tests/test_native.py",
+            "tests/test_native_bindings.py",
+            "tests/test_native_decoders.py",
+            "tests/test_native_fft.py",
+            "tests/test_native_frontend.py",
+            "tests/test_native_frontend_compat.py",
+            "tests/test_native_nn.py",
+            "tests/test_native_nn_bindings.py",
+            "tests/test_native_reference.py"
+          ],
+          "test_exit_code": 0,
+          "proot_version": "5.5.0-25dc6a31",
+          "wheel": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "wheel_sha256": "af2021cee1100ed9578a0efa0833c51606f36b4e9620f25205904cf4d7313554",
+          "test_source_sha256": {
+            "tests/test_audio_comb_filters.py": "e4881052f1f6ee50312374b432df4e72ef2cfbdcef5e7497c0b7e227592eeb6f",
+            "tests/test_ml_hmm.py": "2da5f1d0d68445fb216b702dfa2dfe125e114b9e6ef695d36fd151bf4d24490f",
+            "tests/test_ml_nn.py": "a1b0183a1a34136a9be40c2b53579d8f0cc33a65bc1a885af38e9503f974d686",
+            "tests/test_features_beats.py": "66e424e71bb43ea907b77dfb3d7956368e9f4f62ff673c4ea181c0ac70b67ce2",
+            "tests/test_features_beats_online.py": "b308e13879b1b458e547f80984a18d0cdaeaec72279793790136724f91fd647b",
+            "tests/test_features_onsets.py": "2a6f8fbd0a052688febf2bd30ea5bd66f6cc15b79aa93de902542b9fe5512e54",
+            "tests/test_features_downbeats.py": "756ce6f67e87979085361e996c2ad954ae4d14540af19bf08a814e18d4c4cefc",
+            "tests/test_features_downbeats_online.py": "a58bc753f96ff9d18390904079bc9bc8a269c78a8cb7be8b508202db2012664d",
+            "tests/test_features_downbeats_priors.py": "f570143ba7f5d7caaa87fd2198cc76de50077583b39f8680653ef9ad28697577",
+            "tests/test_features_downbeats_window.py": "d6e81c42a1fbffb60dc864203799ef2d78fc404323e252d76755f3cc81c247b2",
+            "tests/test_pickle_compat.py": "671ff23723db9a4e7f39cc430a2ddad7a4e08498f4700a64000d67bdf08bab24",
+            "tests/test_online_defaults.py": "04d310d584bd47492cb024f78625e2b5fc0e519c60750fe66f3ed4ed705b9655",
+            "tests/test_native.py": "2a3d5e9722a3c0a553201e29dab762c9d912ab37505b8430a0e2a5faeee36632",
+            "tests/test_native_bindings.py": "bc1d743294e7d7a6527157db805cc15779150c4309e4df0ef627d1b8baf8704e",
+            "tests/test_native_decoders.py": "013646eb3a1d705b6d2cba1913a76eabd62da412506d834e5ccd6f7788e91ad9",
+            "tests/test_native_fft.py": "b991d0d35f516b9790371fe4da8bd325b90c05c61662dd291635f57df893578e",
+            "tests/test_native_frontend.py": "e2a20ee27dd300f1ec612663ae312c93e12aa3fa6ddaa787ce78cd25e8fce2f0",
+            "tests/test_native_frontend_compat.py": "6a52da640ffcb4f30d9c29cbc34e9e15da249a07a5e965b4d2cfa125b0e5160a",
+            "tests/test_native_nn.py": "b51394bb74a704c54d2f64012a24d869b0306ba71d924aa96688d10a6398336e",
+            "tests/test_native_nn_bindings.py": "a75b196abf7b9ef9118d9106fafd21e696a6a53bad985a3accb76853d8319851",
+            "tests/test_native_reference.py": "42ca8bf3598db1a7bf1c7f222a490b014da4838e3b0c9dc3cbdeb27465d73cfa"
+          },
+          "test_log_sha256": "db134573a9726e786352811d2ad08f8e340ab43ad199917b4f571e70612778c8",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 11.49s",
+          "tests_passed": 377,
+          "subtests_passed": 189,
+          "wall_seconds": 11.49,
+          "report_file": "build/containers/alma8-amd64-cp312-final.json"
+        },
+        {
+          "container_method": "OCI rootfs with PRoot filesystem virtualization",
+          "kernel_namespace_isolation": false,
+          "runtime": {
+            "architecture": "x86_64",
+            "distribution": {
+              "BUG_REPORT_URL": "https://bugs.debian.org/",
+              "HOME_URL": "https://www.debian.org/",
+              "ID": "debian",
+              "NAME": "Debian GNU/Linux",
+              "PRETTY_NAME": "Debian GNU/Linux 12 (bookworm)",
+              "SUPPORT_URL": "https://www.debian.org/support",
+              "VERSION": "12 (bookworm)",
+              "VERSION_CODENAME": "bookworm",
+              "VERSION_ID": "12"
+            },
+            "engine_smoke": {
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true,
+              "samples_accepted": 442
+            },
+            "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+            "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+            "getconf": "glibc 2.36",
+            "glibc": "2.36",
+            "model_count": 92,
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-312-x86_64-linux-gnu.so",
+            "numpy": "2.4.6",
+            "package_from_wheel": true,
+            "python": "3.12.13",
+            "scipy": "1.18.1"
+          },
+          "test_files": [
+            "tests"
+          ],
+          "test_exit_code": 0,
+          "proot_version": "5.5.0-25dc6a31",
+          "wheel": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "wheel_sha256": "af2021cee1100ed9578a0efa0833c51606f36b4e9620f25205904cf4d7313554",
+          "test_source_sha256": {
+            "tests/__init__.py": "72d8fb8ae1dc98e8ca3abcf23afad5ead9db2124b9cd2579ee3d08012c5d0ca9",
+            "tests/test_audio_chroma.py": "42c41fafe6ff1b0f1dc46ea1694e6386da8f922b485022f6ef569cf753d98ff3",
+            "tests/test_audio_comb_filters.py": "e4881052f1f6ee50312374b432df4e72ef2cfbdcef5e7497c0b7e227592eeb6f",
+            "tests/test_audio_filters.py": "b5b329266c908caf7b14d0be697fa09c99e7b3e019522cd23aa271eebd100424",
+            "tests/test_audio_signal.py": "f980e9cb14e3d4d9e7d83ad203103ef327fcc54ce5b4d7731c0b4f1e62adcbb0",
+            "tests/test_audio_spectrogram.py": "ac7747eca6c916cd784927a4872539cbaa35dce2b4ba9c948c308ec1dfc3f4b2",
+            "tests/test_audio_stft.py": "36242705cf00b39424ff6787c78f8d8bdecde00ede77b4d50f487af5aa812f7f",
+            "tests/test_bin.py": "84302001e8add237a0caddc14a00e1547a483d0eec97c22c2dd090a4ff7e2ebe",
+            "tests/test_bin_evaluate.py": "f13b78119c06bbd030bbe9873b4f53b288642cff7a7fd1714c8e7b20b2b24716",
+            "tests/test_evaluation.py": "fe7ecbefed8277108fcb775c716974db0c906ec2112c585f3eac732daf5dda7b",
+            "tests/test_evaluation_beats.py": "f6dfd518380f420b577d03afa19641a485f39c63188c466e5de5258d0f13fcb4",
+            "tests/test_evaluation_chords.py": "8419590cca78f8b63ea74a9d27a04cd62c8fb6235678d60e574576c371b07e4e",
+            "tests/test_evaluation_key.py": "c1291dffed227b3db4ba9eb5a5594dfc2edb2e641fa74c6dfc632192c56f0bd0",
+            "tests/test_evaluation_notes.py": "cabf7a376e98b7db32827f09df7619127cd29ffc3c523a02570c44c1ee016cbf",
+            "tests/test_evaluation_onsets.py": "c503716d67b3fe2ab3af77f0c0304247ff5cf764786f37b47966e95d84f0db77",
+            "tests/test_evaluation_tempo.py": "29829ba9a40057dd17dd7da5318e899571178507057834fa95d1a471d3594037",
+            "tests/test_features_beats.py": "66e424e71bb43ea907b77dfb3d7956368e9f4f62ff673c4ea181c0ac70b67ce2",
+            "tests/test_features_beats_hmm.py": "7e8002de681dbcaebd8e3a3368fdb45e671bc586a1744cb68d72e7a8caf40a0b",
+            "tests/test_features_beats_online.py": "b308e13879b1b458e547f80984a18d0cdaeaec72279793790136724f91fd647b",
+            "tests/test_features_chords.py": "c90057d6603048a88e7f252eec7aff4abcc9ceee56c353361358d49b10cce0d3",
+            "tests/test_features_downbeats.py": "756ce6f67e87979085361e996c2ad954ae4d14540af19bf08a814e18d4c4cefc",
+            "tests/test_features_downbeats_online.py": "a58bc753f96ff9d18390904079bc9bc8a269c78a8cb7be8b508202db2012664d",
+            "tests/test_features_downbeats_priors.py": "f570143ba7f5d7caaa87fd2198cc76de50077583b39f8680653ef9ad28697577",
+            "tests/test_features_downbeats_window.py": "d6e81c42a1fbffb60dc864203799ef2d78fc404323e252d76755f3cc81c247b2",
+            "tests/test_features_key.py": "ab9558aa5cf5074e96c2c23c065c8021e9ccf112c443b107d10044b62164d4f4",
+            "tests/test_features_notes.py": "bf544a3eb9ac0d76302f55ec3e889bbdb2ca4727877d4e4049b0b2f76eda4b9d",
+            "tests/test_features_online.py": "1fccb47201971cb08c7209eb44390ce5fd8df6e2bf7644ebe3d956574cfd9301",
+            "tests/test_features_onsets.py": "2a6f8fbd0a052688febf2bd30ea5bd66f6cc15b79aa93de902542b9fe5512e54",
+            "tests/test_features_tempo.py": "9eaae600938904a528de97ef4011d8b12513fe5c219f28b32010fda2a4df2087",
+            "tests/test_features_tempo_online.py": "c25ae488e33fbd5f3bd17e0baafb87ea8992dfababf92c383ddd67832d0753b0",
+            "tests/test_io.py": "29839eb52f2b83aeffc0075bf4464b6c69788cfa3b58fcea53b3c9b6b881dc13",
+            "tests/test_io_audio.py": "1aabf6b88d9d59d8100f419e7a463cd09929084d13e5363d929afc07b567faa3",
+            "tests/test_io_midi.py": "e43c3843acad8726f95a39f5e0fcd8f52557446e6516ace0d0e3bf33fa97f384",
+            "tests/test_ml_crf.py": "2a9a4eba7192f8d50fcbc911d04366423154f8b105062d6c4a1e5ca4e2aeaaf7",
+            "tests/test_ml_hmm.py": "2da5f1d0d68445fb216b702dfa2dfe125e114b9e6ef695d36fd151bf4d24490f",
+            "tests/test_ml_nn.py": "a1b0183a1a34136a9be40c2b53579d8f0cc33a65bc1a885af38e9503f974d686",
+            "tests/test_modern_compat.py": "2e0cbed23760fdfb00e3424a4abfb7a19a7bede89f227c2cdd031a1f43272834",
+            "tests/test_mono_parity.py": "ead6868ea15685489e1eed9f033e494e5e665aa0dcb5becc90fb87907f67059f",
+            "tests/test_native.py": "2a3d5e9722a3c0a553201e29dab762c9d912ab37505b8430a0e2a5faeee36632",
+            "tests/test_native_bindings.py": "bc1d743294e7d7a6527157db805cc15779150c4309e4df0ef627d1b8baf8704e",
+            "tests/test_native_decoders.py": "013646eb3a1d705b6d2cba1913a76eabd62da412506d834e5ccd6f7788e91ad9",
+            "tests/test_native_fft.py": "b991d0d35f516b9790371fe4da8bd325b90c05c61662dd291635f57df893578e",
+            "tests/test_native_frontend.py": "e2a20ee27dd300f1ec612663ae312c93e12aa3fa6ddaa787ce78cd25e8fce2f0",
+            "tests/test_native_frontend_compat.py": "6a52da640ffcb4f30d9c29cbc34e9e15da249a07a5e965b4d2cfa125b0e5160a",
+            "tests/test_native_nn.py": "b51394bb74a704c54d2f64012a24d869b0306ba71d924aa96688d10a6398336e",
+            "tests/test_native_nn_bindings.py": "a75b196abf7b9ef9118d9106fafd21e696a6a53bad985a3accb76853d8319851",
+            "tests/test_native_reference.py": "42ca8bf3598db1a7bf1c7f222a490b014da4838e3b0c9dc3cbdeb27465d73cfa",
+            "tests/test_online_defaults.py": "04d310d584bd47492cb024f78625e2b5fc0e519c60750fe66f3ed4ed705b9655",
+            "tests/test_pickle_compat.py": "671ff23723db9a4e7f39cc430a2ddad7a4e08498f4700a64000d67bdf08bab24",
+            "tests/test_pool_lifecycle.py": "7f331e4abf1ebfe8db3c176e14430e733dea1f0e69887fe0f021845aa0e3b1f3",
+            "tests/test_processors.py": "5f72dbbe22267024a5e92b21f0517404b5ce1cd08691ec5fa6aee96a9a2bb1ac",
+            "tests/test_utils.py": "e5f70b04f6af002cead774020aba03334264d722c76526afbc6748d88ddba866",
+            "tests/test_utils_midi.py": "1d80b611c463f78ef77439f865ae0bfff382c2e228d2c4efa2c3640bec2d409d"
+          },
+          "test_log_sha256": "e4d9c4981cb38c1398fad43e5f2a2ce5648a63b1ae64d0b9aa34d17cf03474ad",
+          "pytest_summary": "1147 passed, 236 warnings, 217 subtests passed in 72.48s (0:01:12)",
+          "tests_passed": 1147,
+          "subtests_passed": 217,
+          "wall_seconds": 72.48,
+          "report_file": "build/containers/bookworm-cp312-amd64-final.json"
+        }
+      ],
+      "fresh_final_artifact_smoke": [
+        {
+          "architecture": "x86_64",
+          "distribution": {
+            "ALMALINUX_MANTISBT_PROJECT": "AlmaLinux-8",
+            "ALMALINUX_MANTISBT_PROJECT_VERSION": "8.10",
+            "ANSI_COLOR": "0;34",
+            "BUG_REPORT_URL": "https://bugs.almalinux.org/",
+            "CPE_NAME": "cpe:/o:almalinux:almalinux:8::baseos",
+            "DOCUMENTATION_URL": "https://wiki.almalinux.org/",
+            "HOME_URL": "https://almalinux.org/",
+            "ID": "almalinux",
+            "ID_LIKE": "rhel centos fedora",
+            "LOGO": "fedora-logo-icon",
+            "NAME": "AlmaLinux",
+            "PLATFORM_ID": "platform:el8",
+            "PRETTY_NAME": "AlmaLinux 8.10 (Cerulean Leopard)",
+            "REDHAT_SUPPORT_PRODUCT": "AlmaLinux",
+            "REDHAT_SUPPORT_PRODUCT_VERSION": "8.10",
+            "SUPPORT_END": "2029-06-01",
+            "VERSION": "8.10 (Cerulean Leopard)",
+            "VERSION_ID": "8.10"
+          },
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+          "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+          "getconf": "glibc 2.28",
+          "glibc": "2.28",
+          "model_count": 92,
+          "native_abi_version": 65536,
+          "native_filename": "_native.cpython-312-x86_64-linux-gnu.so",
+          "numpy": "2.4.6",
+          "package_from_wheel": true,
+          "python": "3.12.13",
+          "scipy": "1.18.1"
+        },
+        {
+          "architecture": "x86_64",
+          "distribution": {
+            "BUG_REPORT_URL": "https://bugs.debian.org/",
+            "HOME_URL": "https://www.debian.org/",
+            "ID": "debian",
+            "NAME": "Debian GNU/Linux",
+            "PRETTY_NAME": "Debian GNU/Linux 12 (bookworm)",
+            "SUPPORT_URL": "https://www.debian.org/support",
+            "VERSION": "12 (bookworm)",
+            "VERSION_CODENAME": "bookworm",
+            "VERSION_ID": "12"
+          },
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+          "ffprobe_version": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers",
+          "getconf": "glibc 2.36",
+          "glibc": "2.36",
+          "model_count": 92,
+          "native_abi_version": 65536,
+          "native_filename": "_native.cpython-312-x86_64-linux-gnu.so",
+          "numpy": "2.4.6",
+          "package_from_wheel": true,
+          "python": "3.12.13",
+          "scipy": "1.18.1"
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "physical_aarch64_performance_measured": false,
+    "macos_and_windows_built": false,
+    "glibc_2_27_execution_tested": false,
+    "glibc_execution_versions": [
+      "2.28",
+      "2.36"
+    ]
+  },
+  "source_archive": {
+    "filename": "madmom_plus-0.17.0.dev1.tar.gz",
+    "sha256": "8e38de46066e557f266dd79da3a86dfbf9e971239135d624ee1e3a20c26c3fa0",
+    "size_bytes": 29820592,
+    "checked_source_files_match_tree": true,
+    "model_count": 92,
+    "nn_binding_source_and_header_included": true,
+    "scope_and_both_container_helpers_included": true
+  }
+}

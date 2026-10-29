@@ -8,6 +8,8 @@ Madmom documentation
 
    introduction
    installation
+   compatibility
+   aarch64
    usage
    tutorial
    development

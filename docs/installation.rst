@@ -1,136 +1,71 @@
 Installation
 ============
 
-Please do not try to install from the .zip files provided by GitHub. Rather
-install either install :ref:`from package <install_from_package>` (if you just
-want to use it) or :ref:`from source <install_from_source>` (if you plan to
-use it for development). Whichever variant you choose, please make sure that
-all :ref:`prerequisites <install_prerequisites>` are installed.
+Install the ``madmom-plus`` distribution and continue to use ``import madmom``. The fork retains madmom's Python API, command-line program names, and model references. Use a separate virtual environment because upstream ``madmom`` installs the same package and executable names.
 
 .. _install_prerequisites:
 
 Prerequisites
 -------------
 
-To install the ``madmom`` package, you must have either Python 2.7 or Python
-3.3 or newer and the following packages installed:
+Source installation requires Python 3.9 or newer, a C compiler, and matching Python development headers. Runtime dependencies are NumPy 1.23.5 or newer, SciPy 1.13 or newer, and mido 1.2.6 or newer. PEP 517 build isolation installs setuptools 64 or newer, Cython 3 or newer, and NumPy 2 or newer for compilation.
 
-To install the ``madmom`` package, you must have either Python 2.7 or Python
-3.5 or newer and the following packages installed:
+Install FFmpeg for compressed audio input, resampling, and the complete audio test suite. Optional packages are ``pyaudio`` for microphone input and ``pyfftw`` for FFT acceleration. See :doc:`compatibility` for tested versions and :doc:`aarch64` for 64-bit ARM Linux instructions and verification limits.
 
-- `numpy <http://www.numpy.org>`_
-- `scipy <http://www.scipy.org>`_
-- `cython <http://www.cython.org>`_
-- `mido <https://github.com/olemb/mido>`_
-
-In order to test your installation, process live audio input, or have improved
-FFT performance, additionally install these packages:
-
-- `pytest <https://www.pytest.org/>`_
-- `pyaudio <http://people.csail.mit.edu/hubert/pyaudio/>`_
-- `pyfftw <https://github.com/pyFFTW/pyFFTW/>`_
-
-If you need support for audio files other than ``.wav`` with a sample rate of
-44.1kHz and 16 bit depth, you need ``ffmpeg`` (``avconv`` on Ubuntu Linux has
-some decoding bugs, so we advise not to use it!).
-
-Please refer to the ``requirements.txt`` file for the minimum required versions
-and make sure that these modules are up to date, otherwise it can result in
-unexpected errors or false computations!
+On Debian or Ubuntu with the system Python, install ``build-essential``, ``python3-dev``, and ``python3-venv``. A separately installed interpreter needs its own matching development headers.
 
 .. _install_from_package:
 
-Install from package
---------------------
+Install a built package
+-----------------------
 
-The instructions given here should be used if you just want to install the
-package, e.g. to run the bundled programs or use some functionality for your
-own project. If you intend to change anything within the `madmom` package,
-please follow the steps in :ref:`the next section <install_from_source>`.
+Until a madmom-plus release is published on PyPI, use :ref:`the source instructions <install_from_source>`. An upstream ``pip install madmom`` release does not include this fork's maintenance changes.
 
-The easiest way to install the package is via ``pip`` from the `PyPI (Python
-Package Index) <https://pypi.python.org/pypi>`_::
+To install a wheel built from this checkout, activate the target virtual environment and pass the wheel filename to pip::
 
-  pip install madmom
+    python -m pip install dist/madmom_plus-*.whl
 
-This includes the latest code and trained models and will install all
-dependencies automatically.
-
-You might need higher privileges (use su or sudo) to install the package, model
-files and scripts globally. Alternatively you can install the package locally
-(i.e. only for you) by adding the ``--user`` argument::
-
-  pip install --user madmom
-
-This will also install the executable programs to a common place (e.g.
-``/usr/local/bin``), which should be in your ``$PATH`` already. If you
-installed the package locally, the programs will be copied to a folder which
-might not be included in your ``$PATH`` (e.g. ``~/Library/Python/2.7/bin``
-on Mac OS X or ``~/.local/bin`` on Ubuntu Linux, ``pip`` will tell you). Thus
-the programs need to be called explicitely or you can add their install path
-to your ``$PATH`` environment variable::
-
-    export PATH='path/to/scripts':$PATH
+Use the actual wheel filename and a compatible Python version and platform. Source builds include the pinned upstream models; model licences remain separate from the source licence.
 
 .. _install_from_source:
 
 Install from source
 -------------------
 
-If you plan to use the package as a developer, clone the Git repository::
+Clone the repository with its pinned model submodule, then install into a virtual environment::
 
-  git clone --recursive https://github.com/CPJKU/madmom.git
+    git clone --recurse-submodules https://github.com/karimkfoure/madmom-plus.git
+    cd madmom-plus
+    python3 -m venv .venv
+    . .venv/bin/activate
+    python -m pip install --upgrade pip
+    python -m pip install .
+    python -c "import madmom; print(madmom.__version__)"
 
-Since the pre-trained model/data files are not included in this repository but
-rather added as a Git submodule, you either have to clone the repo recursively.
-This is equivalent to these steps::
+For an existing checkout, initialize its pinned model revision before installation::
 
-  git clone  https://github.com/CPJKU/madmom.git
-  cd madmom
-  git submodule update --init --remote
+    git submodule update --init --recursive
 
-Then you can simply install the package in development mode::
+For development and tests, use an editable installation with the test extra::
 
-  python setup.py develop --user
+    python -m pip install -e '.[test]'
+    python -m pytest tests
+    python -m pytest --import-mode=importlib --doctest-modules madmom
 
-To run the included tests::
+To create a source archive and build its wheel in isolated environments::
 
-  python setup.py pytest
+    python -m pip install build
+    python -m build
 
 .. _upgrading:
 
-Upgrade of existing installations
----------------------------------
+Upgrade a source installation
+-----------------------------
 
-To upgrade the package, please use the same mechanism (pip vs. source) as you
-did for installation. If you want to change from package to source, please
-uninstall the package first.
+Pull the updated source, retain its pinned model revision, and reinstall::
 
-Upgrade a package
-~~~~~~~~~~~~~~~~~
+    git pull
+    git submodule update --init --recursive
+    python -m pip install .
 
-Simply upgrade the package via pip::
-
-  pip install --upgrade madmom [--user]
-
-If some of the provided programs or models changed (please refer to the
-CHANGELOG) you should first uninstall the package and then reinstall::
-
-  pip uninstall madmom
-  pip install madmom [--user]
-
-Upgrade from source
-~~~~~~~~~~~~~~~~~~~
-
-Simply pull the latest sources::
-
-  git pull
-
-To update the models contained in the submodule::
-
-  git submodule update
-
-If any of the ``.pyx`` or ``.pxd`` files changed, you have to recompile the
-modules with Cython::
-
-  python setup.py build_ext --inplace
+Use ``python -m pip install -e '.[test]'`` for an editable development installation. Reinstall after changing Cython source or declaration files so the compiled extensions match the source.

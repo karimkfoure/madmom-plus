@@ -3,6 +3,8 @@
  */
 #include "madmom_native.h"
 #include "madmom_engine.h"
+#include "madmom_nn.h"
+#include "madmom_decoders.h"
 
 #include <algorithm>
 #include <array>
@@ -18,11 +20,6 @@
 #include <utility>
 #include <vector>
 
-#if defined(__aarch64__)
-#include <arm_neon.h>
-#elif defined(__SSE2__)
-#include <emmintrin.h>
-#endif
 
 namespace {
 thread_local std::string last_error;
@@ -68,39 +65,6 @@ void check_input(const float* values, size_t count, const char* message) {
             throw std::runtime_error("Non-finite native input");
         }
     }
-}
-
-float dot(const float* a, const float* b, int count, bool simd) {
-    int i = 0;
-    float sum = 0;
-    if (simd) {
-#if defined(__aarch64__)
-        float32x4_t acc = vdupq_n_f32(0);
-        for (; i + 4 <= count; i += 4) {
-            acc = vaddq_f32(acc, vmulq_f32(vld1q_f32(a + i), vld1q_f32(b + i)));
-        }
-        float lanes[4];
-        vst1q_f32(lanes, acc);
-        sum = ((lanes[0] + lanes[1]) + lanes[2]) + lanes[3];
-#elif defined(__SSE2__)
-        __m128 acc = _mm_setzero_ps();
-        for (; i + 4 <= count; i += 4) {
-            acc = _mm_add_ps(acc, _mm_mul_ps(_mm_loadu_ps(a + i),
-                                          _mm_loadu_ps(b + i)));
-        }
-        float lanes[4];
-        _mm_storeu_ps(lanes, acc);
-        sum = ((lanes[0] + lanes[1]) + lanes[2]) + lanes[3];
-#endif
-    }
-    for (; i < count; ++i) {
-        sum += a[i] * b[i];
-    }
-    return sum;
-}
-
-float sigmoid(float value) {
-    return 1.f / (1.f + std::exp(-value));
 }
 
 float fp16_roundtrip(float value) {
@@ -276,23 +240,40 @@ struct Frontend {
     }
 };
 
+void transpose_gates(std::vector<float>& values, size_t width) {
+    std::vector<float> transposed(values.size());
+    for (size_t gate = 0; gate < 4; ++gate) {
+        const size_t offset = gate * hidden_size * width;
+        for (size_t row = 0; row < hidden_size; ++row) {
+            for (size_t column = 0; column < width; ++column) {
+                transposed[offset + column * hidden_size + row] =
+                    values[offset + row * width + column];
+            }
+        }
+    }
+    values.swap(transposed);
+}
+
 struct LSTM {
     int width;
-    bool simd;
     std::vector<float> weights, recurrent, bias, peepholes, initial, cell_initial;
     std::array<float, hidden_size> hidden, cell;
 
-    LSTM(std::ifstream& stream, int input_width, int mode, bool use_simd)
-        : width(input_width), simd(use_simd),
+    LSTM(std::ifstream& stream, int input_width, int mode)
+        : width(input_width),
           weights(read_values<float>(stream, 4 * hidden_size * input_width)),
           recurrent(read_values<float>(stream, 4 * hidden_size * hidden_size)),
           bias(read_values<float>(stream, 4 * hidden_size)),
           peepholes(read_values<float>(stream, 3 * hidden_size)),
           initial(read_values<float>(stream, hidden_size)),
           cell_initial(read_values<float>(stream, hidden_size)) {
+        // Keep the asset and its per-output-row quantization unchanged, then
+        // convert once to the Python processors' input-major kernel layout.
         quantize(weights, width, mode);
         quantize(recurrent, hidden_size, mode);
         quantize(peepholes, hidden_size, mode);
+        transpose_gates(weights, width);
+        transpose_gates(recurrent, hidden_size);
         require_finite(bias);
         require_finite(initial);
         require_finite(cell_initial);
@@ -304,25 +285,24 @@ struct LSTM {
         std::copy(cell_initial.begin(), cell_initial.end(), cell.begin());
     }
 
-    void run(const float* features) {
-        float gates[4 * hidden_size], rec[4 * hidden_size];
-        for (int row = 0; row < 4 * hidden_size; ++row) {
-            gates[row] = dot(weights.data() + row * width, features, width,
-                             simd) + bias[row];
-            rec[row] = dot(recurrent.data() + row * hidden_size,
-                           hidden.data(), hidden_size, simd);
-        }
-        for (int j = 0; j < hidden_size; ++j) {
-            const float input = sigmoid((gates[j] + peepholes[j] * cell[j]) +
-                                        rec[j]);
-            const float forget = sigmoid((gates[50 + j] +
-                                          peepholes[50 + j] * cell[j]) +
-                                         rec[50 + j]);
-            cell[j] = input * std::tanh(gates[75 + j] + rec[75 + j]) +
-                      forget * cell[j];
-            hidden[j] = sigmoid((gates[25 + j] +
-                                 peepholes[25 + j] * cell[j]) + rec[25 + j]) *
-                        std::tanh(cell[j]);
+    void describe(mm_nn_layer& layer) {
+        layer.kind = 2;
+        layer.inputs = width;
+        layer.outputs = hidden_size;
+        layer.activation = 1;
+        layer.hidden = hidden.data();
+        layer.cell = cell.data();
+        // Asset order: input, output, forget, cell. Kernel order: input,
+        // forget, cell, output. Only the candidate cell has no peepholes.
+        const size_t order[4] = {0, 2, 3, 1};
+        for (size_t k = 0; k < 4; ++k) {
+            const size_t gate = order[k];
+            layer.gates[k].weights = weights.data() + gate * hidden_size * width;
+            layer.gates[k].recurrent = recurrent.data() + gate * hidden_size * hidden_size;
+            layer.gates[k].bias = bias.data() + gate * hidden_size;
+            layer.gates[k].peepholes = gate == 3 ? NULL :
+                peepholes.data() + gate * hidden_size;
+            layer.gates[k].activation = gate == 3 ? 1 : 2;
         }
     }
 };
@@ -333,9 +313,9 @@ struct RNN {
     bool simd;
 
     RNN(std::ifstream& stream, int mode, bool use_simd) : simd(use_simd) {
-        layers.emplace_back(stream, 162, mode, use_simd);
-        layers.emplace_back(stream, 25, mode, use_simd);
-        layers.emplace_back(stream, 25, mode, use_simd);
+        layers.emplace_back(stream, 162, mode);
+        layers.emplace_back(stream, 25, mode);
+        layers.emplace_back(stream, 25, mode);
         output = read_values<float>(stream, 25);
         bias = read_values<float>(stream, 1);
         quantize(output, 25, mode);
@@ -349,11 +329,21 @@ struct RNN {
     }
 
     float run(const float* features) {
+        mm_nn_layer description[4] = {};
         for (size_t i = 0; i < layers.size(); ++i) {
-            layers[i].run(features);
-            features = layers[i].hidden.data();
+            layers[i].describe(description[i]);
         }
-        return sigmoid(dot(output.data(), features, 25, simd) + bias[0]);
+        description[3].kind = 0;
+        description[3].inputs = hidden_size;
+        description[3].outputs = 1;
+        description[3].activation = 2;
+        description[3].gates[0].weights = output.data();
+        description[3].gates[0].bias = bias.data();
+        float result;
+        if (mm_nn_network_ex(features, 1, 162, description, 4, &result, simd ? 1 : 0) != 0) {
+            throw std::runtime_error("Native recurrent inference failed");
+        }
+        return result;
     }
 };
 
@@ -415,35 +405,15 @@ struct HMM {
         const double density[2] = {
             std::exp(static_cast<double>(std::log(nonbeat))),
             std::exp(static_cast<double>(std::log(activation)))};
-        double total = 0;
-        size_t best = 0;
-        for (size_t i = 0; i < previous.size(); ++i) {
-            double value = 0;
-            for (size_t j = pointers[i]; j < pointers[i + 1]; ++j) {
-                value += previous[states[j]] * weights[j];
-            }
-            next[i] = value * density[observation[i]];
-            total += next[i];
-            if (next[i] > next[best]) {
-                best = i;
-            }
-        }
-        if (!(total > 0) || !std::isfinite(total)) {
-            // Preserve the previous posterior and frame clock. Exact endpoint
-            // observations can rule out every path; do not publish NaNs.
+        if (mm_hmm_forward_checked(states.data(), pointers.data(), weights.data(),
+                           previous.size(), states.size(), observation.data(),
+                           density, 1, 2, previous.data(), next.data()) != 0) {
             throw std::runtime_error("DBN observation has zero or invalid probability");
         }
-        const double inverse = 1 / total;
-        for (size_t i = 0; i < next.size(); ++i) {
-            next[i] *= inverse;
-        }
+        const size_t best = std::max_element(next.begin(), next.end()) - next.begin();
         previous.swap(next);
-        const bool beat = observation[best] == 1 &&
-                          time >= last_beat + 60 / max_bpm;
-        if (beat) {
-            tempo = 60 / (time - last_beat);
-            last_beat = time;
-        }
+        const bool beat = mm_beat_event(time, max_bpm, observation[best] == 1,
+                                        &last_beat, &tempo) != 0;
         return beat;
     }
 };

@@ -10,6 +10,7 @@ Madmom documentation
    installation
    usage
    tutorial
+   online-processing
    development
    native
    citation

@@ -6,6 +6,9 @@ Version 0.17.dev0
 
 New features:
 
+* Add opt-in causal bar tracking and training-free bass-accent activations.
+* Add causal spectral beat evidence, robust pulse state and rhythm reliability.
+* Add optional validated meter priors to both downbeat DBN decoders.
 * `PyFFTW` is used to speed up FFT computation (#363)
 * Sustain information of MIDI files is honoured (#370)
 * Python 3.7 support (#374)
@@ -14,6 +17,7 @@ New features:
 
 Bug fixes:
 
+* Handle scalar and empty online tempo updates and safe offline reset.
 * Respect `num_channels` when creating `Signal` from array (#368)
 * Fix erroneously applied smoothing for DBN tempo estimation (#376)
 * `DBNBarTrackingProcessor` can model a single bar length (#394)
@@ -22,6 +26,7 @@ Bug fixes:
 
 Other changes:
 
+* Bound online beat and tempo DBN posterior storage to 64-frame blocks.
 * Volume changes according to `ReplayGain` tags can be applied (#400)
 * Allow selection of channel when loading audio file in mono (#409)
 * Allow reading audio from file objects created in memory (#418)

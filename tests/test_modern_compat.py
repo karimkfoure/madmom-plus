@@ -1,17 +1,24 @@
 """Regression tests for supported Python and NumPy versions."""
 
 import sys
+from importlib.metadata import version
 from types import SimpleNamespace
 from unittest.mock import Mock
 
 import numpy as np
 import pytest
 
+import madmom
 from madmom.audio.signal import Signal, Stream
 from madmom.features.beats_hmm import (
     BeatStateSpace, RNNBeatTrackingObservationModel,
 )
 from madmom.io.audio import _ffmpeg_call
+
+
+def test_distribution_keeps_import_name():
+    """The renamed distribution must expose the same public package."""
+    assert version('madmom-plus') == madmom.__version__
 
 
 @pytest.mark.parametrize('observations', [0.25, [0.25], np.array([0.25])])

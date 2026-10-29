@@ -17,13 +17,11 @@ from __future__ import absolute_import, division, print_function
 
 import doctest
 
-from importlib.metadata import distribution
-
 # import all packages
 from . import audio, evaluation, features, io, ml, models, processors, utils
 
 # define a version variable
-__version__ = distribution("madmom")  .version
+from ._version import __version__
 
 # Create a doctest output checker that optionally ignores the unicode string
 # literal.

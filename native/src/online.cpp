@@ -21,6 +21,12 @@
 #include <vector>
 
 
+#if defined(__aarch64__)
+#include <arm_neon.h>
+#elif defined(__SSE2__)
+#include <emmintrin.h>
+#endif
+
 namespace {
 thread_local std::string last_error;
 const int frame_size = 2048;
@@ -116,59 +122,110 @@ void quantize(std::vector<float>& values, size_t columns, int mode) {
 
 class FFT {
     // Pack even and odd real samples into one half-size complex transform.
-    // All twiddles and arithmetic remain double precision until madmom's
-    // complex64 cast, so the optimization preserves its magnitude convention.
+    // Separate real/imaginary arrays permit SIMD across independent butterflies.
+    // Twiddle order and double precision remain the same as the scalar FFT.
     static const size_t packed_size = frame_size / 2;
     std::array<size_t, packed_size> reversed;
-    std::array<std::complex<double>, packed_size> roots;
-    std::array<std::complex<double>, packed_size> buffer;
+    std::array<double, packed_size> root_real, root_imag;
+    std::array<double, packed_size> stage_real, stage_imag;
+    std::array<double, packed_size> real, imag;
+
+    static float magnitude(double re, double im) {
+        // Keep madmom's complex64 cast before magnitude. A scaled hypot is
+        // needed only when the ordinary squared norm overflows or underflows.
+        const float r = static_cast<float>(re), i = static_cast<float>(im);
+        const float squared = r * r + i * i;
+        if (std::isnormal(squared)) return std::sqrt(squared);
+        if (r == 0 && i == 0) return 0;
+        return std::hypot(r, i);
+    }
 
 public:
     FFT() {
         for (size_t i = 0; i < packed_size; ++i) {
-            size_t value = i;
-            size_t result = 0;
+            size_t value = i, result = 0;
             for (int bit = 0; bit < 10; ++bit) {
                 result = (result << 1) | (value & 1);
                 value >>= 1;
             }
             reversed[i] = result;
-        }
-        for (size_t i = 0; i < roots.size(); ++i) {
             const double phase = -2 * pi * i / frame_size;
-            roots[i] = std::complex<double>(std::cos(phase), std::sin(phase));
+            root_real[i] = std::cos(phase);
+            root_imag[i] = std::sin(phase);
+        }
+        for (size_t length = 2; length <= packed_size; length *= 2) {
+            const size_t half = length / 2, stride = frame_size / length;
+            for (size_t j = 0; j < half; ++j) {
+                stage_real[half - 1 + j] = root_real[j * stride];
+                stage_imag[half - 1 + j] = root_imag[j * stride];
+            }
         }
     }
 
     void magnitudes(const float* frame, const std::vector<double>& window,
                     float* output) {
         for (size_t i = 0; i < packed_size; ++i) {
-            buffer[reversed[i]] = std::complex<double>(
-                frame[2 * i] * window[2 * i],
-                frame[2 * i + 1] * window[2 * i + 1]);
+            real[reversed[i]] = frame[2 * i] * window[2 * i];
+            imag[reversed[i]] = frame[2 * i + 1] * window[2 * i + 1];
         }
         for (size_t length = 2; length <= packed_size; length *= 2) {
             const size_t half = length / 2;
-            const size_t stride = frame_size / length;
+            const double* wr = stage_real.data() + half - 1;
+            const double* wi = stage_imag.data() + half - 1;
             for (size_t first = 0; first < packed_size; first += length) {
-                for (size_t j = 0; j < half; ++j) {
-                    const std::complex<double> even = buffer[first + j];
-                    const std::complex<double> odd =
-                        buffer[first + j + half] * roots[j * stride];
-                    buffer[first + j] = even + odd;
-                    buffer[first + j + half] = even - odd;
+                size_t j = 0;
+#if defined(__aarch64__)
+                for (; j + 2 <= half; j += 2) {
+                    const float64x2_t er = vld1q_f64(real.data() + first + j);
+                    const float64x2_t ei = vld1q_f64(imag.data() + first + j);
+                    const float64x2_t br = vld1q_f64(real.data() + first + j + half);
+                    const float64x2_t bi = vld1q_f64(imag.data() + first + j + half);
+                    const float64x2_t tr = vsubq_f64(vmulq_f64(br, vld1q_f64(wr + j)),
+                                                   vmulq_f64(bi, vld1q_f64(wi + j)));
+                    const float64x2_t ti = vaddq_f64(vmulq_f64(br, vld1q_f64(wi + j)),
+                                                   vmulq_f64(bi, vld1q_f64(wr + j)));
+                    vst1q_f64(real.data() + first + j, vaddq_f64(er, tr));
+                    vst1q_f64(imag.data() + first + j, vaddq_f64(ei, ti));
+                    vst1q_f64(real.data() + first + j + half, vsubq_f64(er, tr));
+                    vst1q_f64(imag.data() + first + j + half, vsubq_f64(ei, ti));
+                }
+#elif defined(__SSE2__)
+                for (; j + 2 <= half; j += 2) {
+                    const __m128d er = _mm_loadu_pd(real.data() + first + j);
+                    const __m128d ei = _mm_loadu_pd(imag.data() + first + j);
+                    const __m128d br = _mm_loadu_pd(real.data() + first + j + half);
+                    const __m128d bi = _mm_loadu_pd(imag.data() + first + j + half);
+                    const __m128d tr = _mm_sub_pd(_mm_mul_pd(br, _mm_loadu_pd(wr + j)),
+                                                  _mm_mul_pd(bi, _mm_loadu_pd(wi + j)));
+                    const __m128d ti = _mm_add_pd(_mm_mul_pd(br, _mm_loadu_pd(wi + j)),
+                                                  _mm_mul_pd(bi, _mm_loadu_pd(wr + j)));
+                    _mm_storeu_pd(real.data() + first + j, _mm_add_pd(er, tr));
+                    _mm_storeu_pd(imag.data() + first + j, _mm_add_pd(ei, ti));
+                    _mm_storeu_pd(real.data() + first + j + half, _mm_sub_pd(er, tr));
+                    _mm_storeu_pd(imag.data() + first + j + half, _mm_sub_pd(ei, ti));
+                }
+#endif
+                for (; j < half; ++j) {
+                    const double er = real[first + j], ei = imag[first + j];
+                    const double br = real[first + j + half], bi = imag[first + j + half];
+                    const double tr = br * wr[j] - bi * wi[j];
+                    const double ti = br * wi[j] + bi * wr[j];
+                    real[first + j] = er + tr;
+                    imag[first + j] = ei + ti;
+                    real[first + j + half] = er - tr;
+                    imag[first + j + half] = ei - ti;
                 }
             }
         }
-        output[0] = std::abs(static_cast<float>(buffer[0].real() +
-                                                buffer[0].imag()));
+        output[0] = std::abs(static_cast<float>(real[0] + imag[0]));
         for (size_t i = 1; i < packed_size; ++i) {
-            const std::complex<double> paired = std::conj(buffer[packed_size - i]);
-            const std::complex<double> even = (buffer[i] + paired) * .5;
-            const std::complex<double> odd = (buffer[i] - paired) *
-                                             std::complex<double>(0, -.5);
-            // madmom casts the complex FFT to complex64 before magnitude.
-            output[i] = std::abs(std::complex<float>(even + roots[i] * odd));
+            const double er = (real[i] + real[packed_size - i]) * .5;
+            const double ei = (imag[i] - imag[packed_size - i]) * .5;
+            const double odd_real = (imag[i] + imag[packed_size - i]) * .5;
+            const double odd_imag = (real[packed_size - i] - real[i]) * .5;
+            output[i] = magnitude(
+                er + (root_real[i] * odd_real - root_imag[i] * odd_imag),
+                ei + (root_real[i] * odd_imag + root_imag[i] * odd_real));
         }
     }
 };

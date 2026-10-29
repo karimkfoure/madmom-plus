@@ -341,6 +341,34 @@ class TestWindowedDownBeatTrackingProcessor(unittest.TestCase):
         for first, second in zip(left_downbeat.calls[:2], right_downbeat.calls[:2]):
             assert_array_equal(first, second)
 
+    def test_acquired_bar_labels_are_independent_of_audio_chunk_size(self):
+        def downbeat(audio, reset=True):
+            # Sample values encode absolute time, so each crop has the same
+            # absolute downbeat phase without retaining model state.
+            start = float(audio[0])
+            data = np.full((len(audio) // 441, 2), 1e-4)
+            for frame in range(len(data)):
+                beat = int(round((start + frame / 100.) * 10))
+                if frame % 10 == 0:
+                    data[frame] = [.01, .95] if beat % 3 == 1 else [.95, .01]
+            return data
+
+        audio = np.arange(92610, dtype=np.float32) / 44100.
+        reference, _, _ = self.make_processor(window=.8, hop=.2,
+                                               beats_per_bar=(3,),
+                                               downbeat_processor=downbeat)
+        expected = reference(audio)
+        self.assertEqual(reference.meter, 3)
+        self.assertGreater(np.count_nonzero(expected[:, 1]), 10)
+        for size in (37, 441, 2000):
+            with self.subTest(size=size):
+                processor, _, _ = self.make_processor(window=.8, hop=.2,
+                                                       beats_per_bar=(3,),
+                                                       downbeat_processor=downbeat)
+                rows = [processor(audio[first:first + size], reset=False)
+                        for first in range(0, len(audio), size)]
+                assert_array_equal(np.vstack(rows), expected)
+
     def test_reset_restarts_audio_and_window_clocks(self):
         processor, _, downbeat = self.make_processor()
         audio = np.zeros(5293, dtype=np.float32)

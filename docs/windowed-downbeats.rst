@@ -64,3 +64,12 @@ Reliability and limits
 Bar voting depends on the causal beat grid. A stable but incorrect grid can produce stable, incorrect bar positions. Overlapping inference windows contain correlated evidence, and short windows can give too few examples at slow tempos. The raw reliability score does not detect silence, speech or music. A caller that needs a presence policy must implement and validate that policy separately.
 
 The implementation and tests use madmom's existing model and processor interfaces. The window-voting design was informed by `BeatTrackerJS <https://github.com/mathigatti/BeatTrackerJS>`_ by Mathias Gatti, snapshot ``604869f580fa695aafd9685b94c6c3247ed0ed87``. The references are its `README <https://github.com/mathigatti/BeatTrackerJS/blob/604869f580fa695aafd9685b94c6c3247ed0ed87/README.md>`_, `migration notes <https://github.com/mathigatti/BeatTrackerJS/blob/604869f580fa695aafd9685b94c6c3247ed0ed87/docs/MIGRATION.md>`_ and `experiment notes <https://github.com/mathigatti/BeatTrackerJS/blob/604869f580fa695aafd9685b94c6c3247ed0ed87/docs/EXPERIMENTS.md>`_. The Python implementation is independent; no JavaScript source or model files from that project are copied. Its reported comparisons use offline madmom as a reference, so they do not establish accuracy against human downbeat annotations.
+
+API reference
+-------------
+
+.. autoclass:: madmom.features.downbeats.BarPhaseVotingProcessor
+    :members:
+
+.. autoclass:: madmom.features.downbeats.WindowedDownBeatTrackingProcessor
+    :members:

@@ -1,9 +1,14 @@
-======
-madmom
-======
+===========
+madmom-plus
+===========
 
-Madmom is an audio signal processing library written in Python with a strong
-focus on music information retrieval (MIR) tasks.
+madmom-plus is a maintained fork of `CPJKU/madmom <https://github.com/CPJKU/madmom>`_, an audio signal processing library for music information retrieval (MIR). It keeps the upstream algorithms, public Python API, command-line programs, trained models, credits, and licences.
+
+The distribution name is ``madmom-plus``. The import name remains ``madmom`` so existing applications and model pickle references keep working. Install one distribution per environment because ``madmom`` and ``madmom-plus`` provide the same Python package and executable names.
+
+This development release, ``0.17.0.dev1``, updates isolated source builds for current Python, NumPy 2, Cython 3, and SciPy. It also fixes scalar online beat input, microphone byte decoding, integer resampling compatibility with current FFmpeg, and missing beat models in wheels. See `CHANGES.rst <CHANGES.rst>`_ for details and `docs/compatibility.rst <docs/compatibility.rst>`_ for tested versions and timings.
+
+The original upstream description and credits follow.
 
 The library is internally used by the Department of Computational Perception,
 Johannes Kepler University, Linz, Austria (http://www.cp.jku.at) and the
@@ -51,127 +56,52 @@ contact `Gerhard Widmer <http://www.cp.jku.at/people/widmer/>`_.
 Installation
 ============
 
-Please do not try to install from the .zip files provided by GitHub. Rather
-install it from package (if you just want to use it) or source (if you plan to
-use it for development) by following the instructions below. Whichever variant
-you choose, please make sure that all prerequisites are installed.
+Source installation uses PEP 517 build isolation. It installs Cython and NumPy build requirements automatically, then compiles the extension modules. A source checkout must include the pinned model submodule.
 
-Prerequisites
--------------
+Requirements
+------------
 
-To install the ``madmom`` package, you must have either Python 2.7 or Python
-3.5 or newer and the following packages installed:
+The package requires Python 3.9 or newer, NumPy 1.23.5 or newer at runtime, SciPy 1.13 or newer, and mido 1.2.6 or newer. The build environment requires setuptools 64 or newer, Cython 3 or newer, and NumPy 2 or newer. A C compiler and matching Python development headers are required for source builds. On Debian or Ubuntu with the system Python, install ``build-essential``, ``python3-dev``, and ``python3-venv``.
 
-- `numpy <http://www.numpy.org>`_
-- `scipy <http://www.scipy.org>`_
-- `cython <http://www.cython.org>`_
-- `mido <https://github.com/olemb/mido>`_
-
-In order to test your installation, process live audio input, or have improved
-FFT performance, additionally install these packages:
-
-- `pytest <https://www.pytest.org/>`_
-- `pyaudio <http://people.csail.mit.edu/hubert/pyaudio/>`_
-- `pyfftw <https://github.com/pyFFTW/pyFFTW/>`_
-
-If you need support for audio files other than ``.wav`` with a sample rate of
-44.1kHz and 16 bit depth, you need ``ffmpeg`` (``avconv`` on Ubuntu Linux has
-some decoding bugs, so we advise not to use it!).
-
-Please refer to the `requirements.txt <requirements.txt>`_ file for the minimum
-required versions and make sure that these modules are up to date, otherwise it
-can result in unexpected errors or false computations!
-
-Install from package
---------------------
-
-The instructions given here should be used if you just want to install the
-package, e.g. to run the bundled programs or use some functionality for your
-own project. If you intend to change anything within the `madmom` package,
-please follow the steps in the next section.
-
-The easiest way to install the package is via ``pip`` from the `PyPI (Python
-Package Index) <https://pypi.python.org/pypi>`_::
-
-    pip install madmom
-
-This includes the latest code and trained models and will install all
-dependencies automatically.
-
-You might need higher privileges (use su or sudo) to install the package, model
-files and scripts globally. Alternatively you can install the package locally
-(i.e. only for you) by adding the ``--user`` argument::
-
-    pip install --user madmom
-
-This will also install the executable programs to a common place (e.g.
-``/usr/local/bin``), which should be in your ``$PATH`` already. If you
-installed the package locally, the programs will be copied to a folder which
-might not be included in your ``$PATH`` (e.g. ``~/Library/Python/2.7/bin``
-on Mac OS X or ``~/.local/bin`` on Ubuntu Linux, ``pip`` will tell you). Thus
-the programs need to be called explicitely or you can add their install path
-to your ``$PATH`` environment variable::
-
-    export PATH='path/to/scripts':$PATH
+Install ``ffmpeg`` for compressed audio input, resampling, and the full audio test suite. Optional packages are ``pyaudio`` for microphone input and ``pyfftw`` for FFT acceleration. The `aarch64 guide <docs/aarch64.rst>`_ gives 64-bit ARM Linux instructions and states what was verified under emulation.
 
 Install from source
 -------------------
 
-If you plan to use the package as a developer, clone the Git repository::
+Create a separate virtual environment so this distribution does not conflict with upstream madmom::
 
-    git clone --recursive https://github.com/CPJKU/madmom.git
+    git clone --recurse-submodules https://github.com/karimkfoure/madmom-plus.git
+    cd madmom-plus
+    python3 -m venv .venv
+    . .venv/bin/activate
+    python -m pip install --upgrade pip
+    python -m pip install .
+    python -c "import madmom; print(madmom.__version__)"
 
-Since the pre-trained model/data files are not included in this repository but
-rather added as a Git submodule, you either have to clone the repo recursively.
-This is equivalent to these steps::
+For an existing checkout, initialize the pinned model revision before installation::
 
-    git clone https://github.com/CPJKU/madmom.git
-    cd madmom
-    git submodule update --init --remote
+    git submodule update --init --recursive
 
-Then you can simply install the package in development mode::
+Use the source instructions until a ``madmom-plus`` release is published on PyPI. An upstream ``madmom`` release has different distribution metadata and does not include these maintenance changes.
 
-    python setup.py develop --user
+Development and tests
+---------------------
 
-To run the included tests::
+Install the package in editable mode with the test extra, then run all upstream tests::
 
-    python setup.py pytest
+    python -m pip install -e '.[test]'
+    python -m pytest tests
 
-Upgrade of existing installations
----------------------------------
+To include documentation examples::
 
-To upgrade the package, please use the same mechanism (pip vs. source) as you
-did for installation. If you want to change from package to source, please
-uninstall the package first.
+    python -m pytest --import-mode=importlib --doctest-modules madmom tests
 
-Upgrade a package
-~~~~~~~~~~~~~~~~~
+Reinstall after changes to Cython extensions. To build a source archive and then build its wheel in an isolated environment::
 
-Simply upgrade the package via pip::
+    python -m pip install build
+    python -m build
 
-    pip install --upgrade madmom [--user]
-
-If some of the provided programs or models changed (please refer to the
-CHANGELOG) you should first uninstall the package and then reinstall::
-
-    pip uninstall madmom
-    pip install madmom [--user]
-
-Upgrade from source
-~~~~~~~~~~~~~~~~~~~
-
-Simply pull the latest sources::
-
-    git pull
-
-To update the models contained in the submodule::
-
-    git submodule update
-
-If any of the ``.pyx`` or ``.pxd`` files changed, you have to recompile the
-modules with Cython::
-
-    python setup.py build_ext --inplace
+Upgrade a source checkout with ``git pull``, then run ``git submodule update --init --recursive`` and reinstall. Keep the pinned submodule revision unless you intend to validate new model data.
 
 Package structure
 -----------------
@@ -192,7 +122,7 @@ The package has a very simple structure, divided into the following folders:
   higher level features (e.g. onsets, beats)
 `/madmom/ml <madmom/ml>`_
   machine learning stuff (e.g. RNNs, HMMs)
-`/madmom/models <../../../madmom_models>`_
+`/madmom/models <https://github.com/CPJKU/madmom_models>`_
   pre-trained model/data files (see the License section)
 `/madmom/utils <madmom/utils>`_
   misc stuff (e.g. MIDI and general file handling)

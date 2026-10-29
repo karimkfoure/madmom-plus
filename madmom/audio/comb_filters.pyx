@@ -100,14 +100,14 @@ def feed_backward_comb_filter(signal, tau, alpha):
 
 
 @cython.boundscheck(False)
-def _feed_backward_comb_filter_1d(np.ndarray[np.float_t, ndim=1] signal,
+def _feed_backward_comb_filter_1d(np.ndarray[np.float64_t, ndim=1] signal,
                                   unsigned int tau, float alpha):
     """Feed backward comb filter for 1d signals."""
     # y[n] = x[n] + α * y[n - τ]
     if tau <= 0:
         raise ValueError('`tau` must be greater than 0')
     # type definitions
-    cdef np.ndarray[np.float_t, ndim=1] y = signal.copy()
+    cdef np.ndarray[np.float64_t, ndim=1] y = signal.copy()
     cdef unsigned int n
     # loop over the complete signal
     for n in range(tau, len(signal)):
@@ -121,14 +121,14 @@ def _feed_backward_comb_filter_1d(np.ndarray[np.float_t, ndim=1] signal,
 
 
 @cython.boundscheck(False)
-def _feed_backward_comb_filter_2d(np.ndarray[np.float_t, ndim=2] signal,
+def _feed_backward_comb_filter_2d(np.ndarray[np.float64_t, ndim=2] signal,
                                   unsigned int tau, float alpha):
     """Feed backward comb filter for 2d signals."""
     # y[n] = x[n] + α * y[n - τ]
     if tau <= 0:
         raise ValueError('`tau` must be greater than 0')
     # type definitions
-    cdef np.ndarray[np.float_t, ndim=2] y = signal.copy()
+    cdef np.ndarray[np.float64_t, ndim=2] y = signal.copy()
     cdef unsigned int d, n
     # loop over the dimensions
     for d in range(2):

@@ -12,6 +12,7 @@ Madmom documentation
    tutorial
    online-processing
    development
+   native
    citation
 
 .. _api_reference:

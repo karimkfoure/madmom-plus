@@ -181,6 +181,17 @@ class NeuralNetworkEnsemble(SequentialProcessor):
         super(NeuralNetworkEnsemble, self).__init__((networks_processor,
                                                      ensemble_fn))
 
+    def process(self, data, **kwargs):
+        """Process ordinary ensemble members in one call to the shared core."""
+        if (len(self.processors) == 2 and type(self[0]) is ParallelProcessor and
+                'process' not in self[0].__dict__):
+            from ._native import ensemble as native_ensemble
+            from ...processors import _process
+            result = native_ensemble(self[0], data, kwargs.get('reset', True))
+            if result is not None:
+                return _process((self[1], result, kwargs))
+        return super(NeuralNetworkEnsemble, self).process(data, **kwargs)
+
     @classmethod
     def load(cls, nn_files, **kwargs):
         """

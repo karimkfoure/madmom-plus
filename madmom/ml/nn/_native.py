@@ -55,7 +55,17 @@ def _library():
     return lib
 
 
+@lru_cache(maxsize=1)
+def _extension():
+    from ... import _native
+    return _native
+
+
 class _Unsupported(Exception):
+    pass
+
+
+class _Stale(Exception):
     pass
 
 
@@ -69,9 +79,12 @@ class _Model:
         self.functions = []
         self.states = []
         self._gates = []
+        self._capsule = None
         self.descriptors = (_Layer * len(layers))()
         previous = None
         for index, layer in enumerate(layers):
+            if 'activate' in layer.__dict__ or 'reset' in layer.__dict__:
+                raise _Unsupported
             descriptor = self.descriptors[index]
             if type(layer) is LSTMLayer:
                 descriptor.kind = 2
@@ -132,7 +145,7 @@ class _Model:
         if (not isinstance(original, np.ndarray) or original.dtype != np.float32
                 or original.shape != shape):
             raise _Unsupported
-        contiguous = np.ascontiguousarray(original)
+        contiguous = np.require(original, requirements=['C', 'A'])
         if contiguous is not original:
             self.copies.append((original, contiguous))
         self.arrays.append((ref(owner), name, original, original.shape,
@@ -172,38 +185,31 @@ class _Model:
                     return False
         return True
 
-    def run(self, data, reset):
+    def run(self, data, reset, layers=None):
         if not self.descriptors or data.shape[1] != self.descriptors[0].inputs:
             raise _Unsupported
-        if reset:
-            for layer in self._layers:
-                layer().reset()
-        # Copies are needed only for strided model arrays or explicit resets.
-        for original, contiguous in self.copies:
-            np.copyto(contiguous, original)
-        for owner, name, value in self.states:
-            source = getattr(owner(), name)
-            if (not isinstance(source, np.ndarray) or source.dtype != _FLOAT32
-                    or source.shape != value.shape):
-                raise _Unsupported
-            if source is not value:
-                np.copyto(value, source)
         result = np.empty((len(data), self.descriptors[-1].outputs), np.float32)
-        if len(data):
-            data = np.ascontiguousarray(data)
-            status = _library().mm_nn_network(
-                data.ctypes.data, len(data), data.shape[1],
-                self.descriptors, len(self.descriptors), result.ctypes.data)
-            if status:
-                raise RuntimeError('Native neural kernel failed')
-            for owner, name, value in self.states:
-                # Previous state references must stay unchanged after a later
-                # call, as they do with the Python layer implementation.
-                setattr(owner(), name, value.copy())
+        data = _input(data)
+        status = _extension().mm_nn_process_many(
+            (self.capsule(),), (layers if layers is not None else
+                               tuple(layer() for layer in self._layers),),
+            data, (result,), reset)
+        if status >= 0:
+            raise _Stale
         return result
+
+    def capsule(self):
+        if self._capsule is None:
+            self._capsule = _extension().mm_nn_configure(self, np.ndarray)
+        return self._capsule
 
 
 _MODELS = WeakKeyDictionary()
+
+
+def _input(data):
+    data = np.ascontiguousarray(data)
+    return data if data.flags.aligned else data.copy()
 
 
 def network(owner, layers, data, reset):
@@ -215,10 +221,58 @@ def network(owner, layers, data, reset):
         return None
     try:
         model = _MODELS.get(owner)
-        if model is None or not model.valid(layers):
+        if model is None:
             model = _Model(layers)
             _MODELS[owner] = model
-        return model.run(data, reset)
+        try:
+            return model.run(data, reset, layers)
+        except _Stale:
+            model = _Model(layers)
+            _MODELS[owner] = model
+            try:
+                return model.run(data, reset, layers)
+            except _Stale:
+                return None
+    except _Unsupported:
+        return None
+
+
+def ensemble(parallel, data, reset):
+    """Run ordinary sequential ensemble members through one buffer adapter."""
+    from . import NeuralNetwork
+
+    if (not isinstance(data, np.ndarray) or data.dtype != _FLOAT32 or
+            data.ndim > 2 or parallel.map is not map):
+        return None
+    networks = parallel.processors
+    if not networks or any(type(item) is not NeuralNetwork or
+                           'process' in item.__dict__ for item in networks):
+        return None
+    data = _input(np.atleast_2d(data))
+    try:
+        models = []
+        chains = []
+        for item in networks:
+            model = _MODELS.get(item)
+            if model is None:
+                model = _Model(item.layers)
+                _MODELS[item] = model
+            if not model.descriptors or model.descriptors[0].inputs != data.shape[1]:
+                return None
+            models.append(model)
+            chains.append(item.layers)
+        # No model consumes a frame until every descriptor has been checked.
+        # Rebuild only the stale member, including its output shape.
+        for _ in range(len(models) + 1):
+            results = [np.empty((len(data), model.descriptors[-1].outputs), np.float32)
+                       for model in models]
+            stale = _extension().mm_nn_process_many(
+                tuple(model.capsule() for model in models), chains, data, results, reset)
+            if stale < 0:
+                return [value.ravel() if value.shape[1] == 1 else value for value in results]
+            models[stale] = _Model(networks[stale].layers)
+            _MODELS[networks[stale]] = models[stale]
+        return None
     except _Unsupported:
         return None
 

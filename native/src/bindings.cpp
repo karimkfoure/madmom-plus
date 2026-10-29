@@ -2,6 +2,7 @@
 #include <Python.h>
 #include "madmom_native.h"
 #include "madmom_decoders.h"
+#include "madmom_nn_bindings.h"
 
 #include <algorithm>
 #include <cstring>
@@ -227,5 +228,10 @@ PyModuleDef module = {
 } // namespace
 
 PyMODINIT_FUNC PyInit__native() {
-    return PyModule_Create(&module);
+    PyObject* result = PyModule_Create(&module);
+    if (result && mm_nn_register(result) < 0) {
+        Py_DECREF(result);
+        return nullptr;
+    }
+    return result;
 }

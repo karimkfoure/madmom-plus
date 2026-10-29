@@ -140,9 +140,11 @@ def test_direct_layer_api_uses_native_kernels_and_preserves_old_state():
     layer = _lstm(rng)
     data = rng.normal(size=(11, 5)).astype(np.float32)
     expected = _python(NeuralNetwork([layer]), data)
-    with patch.object(_native, '_library', wraps=_native._library) as library:
+    extension = _native._extension()
+    with patch.object(extension, 'mm_nn_process_many',
+                      wraps=extension.mm_nn_process_many) as binding:
         result = layer(data)
-        assert library.called
+        assert binding.call_count == 1
     np.testing.assert_allclose(result, expected, atol=2e-6, rtol=2e-5)
     previous = layer._prev
     previous_copy = previous.copy()

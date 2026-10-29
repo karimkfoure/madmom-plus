@@ -16,6 +16,8 @@ Madmom documentation
    windowed-downbeats
    development
    native
+   native-reference
+   native-wheels
    citation
 
 .. _api_reference:

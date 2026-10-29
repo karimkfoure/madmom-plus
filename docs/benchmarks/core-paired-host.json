@@ -1,0 +1,1117 @@
+{
+  "schema_version": 1,
+  "host": {
+    "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+    "architecture": "x86_64",
+    "affinity": [
+      3
+    ],
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "settings": {
+    "repeats": 5,
+    "warmups": 1,
+    "audio_copies": 10,
+    "paired_trials": true,
+    "sample_rate": 44100,
+    "fps": 100,
+    "timing": "Process CPU; excludes loading and initialization",
+    "memory": "Fresh Linux process RSS per variant and stage; includes dependencies"
+  },
+  "audio_sha256": {
+    "sample.wav": "d06b3c39384c4a0cf59f0bd326eda2443edf668fbb90647e37c801e59602866c",
+    "sample2.wav": "b1f19c0a668a6db867d9e277e72dce279830eb93e73e78751645698d8eb9caf5"
+  },
+  "variants": {
+    "before": {
+      "bulk": {
+        "stage": "bulk",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          2.643997136,
+          2.641771462,
+          3.2854663970000004,
+          3.2037571320000002,
+          3.162530228
+        ],
+        "cpu_seconds_per_audio_second": 0.04616343438297083,
+        "rss_before_creation_bytes": 62914560,
+        "rss_after_creation_bytes": 81506304,
+        "rss_after_measurement_bytes": 191385600,
+        "peak_rss_bytes": 249573376,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237",
+        "trials": [
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              2.643997136
+            ],
+            "cpu_seconds_per_audio_second": 0.0385944100125448,
+            "rss_before_creation_bytes": 62914560,
+            "rss_after_creation_bytes": 81506304,
+            "rss_after_measurement_bytes": 191385600,
+            "peak_rss_bytes": 249573376,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              2.641771462
+            ],
+            "cpu_seconds_per_audio_second": 0.038561921862788257,
+            "rss_before_creation_bytes": 62767104,
+            "rss_after_creation_bytes": 81440768,
+            "rss_after_measurement_bytes": 191332352,
+            "peak_rss_bytes": 249479168,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.2854663970000004
+            ],
+            "cpu_seconds_per_audio_second": 0.0479579328894766,
+            "rss_before_creation_bytes": 62492672,
+            "rss_after_creation_bytes": 81063936,
+            "rss_after_measurement_bytes": 190922752,
+            "peak_rss_bytes": 249139200,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.2037571320000002
+            ],
+            "cpu_seconds_per_audio_second": 0.04676522324834419,
+            "rss_before_creation_bytes": 62869504,
+            "rss_after_creation_bytes": 81440768,
+            "rss_after_measurement_bytes": 190472192,
+            "peak_rss_bytes": 248647680,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.162530228
+            ],
+            "cpu_seconds_per_audio_second": 0.04616343438297083,
+            "rss_before_creation_bytes": 62795776,
+            "rss_after_creation_bytes": 81256448,
+            "rss_after_measurement_bytes": 191008768,
+            "peak_rss_bytes": 249147392,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          }
+        ]
+      },
+      "stream": {
+        "stage": "stream",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          4.222148619,
+          6.956305494,
+          4.2622728069999996,
+          4.165728822,
+          4.093520819999999
+        ],
+        "cpu_seconds_per_audio_second": 0.061630677551379104,
+        "rss_before_creation_bytes": 63000576,
+        "rss_after_creation_bytes": 82612224,
+        "rss_after_measurement_bytes": 84373504,
+        "peak_rss_bytes": 84504576,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237",
+        "trials": [
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              4.222148619
+            ],
+            "cpu_seconds_per_audio_second": 0.061630677551379104,
+            "rss_before_creation_bytes": 63000576,
+            "rss_after_creation_bytes": 82612224,
+            "rss_after_measurement_bytes": 84373504,
+            "peak_rss_bytes": 84373504,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              6.956305494
+            ],
+            "cpu_seconds_per_audio_second": 0.10154114872231619,
+            "rss_before_creation_bytes": 62914560,
+            "rss_after_creation_bytes": 82677760,
+            "rss_after_measurement_bytes": 84504576,
+            "peak_rss_bytes": 84504576,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              4.2622728069999996
+            ],
+            "cpu_seconds_per_audio_second": 0.06221637007804922,
+            "rss_before_creation_bytes": 62615552,
+            "rss_after_creation_bytes": 82386944,
+            "rss_after_measurement_bytes": 84238336,
+            "peak_rss_bytes": 84238336,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              4.165728822
+            ],
+            "cpu_seconds_per_audio_second": 0.06080711811986747,
+            "rss_before_creation_bytes": 62787584,
+            "rss_after_creation_bytes": 82403328,
+            "rss_after_measurement_bytes": 84209664,
+            "peak_rss_bytes": 84209664,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              4.093520819999999
+            ],
+            "cpu_seconds_per_audio_second": 0.05975309835659693,
+            "rss_before_creation_bytes": 62504960,
+            "rss_after_creation_bytes": 82169856,
+            "rss_after_measurement_bytes": 84058112,
+            "peak_rss_bytes": 84058112,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          }
+        ]
+      },
+      "stream_frontend": {
+        "stage": "stream_frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.7099749130000002,
+          0.679565334,
+          0.701559487,
+          0.7028633599999999,
+          0.6720228059999999
+        ],
+        "cpu_seconds_per_audio_second": 0.010240659538092858,
+        "rss_before_creation_bytes": 62967808,
+        "rss_after_creation_bytes": 82612224,
+        "rss_after_measurement_bytes": 88625152,
+        "peak_rss_bytes": 88788992,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237",
+        "trials": [
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.7099749130000002
+            ],
+            "cpu_seconds_per_audio_second": 0.010363499459911229,
+            "rss_before_creation_bytes": 62967808,
+            "rss_after_creation_bytes": 82612224,
+            "rss_after_measurement_bytes": 88625152,
+            "peak_rss_bytes": 88625152,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.679565334
+            ],
+            "cpu_seconds_per_audio_second": 0.009919611021359274,
+            "rss_before_creation_bytes": 62709760,
+            "rss_after_creation_bytes": 82407424,
+            "rss_after_measurement_bytes": 88559616,
+            "peak_rss_bytes": 88559616,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.701559487
+            ],
+            "cpu_seconds_per_audio_second": 0.010240659538092858,
+            "rss_before_creation_bytes": 62730240,
+            "rss_after_creation_bytes": 82350080,
+            "rss_after_measurement_bytes": 88469504,
+            "peak_rss_bytes": 88469504,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.7028633599999999
+            ],
+            "cpu_seconds_per_audio_second": 0.010259692164293965,
+            "rss_before_creation_bytes": 63021056,
+            "rss_after_creation_bytes": 82706432,
+            "rss_after_measurement_bytes": 88788992,
+            "peak_rss_bytes": 88788992,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.6720228059999999
+            ],
+            "cpu_seconds_per_audio_second": 0.00980951278630464,
+            "rss_before_creation_bytes": 63115264,
+            "rss_after_creation_bytes": 82698240,
+            "rss_after_measurement_bytes": 88760320,
+            "peak_rss_bytes": 88760320,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          }
+        ]
+      },
+      "frontend": {
+        "stage": "frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.13686514300000002,
+          0.13453812000000004,
+          0.14000490400000004,
+          0.13822399400000002,
+          0.13992943199999996
+        ],
+        "cpu_seconds_per_audio_second": 0.0020176547944670445,
+        "rss_before_creation_bytes": 62656512,
+        "rss_after_creation_bytes": 81248256,
+        "rss_after_measurement_bytes": 171573248,
+        "peak_rss_bytes": 229851136,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237",
+        "trials": [
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.13686514300000002
+            ],
+            "cpu_seconds_per_audio_second": 0.00199781965473641,
+            "rss_before_creation_bytes": 62656512,
+            "rss_after_creation_bytes": 81248256,
+            "rss_after_measurement_bytes": 171573248,
+            "peak_rss_bytes": 229851136,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.13453812000000004
+            ],
+            "cpu_seconds_per_audio_second": 0.00196385211424713,
+            "rss_before_creation_bytes": 62828544,
+            "rss_after_creation_bytes": 81375232,
+            "rss_after_measurement_bytes": 170807296,
+            "peak_rss_bytes": 228929536,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.14000490400000004
+            ],
+            "cpu_seconds_per_audio_second": 0.0020436507268376163,
+            "rss_before_creation_bytes": 62640128,
+            "rss_after_creation_bytes": 81223680,
+            "rss_after_measurement_bytes": 171479040,
+            "peak_rss_bytes": 229761024,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.13822399400000002
+            ],
+            "cpu_seconds_per_audio_second": 0.0020176547944670445,
+            "rss_before_creation_bytes": 62742528,
+            "rss_after_creation_bytes": 81272832,
+            "rss_after_measurement_bytes": 170635264,
+            "peak_rss_bytes": 228704256,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.13992943199999996
+            ],
+            "cpu_seconds_per_audio_second": 0.0020425490625155147,
+            "rss_before_creation_bytes": 62951424,
+            "rss_after_creation_bytes": 81534976,
+            "rss_after_measurement_bytes": 170962944,
+            "peak_rss_bytes": 229138432,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+              "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+              "core": null
+            },
+            "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+          }
+        ]
+      }
+    },
+    "after": {
+      "bulk": {
+        "stage": "bulk",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.8172975550000001,
+          0.8186228,
+          0.978472295,
+          1.039391131,
+          0.8199160059999999
+        ],
+        "cpu_seconds_per_audio_second": 0.011968308921576739,
+        "rss_before_creation_bytes": 62832640,
+        "rss_after_creation_bytes": 81547264,
+        "rss_after_measurement_bytes": 94359552,
+        "peak_rss_bytes": 94396416,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "trials": [
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.8172975550000001
+            ],
+            "cpu_seconds_per_audio_second": 0.011930087408355043,
+            "rss_before_creation_bytes": 62832640,
+            "rss_after_creation_bytes": 81547264,
+            "rss_after_measurement_bytes": 94359552,
+            "peak_rss_bytes": 94359552,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.8186228
+            ],
+            "cpu_seconds_per_audio_second": 0.011949432001509348,
+            "rss_before_creation_bytes": 63070208,
+            "rss_after_creation_bytes": 81723392,
+            "rss_after_measurement_bytes": 94396416,
+            "peak_rss_bytes": 94396416,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.978472295
+            ],
+            "cpu_seconds_per_audio_second": 0.01428275410172218,
+            "rss_before_creation_bytes": 62640128,
+            "rss_after_creation_bytes": 81289216,
+            "rss_after_measurement_bytes": 94019584,
+            "peak_rss_bytes": 94019584,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.039391131
+            ],
+            "cpu_seconds_per_audio_second": 0.015171985977982038,
+            "rss_before_creation_bytes": 62590976,
+            "rss_after_creation_bytes": 81305600,
+            "rss_after_measurement_bytes": 94031872,
+            "peak_rss_bytes": 94031872,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.8199160059999999
+            ],
+            "cpu_seconds_per_audio_second": 0.011968308921576739,
+            "rss_before_creation_bytes": 62889984,
+            "rss_after_creation_bytes": 81530880,
+            "rss_after_measurement_bytes": 94208000,
+            "peak_rss_bytes": 94208000,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          }
+        ]
+      },
+      "stream": {
+        "stage": "stream",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          4.7933165110000004,
+          4.864813836,
+          3.078496869,
+          3.133625434,
+          3.1076409829999996
+        ],
+        "cpu_seconds_per_audio_second": 0.04574151128185438,
+        "rss_before_creation_bytes": 62791680,
+        "rss_after_creation_bytes": 82518016,
+        "rss_after_measurement_bytes": 84082688,
+        "peak_rss_bytes": 84230144,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "trials": [
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              4.7933165110000004
+            ],
+            "cpu_seconds_per_audio_second": 0.0699680117752725,
+            "rss_before_creation_bytes": 62791680,
+            "rss_after_creation_bytes": 82518016,
+            "rss_after_measurement_bytes": 84082688,
+            "peak_rss_bytes": 84082688,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              4.864813836
+            ],
+            "cpu_seconds_per_audio_second": 0.07101165779072345,
+            "rss_before_creation_bytes": 62713856,
+            "rss_after_creation_bytes": 82456576,
+            "rss_after_measurement_bytes": 83959808,
+            "peak_rss_bytes": 83959808,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.078496869
+            ],
+            "cpu_seconds_per_audio_second": 0.04493679995594421,
+            "rss_before_creation_bytes": 62619648,
+            "rss_after_creation_bytes": 82366464,
+            "rss_after_measurement_bytes": 83857408,
+            "peak_rss_bytes": 83857408,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.133625434
+            ],
+            "cpu_seconds_per_audio_second": 0.04574151128185438,
+            "rss_before_creation_bytes": 62738432,
+            "rss_after_creation_bytes": 82419712,
+            "rss_after_measurement_bytes": 84049920,
+            "peak_rss_bytes": 84049920,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.1076409829999996
+            ],
+            "cpu_seconds_per_audio_second": 0.045362216409635996,
+            "rss_before_creation_bytes": 62976000,
+            "rss_after_creation_bytes": 82669568,
+            "rss_after_measurement_bytes": 84230144,
+            "peak_rss_bytes": 84230144,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          }
+        ]
+      },
+      "stream_frontend": {
+        "stage": "stream_frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.589626407,
+          0.5919366799999999,
+          0.5875524870000001,
+          0.5867325889999999,
+          0.5873851819999999
+        ],
+        "cpu_seconds_per_audio_second": 0.008576500056832288,
+        "rss_before_creation_bytes": 62648320,
+        "rss_after_creation_bytes": 82386944,
+        "rss_after_measurement_bytes": 88420352,
+        "peak_rss_bytes": 88748032,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "trials": [
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.589626407
+            ],
+            "cpu_seconds_per_audio_second": 0.008606773054379594,
+            "rss_before_creation_bytes": 62648320,
+            "rss_after_creation_bytes": 82386944,
+            "rss_after_measurement_bytes": 88420352,
+            "peak_rss_bytes": 88420352,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5919366799999999
+            ],
+            "cpu_seconds_per_audio_second": 0.008640496095221386,
+            "rss_before_creation_bytes": 62783488,
+            "rss_after_creation_bytes": 82571264,
+            "rss_after_measurement_bytes": 88600576,
+            "peak_rss_bytes": 88600576,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5875524870000001
+            ],
+            "cpu_seconds_per_audio_second": 0.008576500056832288,
+            "rss_before_creation_bytes": 62554112,
+            "rss_after_creation_bytes": 82358272,
+            "rss_after_measurement_bytes": 88387584,
+            "peak_rss_bytes": 88387584,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5867325889999999
+            ],
+            "cpu_seconds_per_audio_second": 0.00856453201074418,
+            "rss_before_creation_bytes": 62930944,
+            "rss_after_creation_bytes": 82677760,
+            "rss_after_measurement_bytes": 88707072,
+            "peak_rss_bytes": 88707072,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5873851819999999
+            ],
+            "cpu_seconds_per_audio_second": 0.008574057906771215,
+            "rss_before_creation_bytes": 62976000,
+            "rss_after_creation_bytes": 82718720,
+            "rss_after_measurement_bytes": 88748032,
+            "peak_rss_bytes": 88748032,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          }
+        ]
+      },
+      "frontend": {
+        "stage": "frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.36316783499999994,
+          0.3576142069999999,
+          0.35889320599999996,
+          0.35803468800000005,
+          0.359579455
+        ],
+        "cpu_seconds_per_audio_second": 0.005238761931503357,
+        "rss_before_creation_bytes": 62660608,
+        "rss_after_creation_bytes": 81256448,
+        "rss_after_measurement_bytes": 93548544,
+        "peak_rss_bytes": 93798400,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "trials": [
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.36316783499999994
+            ],
+            "cpu_seconds_per_audio_second": 0.0053011586648550055,
+            "rss_before_creation_bytes": 62660608,
+            "rss_after_creation_bytes": 81256448,
+            "rss_after_measurement_bytes": 93548544,
+            "peak_rss_bytes": 93548544,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.3576142069999999
+            ],
+            "cpu_seconds_per_audio_second": 0.0052200923909280165,
+            "rss_before_creation_bytes": 62484480,
+            "rss_after_creation_bytes": 81125376,
+            "rss_after_measurement_bytes": 93417472,
+            "peak_rss_bytes": 93417472,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.35889320599999996
+            ],
+            "cpu_seconds_per_audio_second": 0.005238761931503357,
+            "rss_before_creation_bytes": 62513152,
+            "rss_after_creation_bytes": 81174528,
+            "rss_after_measurement_bytes": 93536256,
+            "peak_rss_bytes": 93536256,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.35803468800000005
+            ],
+            "cpu_seconds_per_audio_second": 0.005226230149511613,
+            "rss_before_creation_bytes": 62779392,
+            "rss_after_creation_bytes": 81506304,
+            "rss_after_measurement_bytes": 93798400,
+            "peak_rss_bytes": 93798400,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.359579455
+            ],
+            "cpu_seconds_per_audio_second": 0.005248779103956414,
+            "rss_before_creation_bytes": 62480384,
+            "rss_after_creation_bytes": 81195008,
+            "rss_after_measurement_bytes": 93556736,
+            "peak_rss_bytes": 93556736,
+            "python": "3.11.15",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "binary_sha256": {
+              "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+              "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+              "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+          }
+        ]
+      }
+    }
+  },
+  "provenance": {
+    "before_revision": "3c7b36a32d4db567542b69e8655d6eea9eed57d8",
+    "after_revision": "8751733ff3008d1080e65e41b3be856c83c12028",
+    "benchmark_revision": "0ec07cd12c44349bd8000e1c0c3f425ce114f347"
+  },
+  "source_sha256": {
+    "native/src/online.cpp": "a58ef12d0e744d12e4ff24a43b495292cf51653bc86e5ebb5f20e0fb7deb5942",
+    "native/src/bindings.cpp": "97adbcf9c2a2ffeaf6814d6cf960c3bea40077ad2023949fc0e923c722b7a41d",
+    "native/src/nn.cpp": "0c39659fd087cb79854497b4a87e17aac45e85d7ec41762d5b1e70a25442860f",
+    "native/src/decoders.cpp": "67898d647df81d6fa163c4c0d2aa946061bc9e7bcd569ea748bd35e3f7006599",
+    "native/include/madmom_exports.h": "dbc41b7b0db9ea74ca1c34d4c5c7aad21e8271ee778aa447f6666172cbc65a93",
+    "native/include/madmom_engine.h": "f1e4eb91cdc21962de896b80b680afec8553ee4cc437284c3f5e6e247d0dbd70",
+    "native/include/madmom_decoders.h": "6c0e88c885fb95b2a46a30fe7120c3a2de3aad65092261054ade0557ef0e2c12",
+    "native/include/madmom_native.h": "3816498f67b0ba9b5fb880e8a009073f7b4c679ff2fa1baf8e4705e1d094b342",
+    "native/include/madmom_nn.h": "f36a24a351f566d97082c1c7dd77746cb0ee8adf34685caa53567a9ee9e5cb4a",
+    "madmom/audio/_native.py": "812ab51238f93937bd8aeb03706ffd76df91927fde95fc8f3693cfd4d0025b87",
+    "madmom/ml/nn/_native.py": "3672a6b4973b82e548110a87df386d48545ae8161879c8b93d91aa50a4ffcf43",
+    "madmom/ml/nn/__init__.py": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+    "madmom/ml/nn/layers.py": "9465ed901ba5244086f6c670432732d501be72f2b85d1acf92348eaa7b84e88b",
+    "madmom/ml/hmm.pyx": "f027648eedab2b15096580e847334c51196ad9f674e01567e71e0b6231dc6736",
+    "madmom/features/beats.py": "564fa9e7009282e40ef7564df9cbf4fd836d8dd97e9b960ed176c7abb2eb95a7",
+    "madmom/_native_decoders.py": "737ca4fe6ed1f7647aa1710ee37a91bd4affc38435662a645e020d265418d75b",
+    "madmom/features/onsets.py": "59b13ea385ff7cb3e06c1402ccce7316716624f872ad84d71e5d9ac121280731",
+    "setup.py": "2225e2fa758bf3eed1b8f474fe35f6517aaf7c13ec0024006c11dcb8e99c69cd",
+    "tools/benchmark_core.py": "26e0711f349860506526107475a8f1242cd27ca97270fe8fc1729500b4258a05"
+  }
+}

@@ -6,7 +6,7 @@ madmom-plus 0.17.0.dev1 preserves the ``madmom`` import name, public processors,
 Verified environments
 ---------------------
 
-The checks below ran on 2026-10-28. Native tests ran on x86-64 Linux with FFmpeg 6.1.1, pytest 9.2.0, and Cython 3.3.0 for extension builds. Each full run includes all 811 upstream tests, the added compatibility and lifecycle tests, and availability tests for the optional native backend. No upstream unit-test assertion or tolerance was weakened.
+The checks below ran on 2026-10-28, before integration of the required native core. They preserve the earlier toolchain and ecosystem evidence. Current core parity, performance, and local-wheel checks are in `native.rst <native.rst>`_ and `native-wheels.rst <native-wheels.rst>`_. These earlier checks used x86-64 Linux with FFmpeg 6.1.1, pytest 9.2.0, and Cython 3.3.0. Each full run included all 811 upstream tests, added compatibility and lifecycle tests, and availability tests for the then-optional backend. No upstream numerical assertion or tolerance was weakened.
 
 .. list-table:: Full installed-package test runs
    :header-rows: 1
@@ -44,7 +44,7 @@ Tests ran outside the source tree with a copy of the upstream test data. Their e
 
 All 46 installed-module doctests also passed on Python 3.12 in 13.00 seconds. The doctest fixture uses NumPy's legacy 1.25 display format on NumPy 2 to keep array and scalar examples readable across versions. This changes display only. Three examples now show their actual ``float32`` dtype; one FFT-based example has its last displayed decimal corrected. Existing numeric unit-test references and tolerances remain unchanged; the adopted continuity regression tests check corrected behavior with asymmetric tolerances.
 
-The nine skipped cases require the optional native extension, which default installs do not build. A separate isolated build with ``MADMOM_BUILD_NATIVE=1`` completed in 32.90 seconds. Its installed wheel passed all 11 native tests and 15 subtests in 4.31 seconds, including activation/beat parity, chunk boundaries, reset, invalid input, and resource cleanup. The default Python inference path also passed its smoke check in that environment.
+In that earlier revision, nine cases required the optional extension and were skipped in default builds. A separate isolated build with ``MADMOM_BUILD_NATIVE=1`` completed in 32.90 seconds. Its installed wheel passed all 11 native tests and 15 subtests in 4.31 seconds, including activation/beat parity, chunk boundaries, reset, invalid input, and resource cleanup. The Python inference path also passed its smoke check. Current builds always include the core and run those tests.
 
 The full runs emitted existing API deprecation and model migration warnings, warnings for deliberately invalid numeric inputs, and Python's warning about forking a process with multiple threads. Those warnings were retained. Python 3.9, 3.10, and versions newer than 3.13 were not tested in this check; the declared dependency floors do not imply that each possible version combination was tested.
 

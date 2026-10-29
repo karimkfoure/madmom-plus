@@ -1,0 +1,279 @@
+{
+  "schema_version": 1,
+  "runtime_revision": "8751733ff3008d1080e65e41b3be856c83c12028",
+  "source_revision_at_packaging": "5a8a7b526981dce6eb3afcc00ff0e71b56eeda47",
+  "build_tools": {
+    "host_system": "Linux x86_64",
+    "host_glibc": "2.39",
+    "x86_python": "3.11.15",
+    "aarch64_build_and_runtime_python": "3.12.13",
+    "numpy_build_headers": "2.4.6",
+    "cython": "3.3.0",
+    "setuptools": "84.2.1",
+    "wheel": "0.48.0",
+    "auditwheel": "6.8.2",
+    "gcc_and_gxx": "13.3.0",
+    "aarch64_gcc_and_gxx": "13.3.0",
+    "qemu": "8.2.2",
+    "cflags": "-O3 -DNDEBUG -g0",
+    "native_cpp_flags": "-std=c++17 -O3 -ffp-contract=off",
+    "maximum_build_workers": 2,
+    "aarch64_runtime_zlib_package": "Ubuntu zlib1g 1:1.3.dfsg-3.1ubuntu2 arm64"
+  },
+  "source_sha256": {
+    "setup.py": "2225e2fa758bf3eed1b8f474fe35f6517aaf7c13ec0024006c11dcb8e99c69cd",
+    "pyproject.toml": "8a3e54433ecb4cf087e5c1cb977f7b43b4f46a00ba9dca0f47230b02297406b2",
+    "MANIFEST.in": "0b7fbda2853e1c973dcb0d0d8189b227b16371959ea8d77df2460465f2869ca2",
+    "README.rst": "8474f8f4350a41890c9195d94bf5d6ee5c250c5fc70a2e4750bafd6c1a874422",
+    "SCOPE.md": "0a1c04b361e2df36378f80157d160a4a804ea29a752e926adf8465de1ed2f20e",
+    "madmom/native.py": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+    "madmom/audio/_native.py": "812ab51238f93937bd8aeb03706ffd76df91927fde95fc8f3693cfd4d0025b87",
+    "madmom/features/beats.py": "564fa9e7009282e40ef7564df9cbf4fd836d8dd97e9b960ed176c7abb2eb95a7",
+    "madmom/features/onsets.py": "59b13ea385ff7cb3e06c1402ccce7316716624f872ad84d71e5d9ac121280731",
+    "madmom/_native_decoders.py": "737ca4fe6ed1f7647aa1710ee37a91bd4affc38435662a645e020d265418d75b",
+    "madmom/ml/hmm.pyx": "f027648eedab2b15096580e847334c51196ad9f674e01567e71e0b6231dc6736",
+    "madmom/ml/nn/__init__.py": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+    "madmom/ml/nn/layers.py": "9465ed901ba5244086f6c670432732d501be72f2b85d1acf92348eaa7b84e88b",
+    "madmom/ml/nn/_native.py": "3672a6b4973b82e548110a87df386d48545ae8161879c8b93d91aa50a4ffcf43",
+    "native/include/madmom_decoders.h": "6c0e88c885fb95b2a46a30fe7120c3a2de3aad65092261054ade0557ef0e2c12",
+    "native/include/madmom_engine.h": "f1e4eb91cdc21962de896b80b680afec8553ee4cc437284c3f5e6e247d0dbd70",
+    "native/include/madmom_exports.h": "dbc41b7b0db9ea74ca1c34d4c5c7aad21e8271ee778aa447f6666172cbc65a93",
+    "native/include/madmom_native.h": "3816498f67b0ba9b5fb880e8a009073f7b4c679ff2fa1baf8e4705e1d094b342",
+    "native/include/madmom_nn.h": "f36a24a351f566d97082c1c7dd77746cb0ee8adf34685caa53567a9ee9e5cb4a",
+    "native/src/bindings.cpp": "97adbcf9c2a2ffeaf6814d6cf960c3bea40077ad2023949fc0e923c722b7a41d",
+    "native/src/decoders.cpp": "67898d647df81d6fa163c4c0d2aa946061bc9e7bcd569ea748bd35e3f7006599",
+    "native/src/nn.cpp": "0c39659fd087cb79854497b4a87e17aac45e85d7ec41762d5b1e70a25442860f",
+    "native/src/online.cpp": "a58ef12d0e744d12e4ff24a43b495292cf51653bc86e5ebb5f20e0fb7deb5942"
+  },
+  "wheels": [
+    {
+      "filename": "madmom_plus-0.17.0.dev1-cp311-cp311-manylinux_2_38_x86_64.whl",
+      "sha256": "227a1177529f12514f5b35d601fe9c5941e106d96584f82ac7e2c8613d6fcd80",
+      "size_bytes": 30384839,
+      "architecture": "x86_64",
+      "runtime_manifest_sha256": "34bf380e9d74a4a5e329b4ed25c346ac36618f223d7f750d215a609882937ccc",
+      "tested_package_hashes_preserved_after_metadata_refresh": true,
+      "extensions": [
+        {
+          "filename": "madmom/_native.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "3f4a6f5dad438d8db51bc61437e665f01b52dcd8a41ed9c9e299a09a33cac7e0"
+        },
+        {
+          "filename": "madmom/audio/comb_filters.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "9880b8c9ab1f6b60152af93fe6d7965c8bf0a0a0914655aff688e4cac688cf37"
+        },
+        {
+          "filename": "madmom/features/beats_crf.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "233a5195aac54bc473ffee54443d055d1f7f2937042101f3430e974851d2e556"
+        },
+        {
+          "filename": "madmom/ml/hmm.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "0387bfa5e65b87844e8017ae0b75ca40fba2d8f2c1ce14167480644c67893201"
+        },
+        {
+          "filename": "madmom/ml/nn/layers.cpython-311-x86_64-linux-gnu.so",
+          "architecture": "x86_64",
+          "sha256": "a2437b3d088acdd519b019b77c859c4bc4a29118f25f49a788da08ad0b232293"
+        }
+      ],
+      "model_count": 92,
+      "models_match_source": true,
+      "python_sources_match_source": true,
+      "description_matches_final_readme_and_changes": true,
+      "private_build_path_files": [],
+      "verification": [
+        {
+          "runtime": {
+            "python": "3.11.15",
+            "architecture": "x86_64",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-311-x86_64-linux-gnu.so",
+            "installed_package": true,
+            "model_count": 92,
+            "engine_smoke": {
+              "samples_accepted": 442,
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true
+            }
+          },
+          "tests_passed": 1100,
+          "warnings": 202,
+          "subtests_passed": 165,
+          "wall_seconds": 61.62,
+          "scope": "complete suite",
+          "test_files": [
+            "tests"
+          ],
+          "cpu_affinity": [
+            0
+          ],
+          "blas_and_openmp_threads": 1,
+          "log": "build/core-wheels/logs/final-x86-tests.log",
+          "log_sha256": "94d8cb3f209a7efb28332a5f92c0bd9e294bbe90f9e7d5851b3ffc113ea6b94d"
+        }
+      ]
+    },
+    {
+      "filename": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_38_aarch64.whl",
+      "sha256": "06f6579c663322e894f9e808306c088c2508e0a9633ad077902162882d6895ec",
+      "size_bytes": 30338783,
+      "architecture": "aarch64",
+      "runtime_manifest_sha256": "d2aa99ba4770e0c5a47ffe1554b9b6d7f05241d4a273eb00f2f83c6f91486be7",
+      "tested_package_hashes_preserved_after_metadata_refresh": true,
+      "extensions": [
+        {
+          "filename": "madmom/_native.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "3a05b752fd9782c0836b706c06390ffe42879907397aae3604be3ffe4f208f48"
+        },
+        {
+          "filename": "madmom/audio/comb_filters.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "c3a692ccfb8d4027649db96f5c115637602e3b0066d8e2fef7de3fb533a3a5e7"
+        },
+        {
+          "filename": "madmom/features/beats_crf.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "1408772eb3b37420332dbb450b8bfdf10e717baff05f26eda1bec984307fbc5a"
+        },
+        {
+          "filename": "madmom/ml/hmm.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "fc859ad320789c3989ab04e9a68e708727e1ae1490dcfaba3a2cda279bd39e47"
+        },
+        {
+          "filename": "madmom/ml/nn/layers.cpython-312-aarch64-linux-gnu.so",
+          "architecture": "aarch64",
+          "sha256": "e90e011384f4c2982581d8194e49e307dfc93c72d3c17c0b2edc51ccd586d94f"
+        }
+      ],
+      "model_count": 92,
+      "models_match_source": true,
+      "python_sources_match_source": true,
+      "description_matches_final_readme_and_changes": true,
+      "private_build_path_files": [],
+      "verification": [
+        {
+          "runtime": {
+            "python": "3.12.13",
+            "architecture": "aarch64",
+            "numpy": "2.4.6",
+            "scipy": "1.17.1",
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-312-aarch64-linux-gnu.so",
+            "installed_package": true,
+            "model_count": 92,
+            "engine_smoke": {
+              "samples_accepted": 442,
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true
+            }
+          },
+          "tests_passed": 285,
+          "warnings": 24,
+          "subtests_passed": 40,
+          "wall_seconds": 123.87,
+          "scope": "focused ARM suite",
+          "test_files": [
+            "tests/test_audio_comb_filters.py",
+            "tests/test_ml_hmm.py",
+            "tests/test_ml_nn.py",
+            "tests/test_features_beats.py",
+            "tests/test_features_beats_online.py",
+            "tests/test_features_onsets.py",
+            "tests/test_pickle_compat.py",
+            "tests/test_online_defaults.py",
+            "tests/test_native.py",
+            "tests/test_native_bindings.py",
+            "tests/test_native_decoders.py",
+            "tests/test_native_frontend.py",
+            "tests/test_native_frontend_compat.py",
+            "tests/test_native_nn.py",
+            "tests/test_native_reference.py"
+          ],
+          "cpu_affinity": [
+            1
+          ],
+          "blas_and_openmp_threads": 1,
+          "log": "build/core-wheels/logs/final-arm-tests.log",
+          "log_sha256": "625d7e1b6e9435e1a183c01c318a72619adc3685f3dd6bfe62211bb29098e3b4"
+        },
+        {
+          "runtime": {
+            "python": "3.12.13",
+            "architecture": "aarch64",
+            "numpy": "1.26.4",
+            "scipy": "1.13.1",
+            "native_abi_version": 65536,
+            "native_filename": "_native.cpython-312-aarch64-linux-gnu.so",
+            "installed_package": true,
+            "model_count": 92,
+            "engine_smoke": {
+              "samples_accepted": 442,
+              "frame_sample_indices": [
+                0,
+                441
+              ],
+              "queue_read_reset_and_configure": true
+            }
+          },
+          "tests_passed": 285,
+          "warnings": 24,
+          "subtests_passed": 40,
+          "wall_seconds": 141.54,
+          "scope": "focused ARM suite",
+          "test_files": [
+            "tests/test_audio_comb_filters.py",
+            "tests/test_ml_hmm.py",
+            "tests/test_ml_nn.py",
+            "tests/test_features_beats.py",
+            "tests/test_features_beats_online.py",
+            "tests/test_features_onsets.py",
+            "tests/test_pickle_compat.py",
+            "tests/test_online_defaults.py",
+            "tests/test_native.py",
+            "tests/test_native_bindings.py",
+            "tests/test_native_decoders.py",
+            "tests/test_native_frontend.py",
+            "tests/test_native_frontend_compat.py",
+            "tests/test_native_nn.py",
+            "tests/test_native_reference.py"
+          ],
+          "cpu_affinity": [
+            2
+          ],
+          "blas_and_openmp_threads": 1,
+          "log": "build/core-wheels/logs/final-arm126-tests.log",
+          "log_sha256": "9727e95c22c424d491d5c69f9a050ac571a18bf3253bd6a1893592bf528d058f"
+        }
+      ]
+    }
+  ],
+  "platform_limits": {
+    "minimum_glibc": "2.38",
+    "minimum_glibc_reason": "fmod@GLIBC_2.38 in the system math library",
+    "physical_aarch64_performance_measured": false,
+    "older_manylinux": "Not built; no Docker or Podman installation on this host.",
+    "macos_arm64_and_x86_64": "Not built; no local macOS SDK or runtime.",
+    "windows": "Not built; no local Windows build toolchain or runtime."
+  },
+  "source_archive": {
+    "filename": "madmom_plus-0.17.0.dev1.tar.gz",
+    "sha256": "5359c3252eab5dd628b9b3a33d64928ea8992258eada865fc877bd01ac9dc957",
+    "size_bytes": 29798342,
+    "checked_sources_match_tree": true,
+    "includes_scope_native_docs_and_cross_build_helper": true
+  }
+}

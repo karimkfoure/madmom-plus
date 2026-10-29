@@ -1,4 +1,4 @@
-"""Optional native streaming beat tracker with the released online models.
+"""Native streaming beat tracker with the released online models.
 
 Audio must be mono float PCM at 44100 Hz. Each output row contains frame time
 in seconds, beat activation, beat event (0 or 1), and tempo in BPM. Frame times
@@ -15,7 +15,7 @@ import numpy as np
 
 
 def available():
-    """Return whether the optional C++ extension can be imported."""
+    """Return whether the required C++ extension can be imported."""
     try:
         from . import _native  # noqa: F401
     except ImportError:
@@ -82,8 +82,9 @@ def _library():
     try:
         from . import _native
     except ImportError as exc:
-        raise ImportError('Native backend unavailable. Rebuild with '
-                          'MADMOM_BUILD_NATIVE=1 to enable it.') from exc
+        raise ImportError('The required madmom native core is unavailable. '
+                          'Reinstall madmom-plus with a C++17 compiler or '
+                          'install a compatible wheel.') from exc
     library = ct.CDLL(_native.__file__)
     fp = ct.POINTER(ct.c_float)
     dp = ct.POINTER(ct.c_double)

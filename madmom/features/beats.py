@@ -101,7 +101,11 @@ class RNNBeatProcessor(SequentialProcessor):
             diff = SpectrogramDifferenceProcessor(
                 diff_ratio=0.5, positive_diffs=True, stack_diffs=np.hstack)
             # process each frame size with spec and diff sequentially
-            multi.append(SequentialProcessor((frames, stft, filt, spec, diff)))
+            if online:
+                from ..audio._native import NativeBeatFrontend
+                multi.append(NativeBeatFrontend((frames, stft, filt, spec, diff)))
+            else:
+                multi.append(SequentialProcessor((frames, stft, filt, spec, diff)))
         # stack the features and processes everything sequentially
         pre_processor = SequentialProcessor((sig, multi, np.hstack))
         # process the pre-processed signal with a NN ensemble and the given
@@ -1214,13 +1218,9 @@ class DBNBeatTrackingProcessor(OnlineProcessor):
         # reset to initial state
         if reset:
             self.reset()
-        # Keep only the selected state per frame. Materializing all forward
-        # posteriors for a long input would require frames * states storage.
-        states = np.empty(len(activations), dtype=int)
-        for start in range(0, len(activations), 64):
-            stop = min(start + 64, len(activations))
-            fwd = self.hmm.forward(activations[start:stop], reset=False)
-            states[start:stop] = np.argmax(fwd, axis=1)
+        # The native forward pass retains one posterior row and returns only
+        # each selected state, avoiding a frames-by-states probability array.
+        states = self.hmm.forward_states(activations, reset=False)
         # decide which time steps are beats
         beats = self.om.pointers[states] == 1
         # the positions inside the beats
@@ -1251,25 +1251,15 @@ class DBNBeatTrackingProcessor(OnlineProcessor):
             display.append('| %5.1f | ' % self.tempo)
             sys.stderr.write('\r%s' % ''.join(display))
             sys.stderr.flush()
-        # forward path often reports multiple beats close together, thus report
-        # only beats more than the minimum interval apart
-        beats_ = []
-        for frame in np.nonzero(beats)[0]:
-            cur_beat = (frame + self.counter) / float(self.fps)
-            next_beat = self.last_beat + 60. / self.max_bpm
-            # FIXME: this skips the first beat, but maybe this has a positive
-            #        effect on the overall beat tracking accuracy
-            if cur_beat >= next_beat:
-                # update tempo
-                self.tempo = 60. / (cur_beat - self.last_beat)
-                # update last beat
-                self.last_beat = cur_beat
-                # append to beats
-                beats_.append(cur_beat)
+        # Use the engine's event rule to suppress nearby forward detections.
+        from .._native_decoders import beat_events
+        beats_, self.last_beat, self.tempo = beat_events(
+            beats, self.counter, self.fps, self.max_bpm,
+            self.last_beat, self.tempo)
         # increase counter
         self.counter += len(activations)
         # return beat(s)
-        return np.array(beats_)
+        return beats_
 
     process_forward = process_online
 

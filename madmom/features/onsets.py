@@ -921,6 +921,19 @@ def peak_picking(activations, threshold, smooth=None, pre_avg=0, post_avg=0,
     """
     # smooth activations
     activations = smooth_signal(activations, smooth)
+    # Keep the usual floating-point path in the shared native core. Other
+    # dtypes, non-finite data, and multidimensional inputs use the existing
+    # SciPy kernels because the native kernel does not implement them.
+    windows = (pre_avg, post_avg, pre_max, post_max)
+    if (activations.ndim == 1 and
+            activations.dtype in (np.float32, np.float64) and
+            all(isinstance(value, (int, np.integer)) and value >= 0
+                for value in windows) and
+            np.ndim(threshold) == 0 and np.isfinite(threshold) and
+            np.result_type(activations, threshold) == activations.dtype and
+            np.isfinite(activations).all()):
+        from .._native_decoders import peak_picking as native_peak_picking
+        return native_peak_picking(activations, threshold, *windows)
     # compute a moving average
     avg_length = pre_avg + post_avg + 1
     if avg_length > 1:

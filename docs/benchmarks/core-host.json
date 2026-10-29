@@ -1,0 +1,459 @@
+{
+  "schema_version": 1,
+  "host": {
+    "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+    "architecture": "x86_64",
+    "affinity": [
+      3
+    ],
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "settings": {
+    "repeats": 5,
+    "warmups": 1,
+    "audio_copies": 10,
+    "sample_rate": 44100,
+    "fps": 100,
+    "timing": "Process CPU; excludes loading and initialization",
+    "memory": "Fresh Linux process RSS per variant and stage; includes dependencies"
+  },
+  "audio_sha256": {
+    "sample.wav": "d06b3c39384c4a0cf59f0bd326eda2443edf668fbb90647e37c801e59602866c",
+    "sample2.wav": "b1f19c0a668a6db867d9e277e72dce279830eb93e73e78751645698d8eb9caf5"
+  },
+  "variants": {
+    "before": {
+      "frontend": {
+        "stage": "frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.13918850200000005,
+          0.13708757100000002,
+          0.13872857000000005,
+          0.13860348499999997,
+          0.13806589700000005
+        ],
+        "cpu_seconds_per_audio_second": 0.0020231942222715036,
+        "rss_before_creation_bytes": 62812160,
+        "rss_after_creation_bytes": 81489920,
+        "rss_after_measurement_bytes": 177532928,
+        "peak_rss_bytes": 233529344,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+      },
+      "network": {
+        "stage": "network",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          2.4397392559999997,
+          2.4273701780000003,
+          2.821715289,
+          3.025827844,
+          2.971406593000001
+        ],
+        "cpu_seconds_per_audio_second": 0.04118856080422485,
+        "rss_before_creation_bytes": 62869504,
+        "rss_after_creation_bytes": 81465344,
+        "rss_after_measurement_bytes": 165462016,
+        "peak_rss_bytes": 169254912,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+      },
+      "decoder": {
+        "stage": "decoder",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.10308463299999993,
+          0.1022513009999999,
+          0.09777926199999998,
+          0.10113320299999984,
+          0.09530268699999977
+        ],
+        "cpu_seconds_per_audio_second": 0.0014762407452410798,
+        "rss_before_creation_bytes": 62603264,
+        "rss_after_creation_bytes": 81215488,
+        "rss_after_measurement_bytes": 167313408,
+        "peak_rss_bytes": 168878080,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+      },
+      "bulk": {
+        "stage": "bulk",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          3.2092579230000005,
+          3.193553057000001,
+          3.2407870780000003,
+          3.240413480999999,
+          3.3528111900000006
+        ],
+        "cpu_seconds_per_audio_second": 0.04730029575035498,
+        "rss_before_creation_bytes": 62504960,
+        "rss_after_creation_bytes": 81084416,
+        "rss_after_measurement_bytes": 197337088,
+        "peak_rss_bytes": 253464576,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+      },
+      "stream_frontend": {
+        "stage": "stream_frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.8351986119999999,
+          0.8216968269999998,
+          0.8374551930000003,
+          0.8014345210000005,
+          0.7478054099999998
+        ],
+        "cpu_seconds_per_audio_second": 0.011994303554814853,
+        "rss_before_creation_bytes": 63025152,
+        "rss_after_creation_bytes": 82669568,
+        "rss_after_measurement_bytes": 88768512,
+        "peak_rss_bytes": 88768512,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+      },
+      "stream_network": {
+        "stage": "stream_network",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          3.552047735,
+          3.681408973,
+          3.4901816770000007,
+          2.978262338000002,
+          2.9711026680000003
+        ],
+        "cpu_seconds_per_audio_second": 0.0509461605787493,
+        "rss_before_creation_bytes": 62754816,
+        "rss_after_creation_bytes": 82456576,
+        "rss_after_measurement_bytes": 158457856,
+        "peak_rss_bytes": 170274816,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+      },
+      "stream_decoder": {
+        "stage": "stream_decoder",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.18782995800000002,
+          0.1864934309999997,
+          0.18680194000000006,
+          0.1876344809999999,
+          0.18751125000000002
+        ],
+        "cpu_seconds_per_audio_second": 0.002737100568653866,
+        "rss_before_creation_bytes": 62763008,
+        "rss_after_creation_bytes": 82382848,
+        "rss_after_measurement_bytes": 167133184,
+        "peak_rss_bytes": 170274816,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+      },
+      "stream": {
+        "stage": "stream",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          4.327539527,
+          4.415441202,
+          5.99824381,
+          4.687969475999999,
+          4.149833674
+        ],
+        "cpu_seconds_per_audio_second": 0.06445216820245137,
+        "rss_before_creation_bytes": 62676992,
+        "rss_after_creation_bytes": 82239488,
+        "rss_after_measurement_bytes": 83931136,
+        "peak_rss_bytes": 83931136,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "562ff314c3b461d5a80e678df756d35694f2f767d816ab86772ddfeb709147c6",
+          "layers": "80c5af5d19964c40175644d2a14c9b2e762a73f809199b4b74fb2c4fd76779b0",
+          "core": null
+        },
+        "network_module_sha256": "8d27ef07a85694771ef6ddfce6c0cd195b693e9d012c4e84addd848ac9b08237"
+      }
+    },
+    "after": {
+      "frontend": {
+        "stage": "frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.3632178169999999,
+          0.359159035,
+          0.35939427599999996,
+          0.35836455499999986,
+          0.358621308
+        ],
+        "cpu_seconds_per_audio_second": 0.005242642235789446,
+        "rss_before_creation_bytes": 62504960,
+        "rss_after_creation_bytes": 81162240,
+        "rss_after_measurement_bytes": 95674368,
+        "peak_rss_bytes": 95674368,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+      },
+      "network": {
+        "stage": "network",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.36709711600000006,
+          0.3703167250000001,
+          0.367530398,
+          0.36704076899999993,
+          0.3668901960000004
+        ],
+        "cpu_seconds_per_audio_second": 0.005358514355564235,
+        "rss_before_creation_bytes": 62431232,
+        "rss_after_creation_bytes": 81121280,
+        "rss_after_measurement_bytes": 90427392,
+        "peak_rss_bytes": 93147136,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+      },
+      "decoder": {
+        "stage": "decoder",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.084675834,
+          0.08456878400000001,
+          0.08536612899999985,
+          0.08549988900000005,
+          0.08571760799999995
+        ],
+        "cpu_seconds_per_audio_second": 0.0012460888625598669,
+        "rss_before_creation_bytes": 62484480,
+        "rss_after_creation_bytes": 81182720,
+        "rss_after_measurement_bytes": 86056960,
+        "peak_rss_bytes": 93261824,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+      },
+      "bulk": {
+        "stage": "bulk",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.047147737,
+          1.20284257,
+          1.215296821,
+          1.2126991789999995,
+          1.2073740000000006
+        ],
+        "cpu_seconds_per_audio_second": 0.017624030888695446,
+        "rss_before_creation_bytes": 62443520,
+        "rss_after_creation_bytes": 81113088,
+        "rss_after_measurement_bytes": 96014336,
+        "peak_rss_bytes": 96014336,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+      },
+      "stream_frontend": {
+        "stage": "stream_frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.753689968,
+          0.7498987150000003,
+          0.7492828889999998,
+          0.7531029060000001,
+          0.753564463
+        ],
+        "cpu_seconds_per_audio_second": 0.010993038509782635,
+        "rss_before_creation_bytes": 62496768,
+        "rss_after_creation_bytes": 82198528,
+        "rss_after_measurement_bytes": 88236032,
+        "peak_rss_bytes": 88236032,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+      },
+      "stream_network": {
+        "stage": "stream_network",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          3.060426877,
+          3.055923635,
+          3.069063723000001,
+          3.0625928899999977,
+          3.0469240899999974
+        ],
+        "cpu_seconds_per_audio_second": 0.0446730323933112,
+        "rss_before_creation_bytes": 62332928,
+        "rss_after_creation_bytes": 82128896,
+        "rss_after_measurement_bytes": 91189248,
+        "peak_rss_bytes": 94208000,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+      },
+      "stream_decoder": {
+        "stage": "stream_decoder",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.4867844490000002,
+          0.4900691610000001,
+          0.4847387620000001,
+          0.48596886900000014,
+          0.4852869219999998
+        ],
+        "cpu_seconds_per_audio_second": 0.007093684606592812,
+        "rss_before_creation_bytes": 62758912,
+        "rss_after_creation_bytes": 82518016,
+        "rss_after_measurement_bytes": 88907776,
+        "peak_rss_bytes": 94625792,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+      },
+      "stream": {
+        "stage": "stream",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          4.65539374,
+          4.731311278,
+          4.782265463,
+          4.743168081,
+          4.7651099519999995
+        ],
+        "cpu_seconds_per_audio_second": 0.06923599544947819,
+        "rss_before_creation_bytes": 62582784,
+        "rss_after_creation_bytes": 82378752,
+        "rss_after_measurement_bytes": 83910656,
+        "peak_rss_bytes": 83910656,
+        "python": "3.11.15",
+        "numpy": "2.4.6",
+        "scipy": "1.17.1",
+        "binary_sha256": {
+          "hmm": "8e64b9e8ee85d15f866b53003a4616c9da9c99cd2fa2e6bc94b14dd0a2f703b9",
+          "layers": "7081abbb7fdb6ff0bec0418d6cf12eac87d542743c503a2c9719e7ca436e2f9f",
+          "core": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9"
+      }
+    }
+  },
+  "provenance": {
+    "before_revision": "3c7b36a32d4db567542b69e8655d6eea9eed57d8",
+    "after_revision": "8751733ff3008d1080e65e41b3be856c83c12028"
+  },
+  "source_sha256": {
+    "native/src/online.cpp": "a58ef12d0e744d12e4ff24a43b495292cf51653bc86e5ebb5f20e0fb7deb5942",
+    "native/src/bindings.cpp": "97adbcf9c2a2ffeaf6814d6cf960c3bea40077ad2023949fc0e923c722b7a41d",
+    "native/src/nn.cpp": "0c39659fd087cb79854497b4a87e17aac45e85d7ec41762d5b1e70a25442860f",
+    "native/src/decoders.cpp": "67898d647df81d6fa163c4c0d2aa946061bc9e7bcd569ea748bd35e3f7006599",
+    "native/include/madmom_exports.h": "dbc41b7b0db9ea74ca1c34d4c5c7aad21e8271ee778aa447f6666172cbc65a93",
+    "native/include/madmom_engine.h": "f1e4eb91cdc21962de896b80b680afec8553ee4cc437284c3f5e6e247d0dbd70",
+    "native/include/madmom_decoders.h": "6c0e88c885fb95b2a46a30fe7120c3a2de3aad65092261054ade0557ef0e2c12",
+    "native/include/madmom_native.h": "3816498f67b0ba9b5fb880e8a009073f7b4c679ff2fa1baf8e4705e1d094b342",
+    "native/include/madmom_nn.h": "f36a24a351f566d97082c1c7dd77746cb0ee8adf34685caa53567a9ee9e5cb4a",
+    "madmom/audio/_native.py": "812ab51238f93937bd8aeb03706ffd76df91927fde95fc8f3693cfd4d0025b87",
+    "madmom/ml/nn/_native.py": "3672a6b4973b82e548110a87df386d48545ae8161879c8b93d91aa50a4ffcf43",
+    "madmom/ml/nn/__init__.py": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+    "madmom/ml/nn/layers.py": "9465ed901ba5244086f6c670432732d501be72f2b85d1acf92348eaa7b84e88b",
+    "madmom/ml/hmm.pyx": "f027648eedab2b15096580e847334c51196ad9f674e01567e71e0b6231dc6736",
+    "madmom/features/beats.py": "564fa9e7009282e40ef7564df9cbf4fd836d8dd97e9b960ed176c7abb2eb95a7",
+    "madmom/_native_decoders.py": "737ca4fe6ed1f7647aa1710ee37a91bd4affc38435662a645e020d265418d75b",
+    "madmom/features/onsets.py": "59b13ea385ff7cb3e06c1402ccce7316716624f872ad84d71e5d9ac121280731",
+    "setup.py": "2225e2fa758bf3eed1b8f474fe35f6517aaf7c13ec0024006c11dcb8e99c69cd",
+    "tools/benchmark_core.py": "884ff8409d5555f529fbe3f4d1309026e94e48d280e75cedd1dce5eed86497cf"
+  }
+}

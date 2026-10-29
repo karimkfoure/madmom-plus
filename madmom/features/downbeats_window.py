@@ -376,7 +376,9 @@ class WindowedDownBeatTrackingProcessor(Processor):
         Downbeat audio window length and inference hop [seconds]. Both must
         be positive multiples of 10 ms, and hop must not exceed window.
     beat_backend : {'python', 'native'}, optional
-        Beat implementation. The native backend requires its opt-in build.
+        Beat interface: existing Python processors or the direct native
+        engine. Both use the required native core; the default retains the
+        Python processor objects.
     background : bool, optional
         Run downbeat inference in one owned background thread. Busy workers
         skip new windows; there is no queued backlog. Results take effect on

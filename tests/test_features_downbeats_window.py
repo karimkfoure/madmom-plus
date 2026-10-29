@@ -11,7 +11,6 @@ from numpy.testing import assert_allclose, assert_array_equal
 from madmom.features.downbeats import (BarPhaseVotingProcessor,
                                       WindowedDownBeatTrackingProcessor)
 from madmom.processors import Processor
-from madmom import native
 from madmom.audio.signal import Signal
 from madmom.features.beats import DBNBeatTrackingProcessor, RNNBeatProcessor
 
@@ -493,7 +492,6 @@ class TestWindowedDownBeatAudio(unittest.TestCase):
             self.assertTrue(np.all(np.isfinite(rows)))
             self.assertEqual(processor.samples, len(self.audio))
 
-    @unittest.skipUnless(native.available(), 'optional native backend is not built')
     def test_native_and_python_backends_preserve_same_beat_grid(self):
         results = []
         for backend in ('python', 'native'):
@@ -502,6 +500,25 @@ class TestWindowedDownBeatAudio(unittest.TestCase):
                 results.append(processor(self.audio))
         self.assertEqual(len(results[0]), len(results[1]))
         assert_allclose(results[0][:, 0], results[1][:, 0], atol=.01, rtol=0)
+
+    def test_native_engine_chunks_empty_calls_and_reset_preserve_events(self):
+        with WindowedDownBeatTrackingProcessor(
+                window=2., hop=1., beat_backend='native') as processor:
+            expected = processor(self.audio)
+            expected_windows = processor.windows
+            for size in (137, 441, 4096):
+                with self.subTest(chunk_samples=size):
+                    processor.reset()
+                    rows = []
+                    for first in range(0, len(self.audio), size):
+                        rows.append(processor(self.audio[first:first + size],
+                                              reset=False))
+                        before = processor.samples
+                        self.assertEqual(processor([], reset=False).shape, (0, 2))
+                        self.assertEqual(processor.samples, before)
+                    assert_array_equal(np.concatenate(rows), expected)
+                    self.assertEqual(processor.windows, expected_windows)
+                    self.assertEqual(processor.samples, len(self.audio))
 
 
 if __name__ == '__main__':

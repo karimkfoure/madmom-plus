@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "verified_revision": "38c4b6371049daa24ba537c197908b4d2102bd46",
+  "branch": "lane/core",
+  "environment": {
+    "architecture": "x86_64",
+    "python": "3.12.13",
+    "numpy": "2.4.6",
+    "scipy": "1.18.1",
+    "cython": "3.3.0",
+    "compiler": "GCC 13.3.0",
+    "blas_threads": 1,
+    "openmp_threads": 1
+  },
+  "full_suite": {
+    "tests_passed": 1131,
+    "subtests_passed": 214,
+    "warnings": 236,
+    "wall_seconds": 57.78,
+    "source": "unmodified merged main",
+    "log": "build/core-merged/main38c-full-tests.log",
+    "log_sha256": "ee81942659130915c8f1a3c1f2f2c41160dbeb642e808b7e9fc9f2a86490c7d5"
+  },
+  "windowed_native_integration": {
+    "tests_passed": 32,
+    "subtests_passed": 52,
+    "wall_seconds": 1.8,
+    "source": "merged package with extended native-backend tests",
+    "log": "build/core-merged/main38c-window-native-tests.log",
+    "log_sha256": "c6e18b62e5db475a3da34ade36c5bacc00001595cf6537ee41d6db5c3370bc39",
+    "coverage": [
+      "native and Python interfaces retain the same beat grid",
+      "native engine chunks of137,441,4096 samples retain all events",
+      "empty calls retain the sample clock",
+      "reset retains event output and completed-window count"
+    ]
+  },
+  "findings": [
+    "No runtime failure found in the merged implementation",
+    "Windowed processor documentation and a skip label still described the core as optional; update them for the required core"
+  ]
+}

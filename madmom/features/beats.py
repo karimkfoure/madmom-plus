@@ -877,6 +877,126 @@ def threshold_activations(activations, threshold):
     return activations[first:last], first
 
 
+class SpectralBeatActivationProcessor(OnlineProcessor):
+    """
+    Adjust beat activations with causal low- and high-frequency onset evidence.
+
+    Parameters
+    ----------
+    strength : float, optional
+        Maximum absolute change to the beat log odds. Set to 0 to return the
+        original beat activations. The default is 1.
+    time_constant : float, optional
+        Time constant of each band's running onset level [seconds].
+    fps : float, optional
+        Frames per second of all three input features.
+    online : bool, optional
+        Keep running levels between calls made with ``reset=False``. Offline
+        processing applies the same causal rule and starts with empty levels.
+
+    Notes
+    -----
+    Input rows contain ``[beat_probability, low_onset, high_onset]``. Onsets
+    must be nonnegative and use the same frame timestamps as the probability.
+    For example, use positive magnitude differences in 30--200 Hz and
+    2--10 kHz, computed from audio frames that end at the current timestamp.
+    Each band is normalized by its own running level, so a fixed positive
+    scale change in either band does not change the output.
+
+    The correction increases beat odds for isolated low-frequency onsets and
+    decreases them for isolated high-frequency onsets. It does not add beats
+    where the original probability is zero. A zero onset in both bands leaves
+    the probability unchanged. The output can be passed to
+    :class:`DBNBeatTrackingProcessor` without changing that processor's API.
+
+    This is an optional rhythmic prior, not a learned instrument classifier.
+    Bass and kick onsets can be syncopated. Use development data to select
+    ``strength``; a nonzero value does not guarantee fewer offbeat errors.
+    Causal output also requires causal input features.
+
+    """
+
+    def __init__(self, strength=1., time_constant=1., fps=100., online=True):
+        for name, value in (('strength', strength),
+                            ('time_constant', time_constant), ('fps', fps)):
+            if not np.isscalar(value) or not np.isfinite(value):
+                raise ValueError('%s must be finite.' % name)
+        if strength < 0:
+            raise ValueError('strength must be nonnegative.')
+        if time_constant <= 0 or fps <= 0:
+            raise ValueError('time_constant and fps must be positive.')
+        super(SpectralBeatActivationProcessor, self).__init__(online=online)
+        self.strength = float(strength)
+        self.time_constant = float(time_constant)
+        self.fps = float(fps)
+        self._update_rate = -np.expm1(-1. / self.fps / self.time_constant)
+        self.reset()
+
+    def reset(self):
+        """Clear both running onset levels."""
+        self._levels = np.zeros(2, dtype=float)
+
+    def process_online(self, data, reset=True, **kwargs):
+        """
+        Return adjusted beat probabilities for one frame or a frame block.
+
+        Parameters
+        ----------
+        data : numpy array, shape (N, 3) or (3,)
+            Beat probabilities and low- and high-frequency onset strengths.
+        reset : bool, optional
+            Clear the running levels before processing these frames.
+
+        Returns
+        -------
+        numpy array, shape (N,)
+            Beat probabilities in the same frame order as the input.
+
+        """
+        data = np.asarray(data, dtype=float)
+        if data.ndim == 1 and data.size == 0:
+            data = data.reshape((0, 3))
+        elif data.ndim == 1 and data.size == 3:
+            data = data.reshape((1, 3))
+        if data.ndim != 2 or data.shape[1] != 3:
+            raise ValueError('Expected rows of [beat, low_onset, high_onset].')
+        if not np.all(np.isfinite(data)):
+            raise ValueError('All input features must be finite.')
+        if np.any((data[:, 0] < 0) | (data[:, 0] > 1)):
+            raise ValueError('Beat probabilities must be between 0 and 1.')
+        if np.any(data[:, 1:] < 0):
+            raise ValueError('Onset strengths must be nonnegative.')
+        if reset:
+            self.reset()
+        output = data[:, 0].copy()
+        # The disabled path returns the original probabilities exactly.
+        if self.strength == 0:
+            return output
+        for index, (probability, low, high) in enumerate(data):
+            onset = np.array([low, high])
+            self._levels *= 1. - self._update_rate
+            self._levels += self._update_rate * onset
+            normalized = np.zeros(2)
+            nonzero = onset > 0
+            # x / (x + level), written this way to avoid overflow in x + level.
+            normalized[nonzero] = 1. / (
+                1. + self._levels[nonzero] / onset[nonzero])
+            shift = self.strength * (normalized[0] - normalized[1])
+            if shift == 0 or probability == 0 or probability == 1:
+                continue
+            log_odds = np.log(probability) - np.log1p(-probability) + shift
+            if log_odds >= 0:
+                output[index] = 1. / (1. + np.exp(-log_odds))
+            else:
+                odds = np.exp(log_odds)
+                output[index] = odds / (1. + odds)
+        return output
+
+    def process_offline(self, data, **kwargs):
+        """Apply the causal correction from an empty running state."""
+        return self.process_online(data, reset=True)
+
+
 class DBNBeatTrackingProcessor(OnlineProcessor):
     """
     Beat tracking with RNNs and a dynamic Bayesian network (DBN) approximated

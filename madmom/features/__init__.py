@@ -287,7 +287,8 @@ from . import beats, chords, downbeats, key, notes, onsets, tempo
 # import often used classes
 from .beats import (BeatDetectionProcessor, BeatTrackingProcessor,
                     CRFBeatDetectionProcessor, DBNBeatTrackingProcessor,
-                    MultiModelSelectionProcessor, RNNBeatProcessor)
+                    MultiModelSelectionProcessor, RNNBeatProcessor,
+                    SpectralBeatActivationProcessor)
 from .chords import (CNNChordFeatureProcessor, CRFChordRecognitionProcessor,
                      DeepChromaChordRecognitionProcessor)
 from .downbeats import (RNNDownBeatProcessor, DBNDownBeatTrackingProcessor,

@@ -970,26 +970,31 @@ class SpectralBeatActivationProcessor(OnlineProcessor):
             self.reset()
         output = data[:, 0].copy()
         # The disabled path returns the original probabilities exactly.
-        if self.strength == 0:
+        if self.strength == 0 or not len(data):
             return output
-        for index, (probability, low, high) in enumerate(data):
-            onset = np.array([low, high])
-            self._levels *= 1. - self._update_rate
-            self._levels += self._update_rate * onset
-            normalized = np.zeros(2)
-            nonzero = onset > 0
-            # x / (x + level), written this way to avoid overflow in x + level.
-            normalized[nonzero] = 1. / (
-                1. + self._levels[nonzero] / onset[nonzero])
-            shift = self.strength * (normalized[0] - normalized[1])
-            if shift == 0 or probability == 0 or probability == 1:
-                continue
-            log_odds = np.log(probability) - np.log1p(-probability) + shift
-            if log_odds >= 0:
-                output[index] = 1. / (1. + np.exp(-log_odds))
-            else:
-                odds = np.exp(log_odds)
-                output[index] = odds / (1. + odds)
+        from scipy.signal import lfilter
+        # lfilter applies the same causal recurrence in each chunk. Store a
+        # copy of the two final levels so no input-length history is retained.
+        decay = 1. - self._update_rate
+        levels, _ = lfilter([self._update_rate], [1., -decay], data[:, 1:],
+                            axis=0, zi=(decay * self._levels)[None, :])
+        self._levels = levels[-1].copy()
+        onset = data[:, 1:]
+        nonzero = onset > 0
+        normalized = np.zeros_like(onset)
+        # x / (x + level), written this way to avoid overflow in x + level.
+        with np.errstate(over='ignore'):
+            np.divide(levels, onset, out=normalized, where=nonzero)
+            np.divide(1., 1. + normalized, out=normalized, where=nonzero)
+        shift = self.strength * (normalized[:, 0] - normalized[:, 1])
+        change = (shift != 0) & (output > 0) & (output < 1)
+        probability = output[change]
+        log_odds = (np.log(probability) - np.log1p(-probability) +
+                    shift[change])
+        # Split the logistic function to keep both tails finite.
+        odds = np.exp(-np.abs(log_odds))
+        output[change] = np.where(log_odds >= 0, 1. / (1. + odds),
+                                  odds / (1. + odds))
         return output
 
     def process_offline(self, data, **kwargs):

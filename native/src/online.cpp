@@ -2,6 +2,7 @@
  * The madmom project licence applies. See LICENSE and docs/native.rst.
  */
 #include "madmom_native.h"
+#include "madmom_engine.h"
 
 #include <algorithm>
 #include <array>
@@ -9,7 +10,6 @@
 #include <complex>
 #include <cstdint>
 #include <cstring>
-#include <deque>
 #include <fstream>
 #include <limits>
 #include <memory>
@@ -151,16 +151,20 @@ void quantize(std::vector<float>& values, size_t columns, int mode) {
 }
 
 class FFT {
-    std::array<size_t, frame_size> reversed;
-    std::array<std::complex<double>, frame_size / 2> roots;
-    std::array<std::complex<double>, frame_size> buffer;
+    // Pack even and odd real samples into one half-size complex transform.
+    // All twiddles and arithmetic remain double precision until madmom's
+    // complex64 cast, so the optimization preserves its magnitude convention.
+    static const size_t packed_size = frame_size / 2;
+    std::array<size_t, packed_size> reversed;
+    std::array<std::complex<double>, packed_size> roots;
+    std::array<std::complex<double>, packed_size> buffer;
 
 public:
     FFT() {
-        for (size_t i = 0; i < frame_size; ++i) {
+        for (size_t i = 0; i < packed_size; ++i) {
             size_t value = i;
             size_t result = 0;
-            for (int bit = 0; bit < 11; ++bit) {
+            for (int bit = 0; bit < 10; ++bit) {
                 result = (result << 1) | (value & 1);
                 value >>= 1;
             }
@@ -174,13 +178,15 @@ public:
 
     void magnitudes(const float* frame, const std::vector<double>& window,
                     float* output) {
-        for (size_t i = 0; i < frame_size; ++i) {
-            buffer[reversed[i]] = std::complex<double>(frame[i] * window[i], 0);
+        for (size_t i = 0; i < packed_size; ++i) {
+            buffer[reversed[i]] = std::complex<double>(
+                frame[2 * i] * window[2 * i],
+                frame[2 * i + 1] * window[2 * i + 1]);
         }
-        for (size_t length = 2; length <= frame_size; length *= 2) {
+        for (size_t length = 2; length <= packed_size; length *= 2) {
             const size_t half = length / 2;
             const size_t stride = frame_size / length;
-            for (size_t first = 0; first < frame_size; first += length) {
+            for (size_t first = 0; first < packed_size; first += length) {
                 for (size_t j = 0; j < half; ++j) {
                     const std::complex<double> even = buffer[first + j];
                     const std::complex<double> odd =
@@ -190,10 +196,83 @@ public:
                 }
             }
         }
-        for (size_t i = 0; i < frame_size / 2; ++i) {
+        output[0] = std::abs(static_cast<float>(buffer[0].real() +
+                                                buffer[0].imag()));
+        for (size_t i = 1; i < packed_size; ++i) {
+            const std::complex<double> paired = std::conj(buffer[packed_size - i]);
+            const std::complex<double> even = (buffer[i] + paired) * .5;
+            const std::complex<double> odd = (buffer[i] - paired) *
+                                             std::complex<double>(0, -.5);
             // madmom casts the complex FFT to complex64 before magnitude.
-            output[i] = std::abs(std::complex<float>(buffer[i]));
+            output[i] = std::abs(std::complex<float>(even + roots[i] * odd));
         }
+    }
+};
+
+struct Frontend {
+    struct Band {
+        size_t first;
+        std::vector<float> weights;
+    };
+    std::vector<double> window;
+    std::array<Band, num_bands> bank;
+    std::vector<std::array<float, num_bands> > history;
+    size_t history_count, history_cursor;
+    FFT fft;
+
+    Frontend(const double* fft_window, const float* dense, size_t lag)
+        : window(fft_window, fft_window + frame_size), history(lag) {
+        if (lag < 1 || lag > 100000) {
+            throw std::runtime_error("Invalid spectral difference lag");
+        }
+        require_finite(window);
+        check_input(dense, (frame_size / 2) * num_bands,
+                    "Missing native filterbank");
+        for (int j = 0; j < num_bands; ++j) {
+            size_t first = 0, end = frame_size / 2;
+            while (first < end && dense[first * num_bands + j] == 0) {
+                ++first;
+            }
+            while (end > first && dense[(end - 1) * num_bands + j] == 0) {
+                --end;
+            }
+            bank[j].first = first;
+            bank[j].weights.reserve(end - first);
+            for (size_t k = first; k < end; ++k) {
+                bank[j].weights.push_back(dense[k * num_bands + j]);
+            }
+        }
+        reset();
+    }
+
+    void reset() {
+        history_count = history_cursor = 0;
+    }
+
+    void features(const float* frame, float* result) {
+        float magnitude[frame_size / 2];
+        fft.magnitudes(frame, window, magnitude);
+        std::array<float, num_bands>& previous = history[history_cursor];
+        for (int j = 0; j < num_bands; ++j) {
+            float sum = 0;
+            const Band& band = bank[j];
+            for (size_t k = 0; k < band.weights.size(); ++k) {
+                // Skip interior zeros too, to retain the previous sparse
+                // accumulation order for custom non-triangular filterbanks.
+                if (band.weights[k] != 0) {
+                    sum += magnitude[band.first + k] * band.weights[k];
+                }
+            }
+            const float current = std::log10(1.f + sum);
+            result[j] = current;
+            result[num_bands + j] = history_count >= history.size()
+                ? std::max(0.f, current - previous[j]) : 0;
+            previous[j] = current;
+        }
+        if (history_count < history.size()) {
+            ++history_count;
+        }
+        history_cursor = (history_cursor + 1) % history.size();
     }
 };
 
@@ -370,15 +449,13 @@ struct HMM {
 };
 
 struct Tracker {
-    std::vector<double> window;
-    std::array<std::vector<std::pair<int, float> >, num_bands> bank;
+    std::unique_ptr<Frontend> frontend;
     std::vector<RNN> networks;
     std::unique_ptr<HMM> hmm;
-    std::deque<std::array<float, num_bands> > history;
-    std::deque<float> audio;
-    FFT fft;
-    int difference_lag;
-    size_t offset, produced, reference, frames;
+    // Duplicating the ring keeps every causal frame contiguous, including
+    // wraparound. Push never allocates or shifts audio samples.
+    std::array<float, 2 * frame_size> audio;
+    size_t produced, reference, frames;
 
     Tracker(const char* path, int count, int mode, int simd) {
         if (count < 1 || count > 8 || mode < 0 || mode > 2 ||
@@ -391,24 +468,14 @@ struct Tracker {
         if (!stream || std::memcmp(magic, "MMONL001", sizeof(magic)) != 0) {
             throw std::runtime_error("Invalid native model asset");
         }
-        window = read_values<double>(stream, frame_size);
+        const std::vector<double> window = read_values<double>(stream, frame_size);
         const std::vector<float> dense =
             read_values<float>(stream, (frame_size / 2) * num_bands);
-        require_finite(window);
-        require_finite(dense);
         const std::vector<uint32_t> lag = read_values<uint32_t>(stream, 1);
         if (lag[0] < 1 || lag[0] > 10) {
             throw std::runtime_error("Invalid spectral difference lag");
         }
-        difference_lag = lag[0];
-        for (int k = 0; k < frame_size / 2; ++k) {
-            for (int j = 0; j < num_bands; ++j) {
-                const float weight = dense[k * num_bands + j];
-                if (weight != 0) {
-                    bank[j].push_back(std::make_pair(k, weight));
-                }
-            }
-        }
+        frontend.reset(new Frontend(window.data(), dense.data(), lag[0]));
         networks.reserve(count);
         for (int i = 0; i < 8; ++i) {
             RNN network(stream, mode, simd != 0);
@@ -428,30 +495,13 @@ struct Tracker {
             networks[i].reset();
         }
         hmm->reset();
-        history.clear();
-        audio.clear();
-        offset = produced = reference = frames = 0;
+        frontend->reset();
+        audio.fill(0);
+        produced = reference = frames = 0;
     }
 
     void features(const float* frame, float* result) {
-        float magnitude[frame_size / 2];
-        fft.magnitudes(frame, window, magnitude);
-        std::array<float, num_bands> current;
-        for (int j = 0; j < num_bands; ++j) {
-            float sum = 0;
-            for (size_t k = 0; k < bank[j].size(); ++k) {
-                sum += magnitude[bank[j][k].first] * bank[j][k].second;
-            }
-            current[j] = std::log10(1.f + sum);
-            result[j] = current[j];
-            result[num_bands + j] =
-                history.size() >= static_cast<size_t>(difference_lag)
-                ? std::max(0.f, current[j] - history.front()[j]) : 0;
-        }
-        history.push_back(current);
-        while (history.size() > static_cast<size_t>(difference_lag)) {
-            history.pop_front();
-        }
+        frontend->features(frame, result);
     }
 
     float network(const float* features) {
@@ -485,27 +535,16 @@ struct Tracker {
         if (count == 0) {
             return 0;
         }
-        audio.insert(audio.end(), pcm, pcm + count);
-        produced = end;
         size_t row = 0;
-        while (reference < produced) {
-            float frame[frame_size] = {};
-            float values[num_bands * 2];
-            for (size_t i = 0; i < frame_size; ++i) {
-                // Avoid signed arithmetic on the long-running sample clock.
-                if (reference + i >= frame_size - 1) {
-                    const size_t position = reference + i - (frame_size - 1);
-                    frame[i] = audio.at(position - offset);
-                }
-            }
-            features(frame, values);
-            decode(network(values), output + 4 * row++);
-            reference += hop_size;
-            const size_t keep = reference > frame_size - 1
-                                ? reference - (frame_size - 1) : 0;
-            while (offset < keep && !audio.empty()) {
-                audio.pop_front();
-                ++offset;
+        for (size_t i = 0; i < count; ++i) {
+            const size_t position = produced % frame_size;
+            audio[position] = audio[position + frame_size] = pcm[i];
+            ++produced;
+            if (reference < produced) {
+                float values[num_bands * 2];
+                features(audio.data() + (produced % frame_size), values);
+                decode(network(values), output + 4 * row++);
+                reference += hop_size;
             }
         }
         return static_cast<int>(row);
@@ -528,7 +567,218 @@ int guard(void* handle, Function function) {
 }
 } // namespace
 
+// The public tag remains incomplete in the C header.
+struct mm_engine {
+    std::string asset;
+    std::unique_ptr<Tracker> tracker;
+    std::vector<mm_engine_frame_v1> queue;
+    size_t head, pending;
+    uint64_t last_beat_sample;
+
+    explicit mm_engine(const char* path, const mm_engine_config_v1* config)
+        : asset(path), head(0), pending(0), last_beat_sample(MM_ENGINE_NO_SAMPLE) {
+        configure(config);
+    }
+
+    void configure(const mm_engine_config_v1* config) {
+        mm_engine_config_v1 defaults = {
+            sizeof(mm_engine_config_v1), MM_ENGINE_ABI_V1, 8, 0, 1, 1024, {0, 0}};
+        const mm_engine_config_v1& options = config ? *config : defaults;
+        if (options.struct_size != sizeof(mm_engine_config_v1) ||
+            options.abi_version != MM_ENGINE_ABI_V1 ||
+            options.network_count < 1 || options.network_count > 8 ||
+            options.weight_mode > 2 || options.use_simd > 1 ||
+            options.queue_capacity < 1 || options.queue_capacity > 8192 ||
+            options.reserved[0] || options.reserved[1]) {
+            throw std::runtime_error("Invalid engine ABI version or configuration");
+        }
+        std::unique_ptr<Tracker> replacement(new Tracker(
+            asset.c_str(), options.network_count, options.weight_mode,
+            options.use_simd));
+        std::vector<mm_engine_frame_v1> output(options.queue_capacity);
+        tracker.swap(replacement);
+        queue.swap(output);
+        head = pending = 0;
+        last_beat_sample = MM_ENGINE_NO_SAMPLE;
+    }
+};
+
+namespace {
+template <typename Handle, typename Function>
+int component_guard(Handle* handle, Function function) {
+    try {
+        if (!handle) {
+            throw std::runtime_error("Null native component handle");
+        }
+        return function(*handle);
+    } catch (const std::exception& exception) {
+        last_error = exception.what();
+    } catch (...) {
+        last_error = "Unknown native component error";
+    }
+    return -1;
+}
+} // namespace
+
 extern "C" {
+void* mm_frontend_create(const double* window, const float* bank, size_t lag) {
+    try {
+        if (!window || !bank || lag < 1 || lag > 100000) {
+            throw std::runtime_error("Invalid native frontend arrays or lag");
+        }
+        return new Frontend(window, bank, lag);
+    } catch (const std::exception& exception) {
+        last_error = exception.what();
+    } catch (...) {
+        last_error = "Unknown native frontend error";
+    }
+    return NULL;
+}
+
+void mm_frontend_destroy(void* handle) {
+    delete static_cast<Frontend*>(handle);
+}
+
+int mm_frontend_reset(void* handle) {
+    return component_guard(static_cast<Frontend*>(handle), [](Frontend& frontend) {
+        frontend.reset();
+        return 0;
+    });
+}
+
+int mm_frontend_process(void* handle, const float* frames, size_t count,
+                        float* output) {
+    return component_guard(static_cast<Frontend*>(handle), [&](Frontend& frontend) {
+        if (count > std::numeric_limits<size_t>::max() / frame_size ||
+            (count && !output)) {
+            throw std::runtime_error("Invalid native frontend frame count or output");
+        }
+        check_input(frames, count * frame_size, "Missing native frontend frames");
+        for (size_t i = 0; i < count; ++i) {
+            frontend.features(frames + i * frame_size, output + i * 2 * num_bands);
+        }
+        return 0;
+    });
+}
+
+uint32_t mm_engine_version(void) {
+    return MM_ENGINE_ABI_V1;
+}
+
+const char* mm_engine_error(void) {
+    return last_error.c_str();
+}
+
+mm_engine* mm_engine_create(const char* asset, const mm_engine_config_v1* config) {
+    try {
+        if (!asset) {
+            throw std::runtime_error("Missing native model asset path");
+        }
+        return new mm_engine(asset, config);
+    } catch (const std::exception& exception) {
+        last_error = exception.what();
+    } catch (...) {
+        last_error = "Unknown native engine error";
+    }
+    return NULL;
+}
+
+int mm_engine_configure(mm_engine* engine, const mm_engine_config_v1* config) {
+    return component_guard(engine, [&](mm_engine& value) {
+        value.configure(config);
+        return 0;
+    });
+}
+
+void mm_engine_destroy(mm_engine* engine) {
+    delete engine;
+}
+
+int mm_engine_reset(mm_engine* engine) {
+    return component_guard(engine, [](mm_engine& value) {
+        value.tracker->reset();
+        value.head = value.pending = 0;
+        value.last_beat_sample = MM_ENGINE_NO_SAMPLE;
+        return 0;
+    });
+}
+
+int mm_engine_push(mm_engine* engine, const float* pcm, size_t count,
+                    size_t* accepted) {
+    if (accepted) {
+        *accepted = 0;
+    }
+    return component_guard(engine, [&](mm_engine& value) {
+        if (!accepted || count > 44100 ||
+            count > std::numeric_limits<size_t>::max() - value.tracker->produced -
+                    frame_size - hop_size) {
+            throw std::runtime_error("Invalid native input count or accepted output");
+        }
+        Tracker& tracker = *value.tracker;
+        const size_t end = tracker.produced + count;
+        const size_t rows = end > tracker.reference
+            ? (end - 1 - tracker.reference) / hop_size + 1 : 0;
+        if (rows > value.queue.size() - value.pending) {
+            return MM_ENGINE_FULL;
+        }
+        const size_t first_frame = tracker.frames;
+        double output[4 * 102];
+        const int produced = tracker.push(pcm, count, output, 102);
+        for (int i = 0; i < produced; ++i) {
+            const size_t position = (value.head + value.pending) % value.queue.size();
+            mm_engine_frame_v1& row = value.queue[position];
+            row.sample_index = static_cast<uint64_t>(first_frame + i) * hop_size;
+            row.activation = static_cast<float>(output[4 * i + 1]);
+            row.beat = output[4 * i + 2] != 0;
+            if (row.beat) {
+                value.last_beat_sample = row.sample_index;
+            }
+            ++value.pending;
+        }
+        *accepted = count;
+        return MM_ENGINE_OK;
+    });
+}
+
+int mm_engine_read(mm_engine* engine, mm_engine_frame_v1* output, size_t capacity) {
+    return component_guard(engine, [&](mm_engine& value) {
+        if (!output) {
+            if (capacity) {
+                throw std::runtime_error("Missing native engine frame output");
+            }
+            return static_cast<int>(value.pending);
+        }
+        const size_t count = std::min(capacity, value.pending);
+        for (size_t i = 0; i < count; ++i) {
+            output[i] = value.queue[(value.head + i) % value.queue.size()];
+        }
+        value.head = (value.head + count) % value.queue.size();
+        value.pending -= count;
+        return static_cast<int>(count);
+    });
+}
+
+int mm_engine_state(mm_engine* engine, mm_engine_state_v1* output) {
+    return component_guard(engine, [&](mm_engine& value) {
+        if (!output) {
+            throw std::runtime_error("Missing native engine state output");
+        }
+        const Tracker& tracker = *value.tracker;
+        const HMM& hmm = *tracker.hmm;
+        const std::vector<double>::const_iterator best =
+            std::max_element(hmm.previous.begin(), hmm.previous.end());
+        output->sample_index = tracker.frames
+            ? static_cast<uint64_t>(tracker.frames - 1) * hop_size : MM_ENGINE_NO_SAMPLE;
+        output->received_samples = tracker.produced;
+        output->last_beat_sample = value.last_beat_sample;
+        output->tempo_bpm = hmm.tempo;
+        output->reliability = *best;
+        output->state_index = static_cast<uint32_t>(best - hmm.previous.begin());
+        output->pending_frames = static_cast<uint32_t>(value.pending);
+        return MM_ENGINE_OK;
+    });
+}
+
 const char* mm_online_error(void) {
     return last_error.c_str();
 }

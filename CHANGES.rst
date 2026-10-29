@@ -6,6 +6,8 @@ Version 0.17.dev0
 
 New features:
 
+* Add opt-in causal bar tracking and training-free bass-accent activations.
+* Add causal spectral beat evidence, robust pulse state and rhythm reliability.
 * `PyFFTW` is used to speed up FFT computation (#363)
 * Sustain information of MIDI files is honoured (#370)
 * Python 3.7 support (#374)

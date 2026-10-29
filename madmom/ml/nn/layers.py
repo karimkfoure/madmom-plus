@@ -222,6 +222,10 @@ class FeedForwardLayer(Layer):
             Activations for this data.
 
         """
+        from ._native import layer as native_layer
+        out = native_layer(self, data)
+        if out is not None:
+            return out
         # weight input, add bias and apply activations function
         out = np.dot(data, self.weights) + self.bias
         if self.activation_fn is not None:
@@ -305,6 +309,11 @@ class RecurrentLayer(FeedForwardLayer):
             Activations for this data.
 
         """
+        from ._native import layer as native_layer
+        if isinstance(data, np.ndarray) and data.ndim == 2:
+            out = native_layer(self, data, reset)
+            if out is not None:
+                return out
         # reset layer to initial state
         if reset:
             self.reset()
@@ -552,6 +561,11 @@ class LSTMLayer(RecurrentLayer):
             Activations for this data.
 
         """
+        from ._native import layer as native_layer
+        if isinstance(data, np.ndarray) and data.ndim == 2:
+            out = native_layer(self, data, reset)
+            if out is not None:
+                return out
         # reset layer
         if reset:
             self.reset()

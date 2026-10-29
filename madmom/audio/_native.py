@@ -19,6 +19,7 @@ def _api():
         'create': ([dp, fp, ct.c_size_t], handle),
         'destroy': ([handle], None),
         'reset': ([handle], ct.c_int),
+        'history': ([handle, fp, ct.c_size_t], ct.c_int),
         'process': ([handle, fp, ct.c_size_t, fp], ct.c_int),
     }
     for name, (args, result) in signatures.items():
@@ -46,6 +47,7 @@ class NativeBeatFrontend(SequentialProcessor):
         self._handle = None
         self._key = None
         self._native_buffer = None
+        self._history = None
         # Fail immediately if a source installation omitted the required core.
         self._lib = _api()
 
@@ -59,27 +61,43 @@ class NativeBeatFrontend(SequentialProcessor):
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        for key in ('_handle', '_lib', '_key', '_native_buffer'):
+        for key in ('_handle', '_lib', '_key', '_native_buffer', '_history'):
             state.pop(key, None)
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
         self._handle, self._key, self._native_buffer = None, None, None
+        self._history = None
         self._lib = _api()
 
     def process(self, data, reset=True, **kwargs):
         from .filters import Filterbank
-        from .spectrogram import _diff_frames
-        from .stft import fft_frequencies
+        from .signal import FramedSignalProcessor
+        from .spectrogram import (FilteredSpectrogramProcessor,
+                                  LogarithmicSpectrogramProcessor,
+                                  Spectrogram, SpectrogramDifferenceProcessor,
+                                  _diff_frames)
+        from .stft import ShortTimeFourierTransformProcessor, fft_frequencies
 
         # Modified chains and precision modes without a matching native kernel
         # still use their existing processors.
-        if len(self) != 5 or kwargs:
+        expected = (FramedSignalProcessor, ShortTimeFourierTransformProcessor,
+                    FilteredSpectrogramProcessor, LogarithmicSpectrogramProcessor,
+                    SpectrogramDifferenceProcessor)
+        if (len(self) != 5 or kwargs or
+                any(type(processor) is not cls or 'process' in processor.__dict__
+                    for processor, cls in zip(self, expected))):
             return super(NativeBeatFrontend, self).process(data, reset=reset,
                                                           **kwargs)
         frames_processor, stft, filt, spec, diff = self
         frames = frames_processor(data)
+        if (not reset and diff._buffer is not None and
+                diff.diff_frames is not None and
+                len(frames) != diff._buffer.buffer_length - diff.diff_frames):
+            # Preserve the original buffer's fixed first-call length when a
+            # caller changes batch size without resetting the processor.
+            return super(NativeBeatFrontend, self).process(data, reset=reset)
         if (frames.shape[1:] != (2048,) or
                 frames.signal.dtype not in (np.dtype('int16'), np.dtype('float32')) or
                 stft.fft_size not in (None, 2048) or stft.circular_shift or
@@ -95,6 +113,8 @@ class NativeBeatFrontend(SequentialProcessor):
                 window = window / float(np.iinfo(frames.signal.dtype).max)
             stft.fft_window = np.ascontiguousarray(window, dtype=np.float64)
         window = np.ascontiguousarray(stft.fft_window, dtype=np.float64)
+        if window.shape != (2048,):
+            return super(NativeBeatFrontend, self).process(data, reset=reset)
         bank = filt.filterbank
         if inspect.isclass(bank) and issubclass(bank, Filterbank):
             bank = bank(fft_frequencies(1024, frames.signal.sample_rate),
@@ -110,7 +130,8 @@ class NativeBeatFrontend(SequentialProcessor):
         lag = diff.diff_frames
         # Byte keys also detect in-place edits to the public window/filterbank.
         key = (window.tobytes(), np.asarray(bank).tobytes(), lag)
-        if key != self._key:
+        reconfigured = key != self._key
+        if reconfigured:
             self._close()
             bank = np.ascontiguousarray(bank, dtype=np.float32)
             self._handle = self._lib.mm_frontend_create(
@@ -118,9 +139,15 @@ class NativeBeatFrontend(SequentialProcessor):
             if not self._handle:
                 raise ValueError(self._lib.mm_online_error().decode())
             self._key = key
-            reset = True
         if reset or diff._buffer is None:
             self._lib.mm_frontend_reset(self._handle)
+        else:
+            history = np.ascontiguousarray(diff._buffer.data[-lag:], dtype=np.float32)
+            if (reconfigured or diff._buffer is not self._native_buffer or
+                    not np.array_equal(history, self._history)):
+                if self._lib.mm_frontend_history(
+                        self._handle, _pointer(history), len(history)) < 0:
+                    raise ValueError(self._lib.mm_online_error().decode())
 
         result = np.empty((len(frames), 162), dtype=np.float32)
         block = np.empty((min(64, len(frames)), 2048), dtype=np.float32)
@@ -134,10 +161,15 @@ class NativeBeatFrontend(SequentialProcessor):
                 raise ValueError(self._lib.mm_online_error().decode())
         # Preserve the public difference processor's reset and history behavior.
         if len(result):
-            history = (np.asarray(diff._buffer.data)[-lag:]
-                       if not reset and diff._buffer is not None else
-                       np.full((lag, 81), np.inf, dtype=np.float32))
-            diff._buffer = BufferProcessor(init=np.concatenate(
-                (history, result[:, :81]), axis=0))
+            # A Spectrogram view keeps the original difference processor
+            # usable when callers change its settings or replace chain stages.
+            logged = result[:, :81].view(Spectrogram)
+            if reset or diff._buffer is None:
+                history = np.full((lag, 81), np.inf, dtype=np.float32)
+                initial = np.concatenate((history, logged), axis=0).view(Spectrogram)
+                diff._buffer = BufferProcessor(init=initial)
+            else:
+                diff._buffer(logged)
             self._native_buffer = diff._buffer
+            self._history = np.array(diff._buffer.data[-lag:], copy=True)
         return result

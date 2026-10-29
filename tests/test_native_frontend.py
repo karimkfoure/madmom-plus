@@ -20,12 +20,10 @@ def test_standard_frontend_uses_native_kernel():
     processor = frontend()
     audio = Signal(AUDIO_PATH + '/sample.wav', sample_rate=44100,
                    num_channels=1, dtype=np.float32)
-    # A successful call must not run the separate Python DSP stages.
-    with mock.patch.object(processor[1], 'process', side_effect=AssertionError('Python FFT')), \
-            mock.patch.object(processor[2], 'process', side_effect=AssertionError('Python filterbank')), \
-            mock.patch.object(processor[3], 'process', side_effect=AssertionError('Python logarithm')), \
-            mock.patch.object(processor[4], 'process', side_effect=AssertionError('Python difference')):
+    with mock.patch.object(processor._lib, 'mm_frontend_process',
+                           wraps=processor._lib.mm_frontend_process) as kernel:
         result = processor(audio)
+    kernel.assert_called()
     assert result.shape == (281, 162)
     assert processor._handle
 

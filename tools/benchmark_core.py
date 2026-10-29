@@ -123,6 +123,9 @@ def main():
     parser.add_argument('--repeats', type=int, default=5)
     parser.add_argument('--copies', type=int, default=10)
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--paired', action='store_true',
+                        help='Alternate variants in fresh processes for each trial')
+    parser.add_argument('--stages', choices=STAGES, nargs='+', default=STAGES)
     parser.add_argument('--stage', choices=STAGES)
     args = parser.parse_args()
     if args.stage:
@@ -144,6 +147,7 @@ def main():
                                    ('OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'MKL_NUM_THREADS')},
         },
         'settings': {'repeats': args.repeats, 'warmups': 1, 'audio_copies': args.copies,
+                     'paired_trials': args.paired,
                      'sample_rate': 44100, 'fps': 100,
                      'timing': 'Process CPU; excludes loading and initialization',
                      'memory': 'Fresh Linux process RSS per variant and stage; includes dependencies'},
@@ -156,20 +160,45 @@ def main():
                 ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         },
     }
-    for name, root in (('before', args.reference_root), ('after', args.package_root)):
-        stages = {}
-        for stage in STAGES:
-            result = subprocess.run([
-                sys.executable, str(Path(__file__).resolve()), '--stage', stage,
-                '--package-root', str(root.resolve()), '--repeats', str(args.repeats),
-                '--copies', str(args.copies)], capture_output=True, text=True)
-            if result.returncode:
-                raise RuntimeError(result.stderr)
-            stages[stage] = json.loads(result.stdout)
-            print('%s %s: %.6f CPU s/audio s, peak %.2f MiB' % (
-                name, stage, stages[stage]['cpu_seconds_per_audio_second'],
-                stages[stage]['peak_rss_bytes'] / 2 ** 20), flush=True)
-        report['variants'][name] = stages
+    variants = (('before', args.reference_root), ('after', args.package_root))
+
+    def measure(root, stage, repeats):
+        result = subprocess.run([
+            sys.executable, str(Path(__file__).resolve()), '--stage', stage,
+            '--package-root', str(root.resolve()), '--repeats', str(repeats),
+            '--copies', str(args.copies)], capture_output=True, text=True)
+        if result.returncode:
+            raise RuntimeError(result.stderr)
+        return json.loads(result.stdout)
+
+    if args.paired:
+        report['variants'] = {'before': {}, 'after': {}}
+        for stage in args.stages:
+            trials = {'before': [], 'after': []}
+            for trial in range(args.repeats):
+                order = variants if trial % 2 == 0 else variants[::-1]
+                for name, root in order:
+                    trials[name].append(measure(root, stage, 1))
+            for name, rows in trials.items():
+                result = rows[0].copy()
+                result['cpu_seconds'] = [row['cpu_seconds'][0] for row in rows]
+                result['cpu_seconds_per_audio_second'] = (
+                    statistics.median(result['cpu_seconds']) / result['audio_seconds'])
+                result['peak_rss_bytes'] = max(row['peak_rss_bytes'] for row in rows)
+                result['trials'] = rows
+                report['variants'][name][stage] = result
+                print('%s %s: %.6f CPU s/audio s, peak %.2f MiB' % (
+                    name, stage, result['cpu_seconds_per_audio_second'],
+                    result['peak_rss_bytes'] / 2 ** 20), flush=True)
+    else:
+        for name, root in variants:
+            stages = {}
+            for stage in args.stages:
+                stages[stage] = measure(root, stage, args.repeats)
+                print('%s %s: %.6f CPU s/audio s, peak %.2f MiB' % (
+                    name, stage, stages[stage]['cpu_seconds_per_audio_second'],
+                    stages[stage]['peak_rss_bytes'] / 2 ** 20), flush=True)
+            report['variants'][name] = stages
     report['source_sha256'] = {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for pattern in ('native/src/*.cpp', 'native/include/*.h', 'madmom/audio/_native.py',

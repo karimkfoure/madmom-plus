@@ -1,5 +1,5 @@
 Windowed online downbeat voting
-==============================
+===============================
 
 ``WindowedDownBeatTrackingProcessor`` adds delayed bar-position evidence to causal beat detections. It runs the released bidirectional downbeat network on completed audio windows. The network can use future context within a completed window, but it cannot read audio that has not arrived. The processor applies each result to subsequent beats and does not revise past events. This makes bar position available during a stream while preserving the causal beat grid.
 
@@ -32,7 +32,7 @@ The default runs window inference synchronously. This gives repeatable results i
 Use a context manager or call ``close()`` to release the owned beat backend and background worker. Supplied ``beat_processor`` instances remain caller-owned. Each processor instance must be used from one calling thread at a time.
 
 Vote on an existing beat grid
-----------------------------
+-----------------------------
 
 ``BarPhaseVotingProcessor`` accepts detected beat times and separately computed downbeat activations. This interface lets a caller select its own causal beat detector or schedule downbeat inference in a separate worker::
 

@@ -13,6 +13,7 @@ Madmom documentation
    usage
    tutorial
    online-processing
+   windowed-downbeats
    development
    native
    citation

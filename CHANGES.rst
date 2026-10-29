@@ -4,6 +4,7 @@ Release Notes
 Version 0.17.0.dev1 (madmom-plus)
 --------------------------------
 
+* Add opt-in rolling-window downbeat evidence, bar-phase voting with hysteresis and meter recovery, optional gap filling, and Python or native causal beat backends. Existing tracking defaults remain unchanged. See ``docs/windowed-downbeats.rst`` for timing, reliability and source provenance.
 * Rename the distribution to ``madmom-plus`` and keep the ``madmom`` Python import, processor classes, CLI names, and model references. Use a shared version file so source imports do not depend on installed distribution metadata.
 * Include all beat model years in wheels, including the 2019 TCN models. Fail with a clear submodule initialization command when model sources are missing.
 * Keep doctest output formatting stable on NumPy 2 and correct outdated example dtypes and one displayed FFT decimal. All upstream unit-test assertions and tolerances remain unchanged.

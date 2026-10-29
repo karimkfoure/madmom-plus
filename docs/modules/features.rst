@@ -17,5 +17,6 @@ Submodules
    features/key
    features/notes
    features/notes_hmm
+   features/online
    features/onsets
    features/tempo

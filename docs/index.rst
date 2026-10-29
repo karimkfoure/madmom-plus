@@ -12,6 +12,7 @@ Madmom documentation
    aarch64
    usage
    tutorial
+   online-processing
    development
    native
    citation

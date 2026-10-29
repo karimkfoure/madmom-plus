@@ -119,6 +119,32 @@ def _process_dbn(process_tuple):
     return process_tuple[0].viterbi(process_tuple[1])
 
 
+def _normalise_meter_weights(weights, num_meters):
+    """Validate and normalise a vector of non-negative meter weights."""
+    if weights is None:
+        if num_meters < 1:
+            raise ValueError('At least one meter is required.')
+        return np.full(num_meters, 1. / num_meters)
+    try:
+        raw = np.asarray(weights)
+        if not np.isrealobj(raw):
+            raise ValueError('Meter weights must be real numbers.')
+        weights = np.array(raw, dtype=float, copy=True)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError('beats_per_bar_weights must be a finite, '
+                         'non-negative vector with one value per meter.') from error
+    if (weights.ndim != 1 or len(weights) != num_meters or
+            not np.all(np.isfinite(weights)) or np.any(weights < 0) or
+            not np.any(weights > 0)):
+        raise ValueError('beats_per_bar_weights must be a finite, '
+                         'non-negative vector with one value per meter '
+                         'and a positive sum.')
+    # Scaling first prevents overflow when valid finite weights sum to inf.
+    weights /= np.max(weights)
+    weights /= np.sum(weights)
+    return weights
+
+
 class DBNDownBeatTrackingProcessor(Processor):
     """
     Downbeat tracking with RNNs and a dynamic Bayesian network (DBN)
@@ -154,6 +180,10 @@ class DBNDownBeatTrackingProcessor(Processor):
         (down-)beat activation function).
     fps : float, optional
         Frames per second.
+    beats_per_bar_weights : list or numpy array, optional
+        Non-negative meter prior weights, in the order of `beats_per_bar`.
+        Values are normalised to sum to one. Zero excludes a meter. The
+        default gives equal weights and preserves unweighted decoding.
     pool : multiprocessing.pool.Pool, optional
         Caller-owned worker pool. The processor does not close this pool.
         Without a supplied pool, parallel workers are created for each
@@ -205,11 +235,14 @@ class DBNDownBeatTrackingProcessor(Processor):
     def __init__(self, beats_per_bar, min_bpm=MIN_BPM, max_bpm=MAX_BPM,
                  num_tempi=NUM_TEMPI, transition_lambda=TRANSITION_LAMBDA,
                  observation_lambda=OBSERVATION_LAMBDA, threshold=THRESHOLD,
-                 correct=CORRECT, fps=None, *, pool=None, **kwargs):
+                 correct=CORRECT, fps=None, *, beats_per_bar_weights=None,
+                 pool=None, **kwargs):
         # pylint: disable=unused-argument
         # pylint: disable=no-name-in-module
         # expand arguments to arrays
         beats_per_bar = np.array(beats_per_bar, ndmin=1)
+        meter_weights = _normalise_meter_weights(beats_per_bar_weights,
+                                                 len(beats_per_bar))
         min_bpm = np.array(min_bpm, ndmin=1)
         max_bpm = np.array(max_bpm, ndmin=1)
         num_tempi = np.array(num_tempi, ndmin=1)
@@ -250,6 +283,7 @@ class DBNDownBeatTrackingProcessor(Processor):
             self.hmms.append(HiddenMarkovModel(tm, om))
         # save variables
         self.beats_per_bar = beats_per_bar
+        self.beats_per_bar_weights = meter_weights
         self.threshold = threshold
         self.correct = correct
         self.fps = fps
@@ -272,6 +306,9 @@ class DBNDownBeatTrackingProcessor(Processor):
         """
         # pylint: disable=arguments-differ
         import itertools as it
+        # Validate before decoding; getattr preserves older saved processors.
+        weights = _normalise_meter_weights(
+            getattr(self, 'beats_per_bar_weights', None), len(self.hmms))
         # use only the activations > threshold (init offset to be added later)
         first = 0
         if self.threshold:
@@ -288,8 +325,16 @@ class DBNDownBeatTrackingProcessor(Processor):
                 results = list(pool.map(_process_dbn, work))
         else:
             results = list(self.map(_process_dbn, work))
-        # choose the best HMM (highest log probability)
-        best = np.argmax(list(r[1] for r in results))
+        # Adapt the meter-selection prior from declension's PR #408,
+        # fd670e62a0438487f1965a69a5ed6576d291b191. Equal weights retain the
+        # exact original score comparison; excluded models cannot win ties.
+        scores = np.array([result[1] for result in results], dtype=float)
+        allowed = np.flatnonzero(weights > 0)
+        if not np.all(weights == weights[0]):
+            scores = scores[allowed] + np.log(weights[allowed])
+            best = allowed[np.argmax(scores)]
+        else:
+            best = np.argmax(scores)
         # the best path through the state space
         path, _ = results[best]
         # the state space and observation model of the best HMM
@@ -447,6 +492,310 @@ class DBNDownBeatTrackingProcessor(Processor):
                        help='output only the downbeats')
         # return the argument group so it can be modified if needed
         return g
+
+
+class CausalDownBeatActivationProcessor(Processor):
+    """
+    Form experimental downbeat evidence from causal bass accents.
+
+    Parameters
+    ----------
+    memory : float, optional
+        Effective averaging history, measured in summed beat probability.
+        Higher values make the bass reference level change more slowly.
+
+    Notes
+    -----
+    Input columns contain causal beat probability and non-negative bass-onset
+    salience. Salience can be positive spectral flux in a low-frequency band.
+    Each frame compares its salience with the previous running mean. The
+    mean update is weighted by beat probability so that gaps between beats
+    have little effect. The output columns are disjoint beat and downbeat
+    activations and sum to the input beat probability.
+
+    This training-free heuristic treats strong bass accents as possible bar
+    starts. Bass can be syncopated, and equal kicks provide no meter evidence.
+    The activations are not calibrated downbeat probabilities. Neither this
+    helper nor a decoder can turn a noncausal beat activation into a causal
+    audio pipeline.
+    """
+
+    def __init__(self, memory=8.):
+        try:
+            valid = (np.isscalar(memory) and np.isrealobj(memory) and
+                     np.isfinite(memory) and memory > 0)
+        except TypeError:
+            valid = False
+        if not valid:
+            raise ValueError('memory must be a finite positive number.')
+        self.memory = float(memory)
+        self.reset()
+
+    def reset(self):
+        """Reset the running bass reference level."""
+        self.mean_bass_salience = None
+
+    def process(self, data, reset=True, **kwargs):
+        """
+        Convert beat probability and bass salience to disjoint activations.
+
+        Parameters
+        ----------
+        data : numpy array, shape (num_frames, 2) or (2,)
+            Beat probability in the first column and non-negative bass-onset
+            salience in the second column. Both columns must be finite.
+        reset : bool, optional
+            Reset before processing. Use False for subsequent stream chunks.
+
+        Returns
+        -------
+        numpy array, shape (num_frames, 2)
+            Disjoint beat and downbeat activations for the online decoder.
+
+        """
+        data = np.asarray(data, dtype=float)
+        if data.shape == (2,):
+            data = data.reshape((1, 2))
+        if (data.ndim != 2 or data.shape[1] != 2 or
+                not np.all(np.isfinite(data)) or np.any(data < 0) or
+                np.any(data[:, 0] > 1)):
+            raise ValueError('Expected finite beat probability and '
+                             'non-negative bass salience with shape (N, 2).')
+        if reset:
+            self.reset()
+        result = np.empty_like(data)
+        for index, (beat, bass) in enumerate(data):
+            mean = self.mean_bass_salience
+            if mean is None and beat > 0 and bass > 0:
+                mean = bass
+            if bass == 0:
+                accent = 0.05
+            elif mean is None or mean == 0:
+                accent = 0.5
+            else:
+                # This ratio avoids overflow and is invariant to bass units.
+                scale = max(bass, mean)
+                accent = (bass / scale) / (bass / scale + mean / scale)
+                accent = np.clip(accent, 0.05, 0.95)
+            result[index, 0] = beat * (1. - accent)
+            result[index, 1] = beat * accent
+            if mean is not None:
+                alpha = -np.expm1(-beat / self.memory)
+                self.mean_bass_salience = (1. - alpha) * mean + alpha * bass
+        return result
+
+    process_online = process
+
+
+class OnlineDBNDownBeatTrackingProcessor(Processor):
+    """
+    Track beats and bar position with causal forward filtering.
+
+    Parameters
+    ----------
+    beats_per_bar : int or list
+        Allowed numbers of beats per bar.
+    min_bpm : float, optional
+        Minimum beat tempo [bpm].
+    max_bpm : float, optional
+        Maximum beat tempo [bpm].
+    num_tempi : int or None, optional
+        Number of logarithmically spaced beat intervals. None uses all
+        integer intervals in the tempo range.
+    transition_lambda : float, optional
+        Tempo transition parameter. Higher values prefer a constant tempo.
+    observation_lambda : float, optional
+        Inverse fraction of each beat interval occupied by beat states.
+    meter_change_probability : float, optional
+        Probability of changing meter at a bar boundary. All meters use the
+        same tempo states. Zero prevents meter changes within each path.
+    threshold : float, optional
+        Minimum sum of beat and downbeat probabilities to emit an event.
+        Filtering and the clock continue below this threshold.
+    fps : float
+        Activation frames per second.
+    beats_per_bar_weights : list or numpy array, optional
+        Non-negative initial meter weights, in the order of `beats_per_bar`.
+        Values are normalised to sum to one. Zero excludes a meter from the
+        filter. The default gives each meter equal initial probability.
+
+    Notes
+    -----
+    Input columns are mutually exclusive beat and downbeat probabilities,
+    as for :class:`DBNDownBeatTrackingProcessor`. The input must itself be
+    causal for the complete pipeline to be causal. The supplied
+    :class:`RNNDownBeatProcessor` uses bidirectional networks and does not
+    meet this condition. This processor does not include a causal downbeat
+    network or a music classifier.
+
+    A joint HMM compares the allowed meters with equal initial probability
+    unless `beats_per_bar_weights` is supplied. These weights initialise
+    the streaming filter; unlike the offline decoder's selection prior,
+    they are not added to a whole-recording score. Evidence and bar-boundary
+    transitions can change the meter posterior. Each event uses the current
+    maximum-posterior state. Events
+    have the current frame time and are never revised or aligned to a future
+    peak. A minimum interval of ``60 / max_bpm`` prevents duplicate events.
+    The processor retains only the filter state and uses fixed-size internal
+    blocks, so memory use does not grow with the recording length.
+
+    ``meter``, ``bar_position`` and ``period`` describe the latest state.
+    ``meter_probability`` is the posterior mass of the selected meter; it
+    is not a calibrated correctness or music-presence probability. Bar
+    position starts at zero, whereas returned beat numbers start at one.
+
+    Examples
+    --------
+    Pass causal activations in time order. The first call resets the state;
+    subsequent calls must use ``reset=False`` to continue the same stream.
+
+    >>> proc = OnlineDBNDownBeatTrackingProcessor([3, 4], fps=100)
+    >>> proc(np.empty((0, 2))).shape
+    (0, 2)
+    """
+
+    def __init__(self, beats_per_bar, min_bpm=55., max_bpm=215.,
+                 num_tempi=60, transition_lambda=100,
+                 observation_lambda=16, meter_change_probability=0.01,
+                 threshold=0.05, fps=None, beats_per_bar_weights=None):
+        meters = np.atleast_1d(np.asarray(beats_per_bar, dtype=float))
+        if (meters.ndim != 1 or not len(meters) or
+                not np.all(np.isfinite(meters)) or
+                np.any(meters < 1) or np.any(meters != np.floor(meters)) or
+                len(np.unique(meters)) != len(meters)):
+            raise ValueError('beats_per_bar must contain distinct positive '
+                             'integers.')
+        meter_weights = _normalise_meter_weights(beats_per_bar_weights,
+                                                 len(meters))
+        values = [fps, min_bpm, max_bpm, observation_lambda,
+                  transition_lambda, meter_change_probability, threshold]
+        try:
+            valid = all(np.isscalar(value) and np.isrealobj(value) and
+                        np.isfinite(value) for value in values)
+        except (TypeError, ValueError):
+            valid = False
+        if (not valid or fps <= 0 or min_bpm <= 0 or max_bpm < min_bpm or
+                observation_lambda <= 1 or transition_lambda < 0 or
+                not 0 <= meter_change_probability < 1 or
+                not 0 <= threshold <= 1):
+            raise ValueError('Invalid online downbeat tracking parameters.')
+        if num_tempi is not None and (not np.isscalar(num_tempi) or
+                                     not np.isfinite(num_tempi) or
+                                     num_tempi < 1 or
+                                     int(num_tempi) != num_tempi):
+            raise ValueError('num_tempi must be a positive integer or None.')
+        if num_tempi is not None:
+            num_tempi = int(num_tempi)
+        # Intervals shorter than one frame have no valid bar-pointer model.
+        if 60. * fps / max_bpm < 1:
+            raise ValueError('max_bpm must not exceed 60 * fps.')
+        self.beats_per_bar = meters.astype(int)
+        self.beats_per_bar_weights = meter_weights
+        allowed = np.flatnonzero(meter_weights > 0)
+        self._active_beats_per_bar = self.beats_per_bar[allowed]
+        self.fps = float(fps)
+        self.max_bpm = float(max_bpm)
+        self.threshold = float(threshold)
+        spaces = [BarStateSpace(meter, 60. * fps / max_bpm,
+                                60. * fps / min_bpm, num_tempi)
+                  for meter in self._active_beats_per_bar]
+        self.st = MultiPatternStateSpace(spaces)
+        transitions = [BarTransitionModel(space, transition_lambda)
+                       for space in spaces]
+        self.tm = MultiPatternTransitionModel(
+            transitions, float(meter_change_probability) or None)
+        self.om = RNNDownBeatTrackingObservationModel(
+            self.st, observation_lambda)
+        # Preserve the original floating-point state prior for equal weights.
+        # A uniform state prior would favour meters with more states.
+        active_weights = meter_weights[allowed]
+        if np.all(active_weights == active_weights[0]):
+            prior = np.concatenate([
+                np.full(space.num_states,
+                        1. / (len(spaces) * space.num_states))
+                for space in spaces])
+        else:
+            prior = np.concatenate([
+                np.full(space.num_states, weight / space.num_states)
+                for space, weight in zip(spaces, active_weights)])
+        self.hmm = HiddenMarkovModel(self.tm, self.om, prior)
+        self.reset()
+
+    def reset(self):
+        """Reset the filter, frame clock and published state."""
+        self.hmm.reset()
+        self.counter = 0
+        self.last_beat = -np.inf
+        self._last_beat_frame = -np.inf
+        self.meter = None
+        self.bar_position = np.nan
+        self.period = np.nan
+        self.meter_probability = 0.
+
+    def process(self, activations, reset=True, **kwargs):
+        """
+        Process causal beat and downbeat activations in time order.
+
+        Parameters
+        ----------
+        activations : numpy array, shape (num_frames, 2) or (2,)
+            Mutually exclusive beat and downbeat probabilities. Each row
+            must be finite, non-negative and sum to at most one.
+        reset : bool, optional
+            Reset before processing. Use False to continue the same stream.
+
+        Returns
+        -------
+        numpy array, shape (num_beats, 2)
+            Current-frame event times [seconds] and beat numbers within bars.
+
+        """
+        observations = np.asarray(activations, dtype=float)
+        if observations.shape == (2,):
+            observations = observations.reshape((1, 2))
+        if (observations.ndim != 2 or observations.shape[1] != 2 or
+                not np.all(np.isfinite(observations)) or
+                np.any(observations < 0) or np.any(observations > 1) or
+                np.any(observations.sum(axis=1) > 1. + 1e-6)):
+            raise ValueError('Expected finite beat/downbeat probabilities '
+                             'with shape (num_frames, 2) and row sums <= 1.')
+        if reset:
+            self.reset()
+        detections = []
+        # Regularise boundary probabilities to keep every forward step finite.
+        # No future-dependent normalization or activation thresholding occurs.
+        epsilon = 1e-8
+        for start in range(0, len(observations), 64):
+            raw = observations[start:start + 64]
+            block = np.maximum(raw, epsilon)
+            block /= np.maximum(1., block.sum(axis=1) / (1. - epsilon))[:, None]
+            forward = self.hmm.forward(block, reset=False)
+            states = forward.argmax(axis=1)
+            for offset, state in enumerate(states):
+                frame = self.counter + start + offset
+                time = frame / self.fps
+                if (self.om.pointers[state] and
+                        raw[offset].sum() >= self.threshold and
+                        frame - self._last_beat_frame >=
+                        60. * self.fps / self.max_bpm):
+                    detections.append((time,
+                                       int(self.st.state_positions[state]) + 1))
+                    self.last_beat = time
+                    self._last_beat_frame = frame
+            state = states[-1]
+            pattern = self.st.state_patterns[state]
+            # Older saved processors contain every meter in the state space.
+            active_meters = getattr(self, '_active_beats_per_bar',
+                                    self.beats_per_bar)
+            self.meter = int(active_meters[pattern])
+            self.bar_position = float(self.st.state_positions[state])
+            self.period = self.st.state_intervals[state] / self.fps
+            self.meter_probability = float(np.sum(
+                forward[-1, self.st.state_patterns == pattern]))
+        self.counter += len(observations)
+        return np.asarray(detections, dtype=float).reshape((-1, 2))
+
+    process_online = process
 
 
 class PatternTrackingProcessor(Processor):

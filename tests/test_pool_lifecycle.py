@@ -1,6 +1,7 @@
 """Downbeat decoding must release owned pools and preserve borrowed pools."""
 
 import io
+import inspect
 import multiprocessing as mp
 
 import numpy as np
@@ -95,3 +96,31 @@ def test_empty_input_does_not_create_workers(monkeypatch):
     np.testing.assert_array_equal(processor(num_threads=2)(np.empty((0, 2))),
                                   np.empty((0, 2)))
     assert workers == []
+
+
+@pytest.mark.parametrize('weights', [None, [1., 1.], [0., 1.], [9., 1.]])
+def test_meter_priors_match_across_pool_ownership(weights):
+    data = activations()
+    reference = processor(beats_per_bar_weights=weights)(data)
+    owned = processor(num_threads=2, beats_per_bar_weights=weights)
+    np.testing.assert_array_equal(owned(data), reference)
+    with mp.Pool(2) as pool:
+        borrowed = processor(num_threads=2, beats_per_bar_weights=weights,
+                             pool=pool)
+        np.testing.assert_array_equal(borrowed(data), reference)
+        assert pool.map(abs, [-2, 3]) == [2, 3]
+    if weights == [0., 1.]:
+        single_meter = DBNDownBeatTrackingProcessor(
+            [4], min_bpm=90, max_bpm=120, num_tempi=3, fps=10)
+        np.testing.assert_array_equal(reference, single_meter(data))
+
+
+def test_meter_prior_and_pool_keep_upstream_positional_signature():
+    parameters = inspect.signature(DBNDownBeatTrackingProcessor).parameters
+    positional = [name for name, parameter in parameters.items()
+                  if parameter.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD]
+    assert positional == [
+        'beats_per_bar', 'min_bpm', 'max_bpm', 'num_tempi', 'transition_lambda',
+        'observation_lambda', 'threshold', 'correct', 'fps']
+    for name in ('beats_per_bar_weights', 'pool'):
+        assert parameters[name].kind == inspect.Parameter.KEYWORD_ONLY

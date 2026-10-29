@@ -33,16 +33,6 @@ def worker(args):
     from madmom.audio.signal import Signal, FramedSignal
     from madmom.features.beats import RNNBeatProcessor, DBNBeatTrackingProcessor
 
-    binaries = {}
-    for name, module in (('hmm', madmom.ml.hmm),
-                         ('layers', madmom.ml.nn.layers)):
-        binaries[name] = hashlib.sha256(Path(module.__file__).read_bytes()).hexdigest()
-    try:
-        from madmom import _native
-        binaries['core'] = hashlib.sha256(Path(_native.__file__).read_bytes()).hexdigest()
-    except ImportError:
-        binaries['core'] = None
-
     def rss():
         return int(Path('/proc/self/statm').read_text().split()[1]) * os.sysconf('SC_PAGE_SIZE')
 
@@ -99,14 +89,24 @@ def worker(args):
         output = run()
         times.append(time.process_time() - start)
         del output
+    final_rss, measured_peak = rss(), peak_rss()
+    binaries = {}
+    for name, module in (('hmm', madmom.ml.hmm),
+                         ('layers', madmom.ml.nn.layers)):
+        binaries[name] = hashlib.sha256(Path(module.__file__).read_bytes()).hexdigest()
+    try:
+        from madmom import _native
+        binaries['core'] = hashlib.sha256(Path(_native.__file__).read_bytes()).hexdigest()
+    except ImportError:
+        binaries['core'] = None
     return {
         'stage': args.stage, 'audio_seconds': len(audio) / 44100,
         'cpu_seconds': times,
         'cpu_seconds_per_audio_second': statistics.median(times) / (len(audio) / 44100),
         'rss_before_creation_bytes': initial_rss,
         'rss_after_creation_bytes': ready_rss,
-        'rss_after_measurement_bytes': rss(),
-        'peak_rss_bytes': peak_rss(),
+        'rss_after_measurement_bytes': final_rss,
+        'peak_rss_bytes': measured_peak,
         'python': platform.python_version(), 'numpy': np.__version__,
         'scipy': scipy.__version__,
         'binary_sha256': binaries,

@@ -7,7 +7,7 @@ This file contains the setup for setuptools to distribute everything as a
 """
 
 import glob
-import os
+import sys
 from pathlib import Path
 from runpy import run_path
 
@@ -43,15 +43,18 @@ extensions = [
     ),
 ]
 
-# The streaming backend is opt-in so existing installations need no C++ compiler.
-if os.environ.get('MADMOM_BUILD_NATIVE') == '1':
-    extensions.append(Extension(
-        'madmom._native',
-        ['native/src/online.cpp', 'native/src/bindings.cpp'],
-        include_dirs=['native/include'],
-        language='c++',
-        extra_compile_args=['-std=c++17', '-O3', '-ffp-contract=off'],
-    ))
+# The online Python processors use this core. A failed native build must fail
+# installation, as it does for the existing Cython extensions.
+extensions.append(Extension(
+    'madmom._native',
+    ['native/src/online.cpp', 'native/src/nn.cpp',
+     'native/src/decoders.cpp', 'native/src/bindings.cpp'],
+    include_dirs=['native/include'],
+    define_macros=[('MADMOM_NATIVE_BUILD', '1')],
+    language='c++',
+    extra_compile_args=(['/std:c++17', '/O2', '/fp:strict'] if sys.platform == 'win32'
+                        else ['-std=c++17', '-O3', '-ffp-contract=off']),
+))
 
 # define scripts to be installed by the PyPI package
 scripts = glob.glob('bin/*')

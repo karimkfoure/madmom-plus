@@ -3,6 +3,8 @@ Causal pulse processing
 
 The online processors add bar tracking, spectral beat evidence, robust pulse state and an optional rhythm signal. Existing processors, model files and command-line defaults keep their behavior. Each new processor is opt-in.
 
+The `adoption record <online-adoption.md>`_ maps the online-lane ecosystem priorities to implemented changes, regression coverage and deferred research candidates. It records source authors, URLs, commits and licence limits.
+
 A causal pipeline uses only audio captured at or before each frame timestamp. A forward decoder cannot remove future information already used by its activation source. For example, the bundled downbeat networks are bidirectional. Their output is suitable for offline analysis, but does not supply causal input to the new bar decoder.
 
 Beat phase and period
@@ -62,6 +64,8 @@ Bar position
     downbeat_times = events[events[:, 1] == 1, 0]
 
 Use ``reset=False`` on both processors for later chunks. Check bar labels separately from beat alignment. A plausible meter posterior does not prove that the first beat of the bar is correct.
+
+Both downbeat decoders accept optional ``beats_per_bar_weights`` in the order of their meter list. Weights must be finite and non-negative, with at least one positive value. Equal weights retain the default. Zero excludes a meter. Offline decoding adds a log selection prior; online decoding assigns initial meter probability, which later evidence can change. These are different uses of a prior. Supply a preference only when the caller has evidence about meter.
 
 Rhythm evidence and abstention
 --------------------------------

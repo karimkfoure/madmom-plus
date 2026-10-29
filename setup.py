@@ -7,11 +7,10 @@ This file contains the setup for setuptools to distribute everything as a
 """
 
 import glob
-from distutils.extension import Extension
 
 import numpy as np
 from Cython.Build import cythonize, build_ext
-from setuptools import setup, find_packages
+from setuptools import Extension, setup, find_packages
 
 # define version
 version = '0.17.dev0'
@@ -69,7 +68,7 @@ classifiers = [
 
 # requirements
 requirements = [
-    'numpy>=1.13.4',
+    'numpy>=1.23.5',
     'scipy>=1.13',
     'mido>=1.2.6',
 ]
@@ -95,13 +94,13 @@ setup(
     url='https://github.com/CPJKU/madmom',
     license='BSD, CC BY-NC-SA',
     packages=find_packages(exclude=['tests', 'docs']),
-    ext_modules=cythonize(extensions),
+    ext_modules=cythonize(extensions, compiler_directives={'language_level': 3}),
     package_data={'madmom': package_data},
     exclude_package_data={'': ['tests', 'docs']},
     scripts=scripts,
     install_requires=requirements,
     cmdclass={'build_ext': build_ext},
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
+    python_requires='>=3.9',
+    extras_require={'test': ['pytest>=7']},
     classifiers=classifiers,
 )

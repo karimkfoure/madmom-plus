@@ -138,7 +138,7 @@ def main():
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--expected-glibc", default="2.36")
     parser.add_argument("--expected-id", default="debian")
-    parser.add_argument("--test-file", action="append")
+    parser.add_argument("--test-file", "--test-path", dest="test_file", action="append")
     parser.add_argument("--ffmpeg", type=Path)
     parser.add_argument("--ffprobe", type=Path)
     parser.add_argument("--probe-only", action="store_true")
@@ -214,10 +214,14 @@ def main():
                             ignore=shutil.ignore_patterns("__pycache__"))
             tests = args.test_file or default_tests(args.source)
             report["test_files"] = tests
-            report["test_source_sha256"] = {
-                name: hashlib.sha256((work / name).read_bytes()).hexdigest()
-                for name in tests
-            }
+            test_sources = {}
+            for selection in tests:
+                path = work / selection.split("::", 1)[0]
+                files = sorted(path.rglob("*.py")) if path.is_dir() else [path]
+                for source in files:
+                    name = source.relative_to(work).as_posix()
+                    test_sources[name] = hashlib.sha256(source.read_bytes()).hexdigest()
+            report["test_source_sha256"] = test_sources
             with (work / "tests.log").open("w") as log:
                 result = subprocess.run(command + [python, "-m", "pytest", "-q"] + tests + ["--tb=short"],
                                         stdout=log, stderr=subprocess.STDOUT, env=environment)

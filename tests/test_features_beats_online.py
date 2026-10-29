@@ -154,18 +154,22 @@ class TestOnlineBeatStreaming(unittest.TestCase):
 
     def test_long_input_bounds_forward_storage(self):
         processor = self.processor()
-        forward = processor.hmm.forward
+        forward = processor.hmm.forward_states
         lengths = []
 
         def record(block, **kwargs):
             lengths.append(len(block))
-            return forward(block, **kwargs)
+            states = forward(block, **kwargs)
+            self.assertEqual(states.shape, (len(block),))
+            self.assertEqual(states.dtype, np.uint32)
+            return states
 
-        with patch.object(processor.hmm, 'forward', side_effect=record):
+        with patch.object(processor.hmm, 'forward_states', side_effect=record), \
+                patch.object(processor.hmm, 'forward',
+                             side_effect=AssertionError('dense posterior allocation')):
             result = processor(self.activations)
         self.assertGreater(len(result), 10)
-        self.assertGreater(len(lengths), 1)
-        self.assertLessEqual(max(lengths), 64)
+        self.assertEqual(lengths, [len(self.activations)])
 
     def test_prefix_cannot_use_future_activations(self):
         expected = self.processor()(self.activations[:217])

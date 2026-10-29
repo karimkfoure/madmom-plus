@@ -561,7 +561,7 @@ class RNNBeatTrackingObservationModel(ObservationModel):
         """
         # cast as 1-dimensional array
         # Note: in online mode, observations are just float values
-        observations = np.array(observations, copy=False, subok=True, ndmin=1)
+        observations = np.atleast_1d(observations)
         # init densities
         log_densities = np.empty((len(observations), 2), dtype=float)
         # Note: it's faster to call np.log 2 times instead of once on the

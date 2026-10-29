@@ -7,6 +7,7 @@ Version 0.17.0.dev1 (madmom-plus)
 * Build with PEP 517 and Cython 3, using NumPy 2 headers. Use public C declarations so the extensions do not depend on removed NumPy declarations.
 * Use setuptools instead of the removed standard-library distutils module. Include Cython declaration files in source distributions and declare a test extra for modern pip workflows.
 * Align dependency requirements: Python 3.9 or newer, NumPy 1.23.5 or newer at runtime, and SciPy 1.13 or newer. The isolated build requires NumPy 2 or newer.
+* Accept scalar beat observations with NumPy 2 and decode microphone bytes with ``frombuffer``. Remove obsolete SciPy version checks and use current SciPy import paths and NumPy output arguments.
 
 
 Version 0.17.dev0

@@ -69,7 +69,7 @@ class HarmonicPercussiveSourceSeparation(Processor):
             Percussive slice.
 
         """
-        from scipy.ndimage.filters import median_filter
+        from scipy.ndimage import median_filter
         # compute the harmonic and percussive slices
         harmonic_slice = median_filter(data, self.harmonic_filter)
         percussive_slice = median_filter(data, self.percussive_filter)

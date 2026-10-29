@@ -175,6 +175,10 @@ class TestNativeBeatTracker(unittest.TestCase):
             with self.subTest(audio=repr(audio)):
                 with self.assertRaises((ValueError, RuntimeError)):
                     tracker.push(audio)
+        invalid_tail = np.zeros(44101, dtype=np.float32)
+        invalid_tail[-1] = np.nan
+        with self.assertRaises(ValueError):
+            tracker.push(invalid_tail)
         np.testing.assert_array_equal(tracker.push(self.audio),
                                        self.tracker().push(self.audio))
         for activation in (-0.1, 1.1, np.nan, np.inf):

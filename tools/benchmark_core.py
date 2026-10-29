@@ -123,11 +123,16 @@ def worker(args):
         'binary_sha256': binaries,
         'network_module_sha256': hashlib.sha256(
             Path(madmom.ml.nn.__file__).read_bytes()).hexdigest(),
+        'streaming_wrapper_sha256': hashlib.sha256(
+            Path(sys.modules['madmom.native'].__file__).read_bytes()).hexdigest(),
         'engine_chunk_samples': chunk_size,
         'engine_configuration': ({'networks': 8, 'precision': 'float32', 'simd': False}
                                  if chunk_size else None),
         'push_calls_per_run': ((len(audio) + chunk_size - 1) // chunk_size
                                if chunk_size else None),
+        'cpu_microseconds_per_push': (
+            statistics.median(times) * 1e6 /
+            ((len(audio) + chunk_size - 1) // chunk_size) if chunk_size else None),
     }
 
 
@@ -201,6 +206,10 @@ def main():
                 result['cpu_seconds_per_audio_second'] = (
                     statistics.median(result['cpu_seconds']) / result['audio_seconds'])
                 result['peak_rss_bytes'] = max(row['peak_rss_bytes'] for row in rows)
+                if result.get('push_calls_per_run'):
+                    result['cpu_microseconds_per_push'] = (
+                        statistics.median(result['cpu_seconds']) * 1e6 /
+                        result['push_calls_per_run'])
                 result['trials'] = rows
                 report['variants'][name][stage] = result
                 print('%s %s: %.6f CPU s/audio s, peak %.2f MiB' % (
@@ -221,6 +230,7 @@ def main():
                         'madmom/ml/nn/_native.py', 'madmom/ml/nn/__init__.py',
                         'madmom/ml/nn/layers.py', 'madmom/ml/hmm.pyx', 'madmom/features/beats.py',
                         'madmom/_native_decoders.py', 'madmom/features/onsets.py',
+                        'madmom/native.py',
                         'setup.py', 'tools/benchmark_core.py')
         for path in ROOT.glob(pattern)}
     args.output.parent.mkdir(parents=True, exist_ok=True)

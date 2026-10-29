@@ -153,7 +153,7 @@ class NativeBeatTracker:
         return self._handle
 
     @staticmethod
-    def _input(values, size=None):
+    def _input(values, size=None, check_finite=True):
         values = np.asarray(values)
         if values.ndim != 1 or (size is not None and values.size != size):
             raise ValueError('Input must be a one-dimensional array' +
@@ -162,7 +162,7 @@ class NativeBeatTracker:
             raise ValueError('Input must use floating point PCM or features')
         with np.errstate(over='ignore', invalid='ignore'):
             values = np.ascontiguousarray(values, dtype=np.float32)
-        if not np.all(np.isfinite(values)):
+        if check_finite and not np.all(np.isfinite(values)):
             raise ValueError('Input must contain finite float32 values')
         return values
 
@@ -181,16 +181,30 @@ class NativeBeatTracker:
         use the usual -1 to +1 PCM scale. Chunk boundaries do not change output.
         """
         handle = self._open()
-        audio = self._input(audio)
+        audio = self._input(audio, check_finite=False)
+        if not len(audio):
+            return np.empty((0, 4), dtype=np.float64)
+        if len(audio) <= 44100:
+            # The C entry point validates the entire chunk before consuming it.
+            return self._push_chunk(handle, audio)
+        # Validate a multi-chunk call before its first state update, including
+        # an invalid value near the end of a long input.
+        if not np.all(np.isfinite(audio)):
+            raise ValueError('Input must contain finite float32 values')
         outputs = []
         for start in range(0, len(audio), 44100):
             chunk = audio[start:start + 44100]
-            output = np.empty((len(chunk) // 441 + 2, 4), dtype=np.float64)
-            count = self._check(self._lib.mm_online_push(
-                handle, self._float_pointer(chunk), len(chunk),
-                self._double_pointer(output), len(output)))
-            outputs.append(output[:count])
-        return np.concatenate(outputs) if outputs else np.empty((0, 4), dtype=np.float64)
+            outputs.append(self._push_chunk(handle, chunk))
+        return np.concatenate(outputs)
+
+    def _push_chunk(self, handle, audio):
+        # An interval of N input samples contains at most ceil(N / 441) frame
+        # references, independent of the current sample-clock phase.
+        output = np.empty(((len(audio) + 440) // 441, 4), dtype=np.float64)
+        count = self._check(self._lib.mm_online_push(
+            handle, self._float_pointer(audio), len(audio),
+            self._double_pointer(output), len(output)))
+        return output if count == len(output) else output[:count].copy()
 
     def features(self, frame):
         """Process one causal 2048-sample frame; update spectral difference state."""

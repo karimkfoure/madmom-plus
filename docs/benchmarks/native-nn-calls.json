@@ -1,0 +1,413 @@
+{
+  "schema_version": 1,
+  "host": {
+    "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "architecture": "x86_64",
+    "cpu_affinity": [
+      5
+    ],
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "settings": {
+    "repeats": 7,
+    "warmups": 1,
+    "frames": 687,
+    "networks": 8,
+    "audio_seconds": 6.8507256235827665,
+    "scope": "Concatenate stored public features, reset once per trial, process one frame per call; exclude loading and construction",
+    "comparison": "Load the reference Python ctypes adapter and inherited sequential ensemble dispatcher; both variants use the current shared C++ inference binary",
+    "profiling": "Collect separate cProfile diagnostics after timing; profile counters include profiler overhead"
+  },
+  "provenance": {
+    "reference_revision": "38c4b6371049daa24ba537c197908b4d2102bd46",
+    "current_revision": "0750259465b08d832857372460972503d96e96ce",
+    "reference_adapter_sha256": "3672a6b4973b82e548110a87df386d48545ae8161879c8b93d91aa50a4ffcf43",
+    "source_sha256": {
+      "madmom/ml/nn/_native.py": "b1343259304ebfb0408c1782572d2056d71ca907c7a5532756124f64a6b5434d",
+      "madmom/ml/nn/__init__.py": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+      "native/src/nn.cpp": "0c39659fd087cb79854497b4a87e17aac45e85d7ec41762d5b1e70a25442860f",
+      "native/src/nn_bindings.cpp": "54b6189ebc5afa92d638e1e3aa2ad56fb01a0ccb4f4ffc5c250304b26573a84a",
+      "native/src/bindings.cpp": "b75d153e301794745dd71f3f4e2286eadb991ead067d85f969d71391c5150e09",
+      "tools/benchmark_nn_calls.py": "3faf9a82598407c3439c84a87c7b77385e06210494fa4b40e8a2d79ed1c3ea6e"
+    },
+    "binary_sha256": "60d32c80a9f4aa4aff905143dd77a39bf5368ed9641572dbf244385bc8b870fb",
+    "features_sha256": "64a6745ce42fc250c07bbd64109cf55395a5fea0952a2ae41d834aa0ce0750f5",
+    "fixtures": {
+      "sample.npz": "781c3b9400bc94c5444ee89f7bf5b8d59626a8d0bffcf64119ffb10d9ebd2bfe",
+      "sample2.npz": "5e2c7dd798d3316d3106a915e0cb9d607a2de24df46a6a08bc247f727c594c2e"
+    },
+    "model_sha256": {
+      "beats_lstm_1.pkl": "baab78a188d220d6972fdb91040f375ae711d96489bdb471ff7268124cc47725",
+      "beats_lstm_2.pkl": "af222e0cb79f49b680a87952e13dd755b71f5b81128b3318d4e99bdd458dba26",
+      "beats_lstm_3.pkl": "fc54ea5248fca54385312e17974cac07ca4a1a97432dc1dd1c02c364b4cd717a",
+      "beats_lstm_4.pkl": "7a355cf7167607f3543e73b8b2ba06ffa481d1cd7443376d4e3378ef6d28f1ae",
+      "beats_lstm_5.pkl": "849d563129e1b77df72c9b5e0d13a02f5a3eeffe3189b91a3edb73f864dc19c9",
+      "beats_lstm_6.pkl": "cae69664e3058ad3fed74dcd53414284096913cae8c9b2726375a555701202c8",
+      "beats_lstm_7.pkl": "bbc47b60c3c7e3f2026e234847aa91b41d3faf8cc61f81b8f523c4567a7b6c46",
+      "beats_lstm_8.pkl": "78459e9ef8af334ffa88eb8a36ababf04e51d7abdad2daaabd56dd99ccad2f3e"
+    }
+  },
+  "variants": {
+    "before": {
+      "cpu_seconds": [
+        0.18908418100000002,
+        0.18910034100000006,
+        0.19285364000000005,
+        0.19064892600000016,
+        0.18938386299999999,
+        0.18930495400000025,
+        0.19019615700000037
+      ],
+      "median_cpu_seconds": 0.18938386299999999,
+      "microseconds_per_hop": 275.66792285298396,
+      "cpu_seconds_per_audio_second": 0.027644350891542015,
+      "profile": [
+        {
+          "file": "reference/madmom/ml/nn/_native.py",
+          "line": 151,
+          "function": "valid",
+          "calls": 5496,
+          "self_seconds": 0.13494297400000002,
+          "cumulative_seconds": 0.162541559
+        },
+        {
+          "file": "reference/madmom/ml/nn/_native.py",
+          "line": 175,
+          "function": "run",
+          "calls": 5496,
+          "self_seconds": 0.123438948,
+          "cumulative_seconds": 0.15319776200000002
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.getattr>",
+          "calls": 307776,
+          "self_seconds": 0.019461972,
+          "cumulative_seconds": 0.019461972
+        },
+        {
+          "file": "madmom/ml/nn/__init__.py",
+          "line": 95,
+          "function": "process",
+          "calls": 5496,
+          "self_seconds": 0.013013021000000001,
+          "cumulative_seconds": 0.35180110400000003
+        },
+        {
+          "file": "reference/madmom/ml/nn/_native.py",
+          "line": 209,
+          "function": "network",
+          "calls": 5496,
+          "self_seconds": 0.010562745,
+          "cumulative_seconds": 0.336691987
+        },
+        {
+          "file": "reference/madmom/ml/nn/_native.py",
+          "line": 171,
+          "function": "<genexpr>",
+          "calls": 82440,
+          "self_seconds": 0.007605096,
+          "cumulative_seconds": 0.007605096
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'copy' of 'numpy.ndarray' objects>",
+          "calls": 32976,
+          "self_seconds": 0.007604002,
+          "cumulative_seconds": 0.007604002
+        },
+        {
+          "file": "madmom/processors.py",
+          "line": 260,
+          "function": "_process",
+          "calls": 6870,
+          "self_seconds": 0.006387327000000001,
+          "cumulative_seconds": 0.36970661800000004
+        },
+        {
+          "file": "_internal.py",
+          "line": 263,
+          "function": "__init__",
+          "calls": 10992,
+          "self_seconds": 0.005194441,
+          "cumulative_seconds": 0.005194441
+        },
+        {
+          "file": "shape_base.py",
+          "line": 78,
+          "function": "atleast_2d",
+          "calls": 5496,
+          "self_seconds": 0.005135451,
+          "cumulative_seconds": 0.006444153
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.setattr>",
+          "calls": 32976,
+          "self_seconds": 0.00417512,
+          "cumulative_seconds": 0.00417512
+        },
+        {
+          "file": "madmom/processors.py",
+          "line": 125,
+          "function": "__call__",
+          "calls": 6870,
+          "self_seconds": 0.003875635,
+          "cumulative_seconds": 0.371152596
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sum>",
+          "calls": 687,
+          "self_seconds": 0.0030690690000000002,
+          "cumulative_seconds": 0.0030690690000000002
+        },
+        {
+          "file": "reference/madmom/ml/nn/_native.py",
+          "line": 152,
+          "function": "<genexpr>",
+          "calls": 27480,
+          "self_seconds": 0.003055621,
+          "cumulative_seconds": 0.003055621
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.isinstance>",
+          "calls": 51525,
+          "self_seconds": 0.003051817,
+          "cumulative_seconds": 0.003051817
+        },
+        {
+          "file": "multiarray.py",
+          "line": 1085,
+          "function": "copyto",
+          "calls": 32976,
+          "self_seconds": 0.002832344,
+          "cumulative_seconds": 0.002832344
+        },
+        {
+          "file": "madmom/processors.py",
+          "line": 470,
+          "function": "process",
+          "calls": 687,
+          "self_seconds": 0.002536698,
+          "cumulative_seconds": 0.363176826
+        },
+        {
+          "file": "weakref.py",
+          "line": 451,
+          "function": "get",
+          "calls": 5496,
+          "self_seconds": 0.002379598,
+          "cumulative_seconds": 0.0031755890000000004
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method numpy.empty>",
+          "calls": 5496,
+          "self_seconds": 0.002372973,
+          "cumulative_seconds": 0.002372973
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.len>",
+          "calls": 29541,
+          "self_seconds": 0.0020624610000000002,
+          "cumulative_seconds": 0.0020624610000000002
+        }
+      ]
+    },
+    "after": {
+      "cpu_seconds": [
+        0.13300842000000002,
+        0.12627245599999992,
+        0.12490004199999993,
+        0.12304971099999995,
+        0.12253249099999985,
+        0.1222442909999999,
+        0.12304886999999987
+      ],
+      "median_cpu_seconds": 0.12304971099999995,
+      "microseconds_per_hop": 179.11166084425028,
+      "cpu_seconds_per_audio_second": 0.017961558783848634,
+      "profile": [
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method madmom._native.mm_nn_process_many>",
+          "calls": 687,
+          "self_seconds": 0.098702407,
+          "cumulative_seconds": 0.098702407
+        },
+        {
+          "file": "madmom/ml/nn/_native.py",
+          "line": 240,
+          "function": "ensemble",
+          "calls": 687,
+          "self_seconds": 0.008440209,
+          "cumulative_seconds": 0.121194297
+        },
+        {
+          "file": "madmom/ml/nn/__init__.py",
+          "line": 184,
+          "function": "process",
+          "calls": 687,
+          "self_seconds": 0.00331466,
+          "cumulative_seconds": 0.13016038200000002
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.sum>",
+          "calls": 687,
+          "self_seconds": 0.002718987,
+          "cumulative_seconds": 0.002718987
+        },
+        {
+          "file": "madmom/ml/nn/_native.py",
+          "line": 267,
+          "function": "<listcomp>",
+          "calls": 687,
+          "self_seconds": 0.002351817,
+          "cumulative_seconds": 0.0038773690000000003
+        },
+        {
+          "file": "weakref.py",
+          "line": 451,
+          "function": "get",
+          "calls": 5496,
+          "self_seconds": 0.001571108,
+          "cumulative_seconds": 0.002073642
+        },
+        {
+          "file": "madmom/ml/nn/_native.py",
+          "line": 272,
+          "function": "<listcomp>",
+          "calls": 687,
+          "self_seconds": 0.001402117,
+          "cumulative_seconds": 0.001987019
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method numpy.empty>",
+          "calls": 5496,
+          "self_seconds": 0.0012235940000000002,
+          "cumulative_seconds": 0.0012235940000000002
+        },
+        {
+          "file": "madmom/ml/nn/_native.py",
+          "line": 270,
+          "function": "<genexpr>",
+          "calls": 6183,
+          "self_seconds": 0.001136155,
+          "cumulative_seconds": 0.0016650880000000001
+        },
+        {
+          "file": "madmom/ml/nn/_native.py",
+          "line": 248,
+          "function": "<genexpr>",
+          "calls": 6183,
+          "self_seconds": 0.001030592,
+          "cumulative_seconds": 0.001030592
+        },
+        {
+          "file": "madmom/ml/nn/__init__.py",
+          "line": 43,
+          "function": "avg",
+          "calls": 687,
+          "self_seconds": 0.000980393,
+          "cumulative_seconds": 0.0037419650000000003
+        },
+        {
+          "file": "madmom/processors.py",
+          "line": 125,
+          "function": "__call__",
+          "calls": 687,
+          "self_seconds": 0.000771092,
+          "cumulative_seconds": 0.13093147400000002
+        },
+        {
+          "file": "tools/benchmark_nn_calls.py",
+          "line": 99,
+          "function": "<listcomp>",
+          "calls": 1,
+          "self_seconds": 0.0006525000000000001,
+          "cumulative_seconds": 0.13158397400000002
+        },
+        {
+          "file": "shape_base.py",
+          "line": 78,
+          "function": "atleast_2d",
+          "calls": 687,
+          "self_seconds": 0.0006290530000000001,
+          "cumulative_seconds": 0.0008004640000000001
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'append' of 'list' objects>",
+          "calls": 11679,
+          "self_seconds": 0.000617352,
+          "cumulative_seconds": 0.000617352
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'ravel' of 'numpy.ndarray' objects>",
+          "calls": 5496,
+          "self_seconds": 0.000584902,
+          "cumulative_seconds": 0.000584902
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.any>",
+          "calls": 687,
+          "self_seconds": 0.000578148,
+          "cumulative_seconds": 0.00160874
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'get' of 'dict' objects>",
+          "calls": 6183,
+          "self_seconds": 0.000567532,
+          "cumulative_seconds": 0.000567532
+        },
+        {
+          "file": "madmom/ml/nn/__init__.py",
+          "line": 18,
+          "function": "average_predictions",
+          "calls": 687,
+          "self_seconds": 0.0005500570000000001,
+          "cumulative_seconds": 0.004402086
+        },
+        {
+          "file": "madmom/processors.py",
+          "line": 260,
+          "function": "_process",
+          "calls": 687,
+          "self_seconds": 0.000542237,
+          "cumulative_seconds": 0.005046973000000001
+        }
+      ]
+    }
+  },
+  "speedup": 1.5390841755004208,
+  "activation_max_abs_error": 0.0
+}

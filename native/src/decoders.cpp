@@ -55,22 +55,26 @@ int hmm_forward(
             return -2;
         }
         const double reciprocal = 1. / sum;
-        for (size_t state = 0; state < num_states; ++state) {
-            current[state] *= reciprocal;
-            previous[state] = current[state];
-        }
         if (output_states) {
             size_t best = 0;
-            for (size_t state = 1; state < num_states; ++state) {
-                // NumPy argmax selects the first NaN for an impossible path.
-                if (current[state] > current[best] ||
-                    (std::isnan(current[state]) &&
-                     !std::isnan(current[best]))) {
+            for (size_t state = 0; state < num_states; ++state) {
+                current[state] *= reciprocal;
+                previous[state] = current[state];
+                // Compare after normalization, because rounding can create
+                // ties. NumPy argmax selects the first tie and first NaN.
+                if (state && (current[state] > current[best] ||
+                    (std::isnan(current[state]) && !std::isnan(current[best])))) {
                     best = state;
                 }
             }
             output_states[frame] = static_cast<uint32_t>(best);
+        } else {
+            for (size_t state = 0; state < num_states; ++state) {
+                current[state] *= reciprocal;
+                previous[state] = current[state];
+            }
         }
+
     }
     return 0;
 }

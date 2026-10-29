@@ -7,7 +7,8 @@ import pytest
 
 from madmom import _native_decoders
 from madmom.features.onsets import OnsetPeakPickingProcessor, peak_picking
-from madmom.ml.hmm import DiscreteObservationModel, HiddenMarkovModel
+from madmom.ml.hmm import (DiscreteObservationModel, HiddenMarkovModel,
+                           ObservationModel)
 from tests.test_ml_hmm import (CORRECT_FWD, OBS_PROB, OBS_SEQ, PRIOR,
                                TRANSITIONS, TransitionModel)
 
@@ -135,3 +136,43 @@ def test_online_peak_processor_uses_native_and_preserves_reset():
         kernel.assert_called_once()
     np.testing.assert_array_equal(expected, [0.01, 0.04, 0.06])
     np.testing.assert_array_equal(processor(values, reset=True), expected)
+
+
+class ArrayObservationModel(ObservationModel):
+    def densities(self, observations):
+        return np.asarray(observations, dtype=np.float64)
+
+
+def test_forward_state_selection_matches_normalized_dense_rows():
+    rng = np.random.default_rng(26029)
+    for trial in range(100):
+        size = int(rng.integers(1, 17))
+        transitions = rng.random((size, size))
+        transitions /= transitions.sum(axis=0)
+        model = TransitionModel(
+            np.tile(np.arange(size, dtype=np.uint32), size),
+            np.arange(0, size * size + 1, size, dtype=np.uint32),
+            transitions.ravel())
+        pointers = rng.integers(0, 3, size=size, dtype=np.uint32)
+        prior = rng.random(size)
+        prior /= prior.sum()
+        observations = rng.random((20, 3))
+        if trial % 5 == 1:
+            observations[5] = 0  # Impossible paths retain upstream NaNs.
+        elif trial % 5 == 2:
+            observations -= .5  # Custom densities can change normalization sign.
+        elif trial % 5 == 3:
+            observations[5, 0] = np.nan
+        elif trial % 5 == 4:
+            observations[5, 1] = np.inf
+        hmm = HiddenMarkovModel(model, ArrayObservationModel(pointers), prior)
+        dense = hmm.forward(observations)
+        selected = hmm.forward_states(observations)
+        np.testing.assert_array_equal(selected, dense.argmax(axis=1))
+        np.testing.assert_array_equal(hmm._prev, dense[-1])
+    # Equal normalized rows must choose the first state.
+    model = TransitionModel(np.arange(3, dtype=np.uint32),
+                            np.arange(4, dtype=np.uint32), np.ones(3))
+    hmm = HiddenMarkovModel(model, ArrayObservationModel(
+        np.zeros(3, dtype=np.uint32)), np.full(3, 1. / 3))
+    np.testing.assert_array_equal(hmm.forward_states(np.ones((4, 1))), 0)

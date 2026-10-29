@@ -81,6 +81,14 @@ class TestNativeFrontendCompatibility(unittest.TestCase):
             chain[3].mul = 1
         self.assert_same(native, reference, frame=22, reset=False)
 
+    def test_empty_reset_keeps_original_buffer_length(self):
+        native, reference = self.frontends(streaming=False)
+        empty = Signal(np.empty(0, np.float32), sample_rate=44100)
+        for chain in (native, reference):
+            self.assertEqual(chain(empty, reset=True).shape, (0, 162))
+        self.assert_same(native, reference, reset=False)
+        self.assert_same(native, reference, reset=True)
+
     def test_keyword_fallback_and_native_resume_keep_history(self):
         native, reference = self.frontends()
         self.assert_same(native, reference, frame=20, reset=True)

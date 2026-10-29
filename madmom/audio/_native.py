@@ -136,7 +136,7 @@ class NativeBeatFrontend(SequentialProcessor):
                     history if start == 0 else None,
                     clear_history if start == 0 else False)
         # Preserve the public difference processor's reset and history behavior.
-        if len(result):
+        if len(result) or reset or diff._buffer is None:
             # A Spectrogram view keeps the original difference processor
             # usable when callers change its settings or replace chain stages.
             logged = result[:, :81].view(Spectrogram)

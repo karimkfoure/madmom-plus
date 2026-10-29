@@ -1,0 +1,3124 @@
+{
+  "schema_version": 1,
+  "host": {
+    "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+    "architecture": "x86_64",
+    "affinity": [
+      3
+    ],
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "settings": {
+    "repeats": 5,
+    "warmups": 1,
+    "audio_copies": 10,
+    "paired_trials": true,
+    "sample_rate": 44100,
+    "fps": 100,
+    "timing": "Process CPU; excludes loading and initialization",
+    "memory": "Fresh Linux process RSS per variant and stage; includes dependencies"
+  },
+  "audio_sha256": {
+    "sample.wav": "d06b3c39384c4a0cf59f0bd326eda2443edf668fbb90647e37c801e59602866c",
+    "sample2.wav": "b1f19c0a668a6db867d9e277e72dce279830eb93e73e78751645698d8eb9caf5"
+  },
+  "variants": {
+    "before": {
+      "bulk": {
+        "stage": "bulk",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.812959357,
+          0.818231556,
+          0.8222200559999999,
+          0.804954572,
+          0.8154642969999999
+        ],
+        "cpu_seconds_per_audio_second": 0.011903327352548844,
+        "rss_before_creation_bytes": 68558848,
+        "rss_after_creation_bytes": 87482368,
+        "rss_after_measurement_bytes": 100233216,
+        "peak_rss_bytes": 100286464,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.812959357
+            ],
+            "cpu_seconds_per_audio_second": 0.011866762758699443,
+            "rss_before_creation_bytes": 68558848,
+            "rss_after_creation_bytes": 87482368,
+            "rss_after_measurement_bytes": 100233216,
+            "peak_rss_bytes": 100233216,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.818231556
+            ],
+            "cpu_seconds_per_audio_second": 0.011943721015235819,
+            "rss_before_creation_bytes": 68538368,
+            "rss_after_creation_bytes": 87531520,
+            "rss_after_measurement_bytes": 100286464,
+            "peak_rss_bytes": 100286464,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.8222200559999999
+            ],
+            "cpu_seconds_per_audio_second": 0.012001941125325617,
+            "rss_before_creation_bytes": 68526080,
+            "rss_after_creation_bytes": 87511040,
+            "rss_after_measurement_bytes": 100265984,
+            "peak_rss_bytes": 100265984,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.804954572
+            ],
+            "cpu_seconds_per_audio_second": 0.011749916961044892,
+            "rss_before_creation_bytes": 68538368,
+            "rss_after_creation_bytes": 87523328,
+            "rss_after_measurement_bytes": 100216832,
+            "peak_rss_bytes": 100216832,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.8154642969999999
+            ],
+            "cpu_seconds_per_audio_second": 0.011903327352548844,
+            "rss_before_creation_bytes": 68456448,
+            "rss_after_creation_bytes": 87375872,
+            "rss_after_measurement_bytes": 100130816,
+            "peak_rss_bytes": 100130816,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "stream": {
+        "stage": "stream",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          4.827070602999999,
+          3.530485692,
+          3.557564542,
+          3.068473358,
+          3.0369150240000002
+        ],
+        "cpu_seconds_per_audio_second": 0.05153447803903785,
+        "rss_before_creation_bytes": 68517888,
+        "rss_after_creation_bytes": 88518656,
+        "rss_after_measurement_bytes": 90128384,
+        "peak_rss_bytes": 90292224,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              4.827070602999999
+            ],
+            "cpu_seconds_per_audio_second": 0.07046072004961652,
+            "rss_before_creation_bytes": 68517888,
+            "rss_after_creation_bytes": 88518656,
+            "rss_after_measurement_bytes": 90128384,
+            "peak_rss_bytes": 90128384,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.530485692
+            ],
+            "cpu_seconds_per_audio_second": 0.05153447803903785,
+            "rss_before_creation_bytes": 68608000,
+            "rss_after_creation_bytes": 88715264,
+            "rss_after_measurement_bytes": 90275840,
+            "peak_rss_bytes": 90275840,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.557564542
+            ],
+            "cpu_seconds_per_audio_second": 0.051929747846761354,
+            "rss_before_creation_bytes": 68608000,
+            "rss_after_creation_bytes": 88719360,
+            "rss_after_measurement_bytes": 90193920,
+            "peak_rss_bytes": 90193920,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.068473358
+            ],
+            "cpu_seconds_per_audio_second": 0.04479048682722256,
+            "rss_before_creation_bytes": 68681728,
+            "rss_after_creation_bytes": 88801280,
+            "rss_after_measurement_bytes": 90292224,
+            "peak_rss_bytes": 90292224,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.0369150240000002
+            ],
+            "cpu_seconds_per_audio_second": 0.04432983001896616,
+            "rss_before_creation_bytes": 68636672,
+            "rss_after_creation_bytes": 88739840,
+            "rss_after_measurement_bytes": 90284032,
+            "peak_rss_bytes": 90284032,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "stream_frontend": {
+        "stage": "stream_frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.5748403830000001,
+          0.5783945380000001,
+          0.5758781810000001,
+          0.566734379,
+          0.5788237150000001
+        ],
+        "cpu_seconds_per_audio_second": 0.00840609028359874,
+        "rss_before_creation_bytes": 68501504,
+        "rss_after_creation_bytes": 88592384,
+        "rss_after_measurement_bytes": 94642176,
+        "peak_rss_bytes": 94773248,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5748403830000001
+            ],
+            "cpu_seconds_per_audio_second": 0.008390941552544214,
+            "rss_before_creation_bytes": 68501504,
+            "rss_after_creation_bytes": 88592384,
+            "rss_after_measurement_bytes": 94642176,
+            "peak_rss_bytes": 94642176,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5783945380000001
+            ],
+            "cpu_seconds_per_audio_second": 0.008442821531327268,
+            "rss_before_creation_bytes": 68685824,
+            "rss_after_creation_bytes": 88788992,
+            "rss_after_measurement_bytes": 94773248,
+            "peak_rss_bytes": 94773248,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5758781810000001
+            ],
+            "cpu_seconds_per_audio_second": 0.00840609028359874,
+            "rss_before_creation_bytes": 68567040,
+            "rss_after_creation_bytes": 88637440,
+            "rss_after_measurement_bytes": 94691328,
+            "peak_rss_bytes": 94691328,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.566734379
+            ],
+            "cpu_seconds_per_audio_second": 0.008272618261766137,
+            "rss_before_creation_bytes": 68599808,
+            "rss_after_creation_bytes": 88682496,
+            "rss_after_measurement_bytes": 94670848,
+            "peak_rss_bytes": 94670848,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5788237150000001
+            ],
+            "cpu_seconds_per_audio_second": 0.008449086225369643,
+            "rss_before_creation_bytes": 68661248,
+            "rss_after_creation_bytes": 88670208,
+            "rss_after_measurement_bytes": 94658560,
+            "peak_rss_bytes": 94658560,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "stream_network": {
+        "stage": "stream_network",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.919747691,
+          1.8868991190000006,
+          3.228524612,
+          3.201857224,
+          3.3885500130000006
+        ],
+        "cpu_seconds_per_audio_second": 0.046737490302895895,
+        "rss_before_creation_bytes": 68509696,
+        "rss_after_creation_bytes": 88530944,
+        "rss_after_measurement_bytes": 97603584,
+        "peak_rss_bytes": 100884480,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.919747691
+            ],
+            "cpu_seconds_per_audio_second": 0.028022545296391792,
+            "rss_before_creation_bytes": 68509696,
+            "rss_after_creation_bytes": 88530944,
+            "rss_after_measurement_bytes": 97603584,
+            "peak_rss_bytes": 100601856,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.8868991190000006
+            ],
+            "cpu_seconds_per_audio_second": 0.027543054891945844,
+            "rss_before_creation_bytes": 68636672,
+            "rss_after_creation_bytes": 88748032,
+            "rss_after_measurement_bytes": 97828864,
+            "peak_rss_bytes": 100700160,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.228524612
+            ],
+            "cpu_seconds_per_audio_second": 0.047126754002323606,
+            "rss_before_creation_bytes": 68628480,
+            "rss_after_creation_bytes": 88739840,
+            "rss_after_measurement_bytes": 97816576,
+            "peak_rss_bytes": 100638720,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.201857224
+            ],
+            "cpu_seconds_per_audio_second": 0.046737490302895895,
+            "rss_before_creation_bytes": 68579328,
+            "rss_after_creation_bytes": 88682496,
+            "rss_after_measurement_bytes": 97751040,
+            "peak_rss_bytes": 100884480,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.3885500130000006
+            ],
+            "cpu_seconds_per_audio_second": 0.04946264380134187,
+            "rss_before_creation_bytes": 68722688,
+            "rss_after_creation_bytes": 88801280,
+            "rss_after_measurement_bytes": 97804288,
+            "peak_rss_bytes": 100749312,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "stream_decoder": {
+        "stage": "stream_decoder",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.46193129200000005,
+          0.3165719659999999,
+          0.30042841500000006,
+          0.44356380100000004,
+          0.30391871300000006
+        ],
+        "cpu_seconds_per_audio_second": 0.004620999050235503,
+        "rss_before_creation_bytes": 68648960,
+        "rss_after_creation_bytes": 88760320,
+        "rss_after_measurement_bytes": 95858688,
+        "peak_rss_bytes": 100962304,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.46193129200000005
+            ],
+            "cpu_seconds_per_audio_second": 0.006742808242237279,
+            "rss_before_creation_bytes": 68648960,
+            "rss_after_creation_bytes": 88760320,
+            "rss_after_measurement_bytes": 95858688,
+            "peak_rss_bytes": 100962304,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.3165719659999999
+            ],
+            "cpu_seconds_per_audio_second": 0.004620999050235503,
+            "rss_before_creation_bytes": 68579328,
+            "rss_after_creation_bytes": 88686592,
+            "rss_after_measurement_bytes": 95748096,
+            "peak_rss_bytes": 100892672,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.30042841500000006
+            ],
+            "cpu_seconds_per_audio_second": 0.004385351735089387,
+            "rss_before_creation_bytes": 68644864,
+            "rss_after_creation_bytes": 88752128,
+            "rss_after_measurement_bytes": 95698944,
+            "peak_rss_bytes": 100634624,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.44356380100000004
+            ],
+            "cpu_seconds_per_audio_second": 0.006474698088521996,
+            "rss_before_creation_bytes": 68665344,
+            "rss_after_creation_bytes": 88743936,
+            "rss_after_measurement_bytes": 95657984,
+            "peak_rss_bytes": 100626432,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.30391871300000006
+            ],
+            "cpu_seconds_per_audio_second": 0.004436299593634255,
+            "rss_before_creation_bytes": 68636672,
+            "rss_after_creation_bytes": 88739840,
+            "rss_after_measurement_bytes": 95731712,
+            "peak_rss_bytes": 100618240,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "frontend": {
+        "stage": "frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.408289228,
+          0.3690535549999999,
+          0.3803754100000001,
+          0.41487907699999993,
+          0.41486437099999995
+        ],
+        "cpu_seconds_per_audio_second": 0.0059597953623265155,
+        "rss_before_creation_bytes": 68530176,
+        "rss_after_creation_bytes": 87457792,
+        "rss_after_measurement_bytes": 99700736,
+        "peak_rss_bytes": 99876864,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.408289228
+            ],
+            "cpu_seconds_per_audio_second": 0.0059597953623265155,
+            "rss_before_creation_bytes": 68530176,
+            "rss_after_creation_bytes": 87457792,
+            "rss_after_measurement_bytes": 99700736,
+            "peak_rss_bytes": 99700736,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.3690535549999999
+            ],
+            "cpu_seconds_per_audio_second": 0.005387072483673542,
+            "rss_before_creation_bytes": 68603904,
+            "rss_after_creation_bytes": 87621632,
+            "rss_after_measurement_bytes": 99860480,
+            "peak_rss_bytes": 99860480,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.3803754100000001
+            ],
+            "cpu_seconds_per_audio_second": 0.005552337531817144,
+            "rss_before_creation_bytes": 68509696,
+            "rss_after_creation_bytes": 87527424,
+            "rss_after_measurement_bytes": 99831808,
+            "peak_rss_bytes": 99831808,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.41487907699999993
+            ],
+            "cpu_seconds_per_audio_second": 0.00605598734784868,
+            "rss_before_creation_bytes": 68644864,
+            "rss_after_creation_bytes": 87633920,
+            "rss_after_measurement_bytes": 99876864,
+            "peak_rss_bytes": 99876864,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.41486437099999995
+            ],
+            "cpu_seconds_per_audio_second": 0.006055772684456683,
+            "rss_before_creation_bytes": 68530176,
+            "rss_after_creation_bytes": 87515136,
+            "rss_after_measurement_bytes": 99753984,
+            "peak_rss_bytes": 99753984,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "engine_128": {
+        "stage": "engine_128",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.2265668710000002,
+          1.238240275,
+          1.350271823,
+          1.205017671,
+          1.3102928719999998
+        ],
+        "cpu_seconds_per_audio_second": 0.01807458571596434,
+        "rss_before_creation_bytes": 68591616,
+        "rss_after_creation_bytes": 89309184,
+        "rss_after_measurement_bytes": 92749824,
+        "peak_rss_bytes": 92749824,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": 128,
+        "engine_configuration": {
+          "networks": 8,
+          "precision": "float32",
+          "simd": false
+        },
+        "push_calls_per_run": 23603,
+        "cpu_microseconds_per_push": 52.4611394737957,
+        "trials": [
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.2265668710000002
+            ],
+            "cpu_seconds_per_audio_second": 0.017904189109219277,
+            "rss_before_creation_bytes": 68591616,
+            "rss_after_creation_bytes": 89309184,
+            "rss_after_measurement_bytes": 92749824,
+            "peak_rss_bytes": 92749824,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 51.966566580519434
+          },
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.238240275
+            ],
+            "cpu_seconds_per_audio_second": 0.01807458571596434,
+            "rss_before_creation_bytes": 68595712,
+            "rss_after_creation_bytes": 89255936,
+            "rss_after_measurement_bytes": 92700672,
+            "peak_rss_bytes": 92700672,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 52.4611394737957
+          },
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.350271823
+            ],
+            "cpu_seconds_per_audio_second": 0.019709909536470966,
+            "rss_before_creation_bytes": 68526080,
+            "rss_after_creation_bytes": 89190400,
+            "rss_after_measurement_bytes": 92569600,
+            "peak_rss_bytes": 92569600,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 57.20763559716985
+          },
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.205017671
+            ],
+            "cpu_seconds_per_audio_second": 0.017589635568703514,
+            "rss_before_creation_bytes": 68599808,
+            "rss_after_creation_bytes": 89268224,
+            "rss_after_measurement_bytes": 92643328,
+            "peak_rss_bytes": 92643328,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 51.05358094310046
+          },
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.3102928719999998
+            ],
+            "cpu_seconds_per_audio_second": 0.019126337033400963,
+            "rss_before_creation_bytes": 68530176,
+            "rss_after_creation_bytes": 89239552,
+            "rss_after_measurement_bytes": 92614656,
+            "peak_rss_bytes": 92614656,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 55.51382756429266
+          }
+        ]
+      },
+      "engine_441": {
+        "stage": "engine_441",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.4972906419999998,
+          1.577623638,
+          1.4848288859999998,
+          1.476966318,
+          1.507150372
+        ],
+        "cpu_seconds_per_audio_second": 0.0218559423376374,
+        "rss_before_creation_bytes": 68620288,
+        "rss_after_creation_bytes": 89288704,
+        "rss_after_measurement_bytes": 90083328,
+        "peak_rss_bytes": 90120192,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": 441,
+        "engine_configuration": {
+          "networks": 8,
+          "precision": "float32",
+          "simd": false
+        },
+        "push_calls_per_run": 6851,
+        "cpu_microseconds_per_push": 218.55067026711424,
+        "trials": [
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.4972906419999998
+            ],
+            "cpu_seconds_per_audio_second": 0.0218559423376374,
+            "rss_before_creation_bytes": 68620288,
+            "rss_after_creation_bytes": 89288704,
+            "rss_after_measurement_bytes": 90083328,
+            "peak_rss_bytes": 90083328,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 218.55067026711424
+          },
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.577623638
+            ],
+            "cpu_seconds_per_audio_second": 0.02302856258859978,
+            "rss_before_creation_bytes": 68665344,
+            "rss_after_creation_bytes": 89321472,
+            "rss_after_measurement_bytes": 90120192,
+            "peak_rss_bytes": 90120192,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 230.2764031528244
+          },
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.4848288859999998
+            ],
+            "cpu_seconds_per_audio_second": 0.02167403816157316,
+            "rss_before_creation_bytes": 68538368,
+            "rss_after_creation_bytes": 89214976,
+            "rss_after_measurement_bytes": 89935872,
+            "peak_rss_bytes": 89935872,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 216.73170135746605
+          },
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.476966318
+            ],
+            "cpu_seconds_per_audio_second": 0.021559268304597222,
+            "rss_before_creation_bytes": 68452352,
+            "rss_after_creation_bytes": 89088000,
+            "rss_after_measurement_bytes": 89878528,
+            "peak_rss_bytes": 89878528,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 215.584048752007
+          },
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.507150372
+            ],
+            "cpu_seconds_per_audio_second": 0.02199986475610442,
+            "rss_before_creation_bytes": 68505600,
+            "rss_after_creation_bytes": 89145344,
+            "rss_after_measurement_bytes": 89939968,
+            "peak_rss_bytes": 89939968,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 219.9898368121442
+          }
+        ]
+      },
+      "engine_2048": {
+        "stage": "engine_2048",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.384994077,
+          1.316949309,
+          1.3773322679999997,
+          1.34674219,
+          1.357646991
+        ],
+        "cpu_seconds_per_audio_second": 0.019817564818629868,
+        "rss_before_creation_bytes": 68530176,
+        "rss_after_creation_bytes": 89178112,
+        "rss_after_measurement_bytes": 89362432,
+        "peak_rss_bytes": 89567232,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+          "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+          "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+        },
+        "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+        "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "engine_chunk_samples": 2048,
+        "engine_configuration": {
+          "networks": 8,
+          "precision": "float32",
+          "simd": false
+        },
+        "push_calls_per_run": 1476,
+        "cpu_microseconds_per_push": 919.8150345528455,
+        "trials": [
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.384994077
+            ],
+            "cpu_seconds_per_audio_second": 0.020216750065603722,
+            "rss_before_creation_bytes": 68530176,
+            "rss_after_creation_bytes": 89178112,
+            "rss_after_measurement_bytes": 89362432,
+            "peak_rss_bytes": 89362432,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 938.342870596206
+          },
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.316949309
+            ],
+            "cpu_seconds_per_audio_second": 0.019223501003551604,
+            "rss_before_creation_bytes": 68644864,
+            "rss_after_creation_bytes": 89321472,
+            "rss_after_measurement_bytes": 89567232,
+            "peak_rss_bytes": 89567232,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 892.2420792682926
+          },
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.3773322679999997
+            ],
+            "cpu_seconds_per_audio_second": 0.020104910686522103,
+            "rss_before_creation_bytes": 68558848,
+            "rss_after_creation_bytes": 89210880,
+            "rss_after_measurement_bytes": 89391104,
+            "peak_rss_bytes": 89391104,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 933.1519430894307
+          },
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.34674219
+            ],
+            "cpu_seconds_per_audio_second": 0.019658387505171838,
+            "rss_before_creation_bytes": 68616192,
+            "rss_after_creation_bytes": 89292800,
+            "rss_after_measurement_bytes": 89542656,
+            "peak_rss_bytes": 89542656,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 912.4269579945801
+          },
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.357646991
+            ],
+            "cpu_seconds_per_audio_second": 0.019817564818629868,
+            "rss_before_creation_bytes": 68558848,
+            "rss_after_creation_bytes": 89239552,
+            "rss_after_measurement_bytes": 89485312,
+            "peak_rss_bytes": 89485312,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f23acbd9acda7faf8c54182de54a89837229f88e54ea8e3dcfdb03bd506140ed",
+              "layers": "2fcf130a6e450fc845db2fe684a23fd9c172a3e385ef3e8e1b8ff668ab20ec5c",
+              "core": "402b910dda73be2ba4fdacc08bbadf40357216a91d2543e6b4bed6a6dff73e09"
+            },
+            "network_module_sha256": "878e949383b63a3721e5db862248568ed76a1fb33e56c5c5b188a9826976f2c9",
+            "streaming_wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 919.8150345528455
+          }
+        ]
+      }
+    },
+    "after": {
+      "bulk": {
+        "stage": "bulk",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.5335210020000001,
+          0.528010235,
+          0.5277374050000001,
+          0.529172935,
+          0.9490748050000002
+        ],
+        "cpu_seconds_per_audio_second": 0.007724334093579638,
+        "rss_before_creation_bytes": 69668864,
+        "rss_after_creation_bytes": 87719936,
+        "rss_after_measurement_bytes": 101187584,
+        "peak_rss_bytes": 101187584,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5335210020000001
+            ],
+            "cpu_seconds_per_audio_second": 0.007787802800967838,
+            "rss_before_creation_bytes": 69668864,
+            "rss_after_creation_bytes": 87719936,
+            "rss_after_measurement_bytes": 101187584,
+            "peak_rss_bytes": 101187584,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.528010235
+            ],
+            "cpu_seconds_per_audio_second": 0.007707362168795532,
+            "rss_before_creation_bytes": 68448256,
+            "rss_after_creation_bytes": 87375872,
+            "rss_after_measurement_bytes": 100372480,
+            "peak_rss_bytes": 100372480,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.5277374050000001
+            ],
+            "cpu_seconds_per_audio_second": 0.007703379670955293,
+            "rss_before_creation_bytes": 68620288,
+            "rss_after_creation_bytes": 87638016,
+            "rss_after_measurement_bytes": 100507648,
+            "peak_rss_bytes": 100507648,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.529172935
+            ],
+            "cpu_seconds_per_audio_second": 0.007724334093579638,
+            "rss_before_creation_bytes": 68538368,
+            "rss_after_creation_bytes": 87515136,
+            "rss_after_measurement_bytes": 100462592,
+            "peak_rss_bytes": 100462592,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "bulk",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.9490748050000002
+            ],
+            "cpu_seconds_per_audio_second": 0.013853639120109099,
+            "rss_before_creation_bytes": 68562944,
+            "rss_after_creation_bytes": 87547904,
+            "rss_after_measurement_bytes": 100421632,
+            "peak_rss_bytes": 100421632,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "stream": {
+        "stage": "stream",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.9379271100000004,
+          1.8716456970000004,
+          2.22248531,
+          1.85613391,
+          1.894138226
+        ],
+        "cpu_seconds_per_audio_second": 0.027648724092520446,
+        "rss_before_creation_bytes": 68497408,
+        "rss_after_creation_bytes": 88608768,
+        "rss_after_measurement_bytes": 90271744,
+        "peak_rss_bytes": 90587136,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.9379271100000004
+            ],
+            "cpu_seconds_per_audio_second": 0.02828791016427411,
+            "rss_before_creation_bytes": 68497408,
+            "rss_after_creation_bytes": 88608768,
+            "rss_after_measurement_bytes": 90271744,
+            "peak_rss_bytes": 90271744,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.8716456970000004
+            ],
+            "cpu_seconds_per_audio_second": 0.027320400784365,
+            "rss_before_creation_bytes": 68583424,
+            "rss_after_creation_bytes": 88604672,
+            "rss_after_measurement_bytes": 90402816,
+            "peak_rss_bytes": 90402816,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              2.22248531
+            ],
+            "cpu_seconds_per_audio_second": 0.032441604468136515,
+            "rss_before_creation_bytes": 68558848,
+            "rss_after_creation_bytes": 88678400,
+            "rss_after_measurement_bytes": 90374144,
+            "peak_rss_bytes": 90374144,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.85613391
+            ],
+            "cpu_seconds_per_audio_second": 0.027093975324460392,
+            "rss_before_creation_bytes": 68530176,
+            "rss_after_creation_bytes": 88637440,
+            "rss_after_measurement_bytes": 90300416,
+            "peak_rss_bytes": 90300416,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.894138226
+            ],
+            "cpu_seconds_per_audio_second": 0.027648724092520446,
+            "rss_before_creation_bytes": 68755456,
+            "rss_after_creation_bytes": 88875008,
+            "rss_after_measurement_bytes": 90587136,
+            "peak_rss_bytes": 90587136,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "stream_frontend": {
+        "stage": "stream_frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.285221963,
+          0.293244921,
+          0.293056078,
+          0.29924849200000003,
+          0.31094794699999995
+        ],
+        "cpu_seconds_per_audio_second": 0.004280494317135414,
+        "rss_before_creation_bytes": 68599808,
+        "rss_after_creation_bytes": 88694784,
+        "rss_after_measurement_bytes": 94728192,
+        "peak_rss_bytes": 94781440,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.285221963
+            ],
+            "cpu_seconds_per_audio_second": 0.004163383248311085,
+            "rss_before_creation_bytes": 68599808,
+            "rss_after_creation_bytes": 88694784,
+            "rss_after_measurement_bytes": 94728192,
+            "peak_rss_bytes": 94728192,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.293244921
+            ],
+            "cpu_seconds_per_audio_second": 0.004280494317135414,
+            "rss_before_creation_bytes": 68636672,
+            "rss_after_creation_bytes": 88719360,
+            "rss_after_measurement_bytes": 94752768,
+            "peak_rss_bytes": 94752768,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.293056078
+            ],
+            "cpu_seconds_per_audio_second": 0.004277737777020161,
+            "rss_before_creation_bytes": 68632576,
+            "rss_after_creation_bytes": 88752128,
+            "rss_after_measurement_bytes": 94781440,
+            "peak_rss_bytes": 94781440,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.29924849200000003
+            ],
+            "cpu_seconds_per_audio_second": 0.004368128406279687,
+            "rss_before_creation_bytes": 68595712,
+            "rss_after_creation_bytes": 88678400,
+            "rss_after_measurement_bytes": 94711808,
+            "peak_rss_bytes": 94711808,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.31094794699999995
+            ],
+            "cpu_seconds_per_audio_second": 0.004538905279312318,
+            "rss_before_creation_bytes": 68612096,
+            "rss_after_creation_bytes": 88731648,
+            "rss_after_measurement_bytes": 94752768,
+            "peak_rss_bytes": 94752768,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "stream_network": {
+        "stage": "stream_network",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.1690229669999999,
+          1.162253631,
+          1.9212326279999998,
+          1.901270245,
+          2.166258543
+        ],
+        "cpu_seconds_per_audio_second": 0.027752830130214453,
+        "rss_before_creation_bytes": 68657152,
+        "rss_after_creation_bytes": 88780800,
+        "rss_after_measurement_bytes": 98201600,
+        "peak_rss_bytes": 101064704,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.1690229669999999
+            ],
+            "cpu_seconds_per_audio_second": 0.01706422109470834,
+            "rss_before_creation_bytes": 68657152,
+            "rss_after_creation_bytes": 88780800,
+            "rss_after_measurement_bytes": 98201600,
+            "peak_rss_bytes": 101064704,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.162253631
+            ],
+            "cpu_seconds_per_audio_second": 0.016965409138545662,
+            "rss_before_creation_bytes": 68558848,
+            "rss_after_creation_bytes": 88633344,
+            "rss_after_measurement_bytes": 98017280,
+            "peak_rss_bytes": 100814848,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.9212326279999998
+            ],
+            "cpu_seconds_per_audio_second": 0.02804422091269276,
+            "rss_before_creation_bytes": 68616192,
+            "rss_after_creation_bytes": 88698880,
+            "rss_after_measurement_bytes": 98082816,
+            "peak_rss_bytes": 100880384,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.901270245
+            ],
+            "cpu_seconds_per_audio_second": 0.027752830130214453,
+            "rss_before_creation_bytes": 68722688,
+            "rss_after_creation_bytes": 88809472,
+            "rss_after_measurement_bytes": 98258944,
+            "peak_rss_bytes": 100925440,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_network",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              2.166258543
+            ],
+            "cpu_seconds_per_audio_second": 0.03162086269435351,
+            "rss_before_creation_bytes": 68685824,
+            "rss_after_creation_bytes": 88805376,
+            "rss_after_measurement_bytes": 98181120,
+            "peak_rss_bytes": 100937728,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "stream_decoder": {
+        "stage": "stream_decoder",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.23253657299999997,
+          0.2356143049999999,
+          0.24712560700000008,
+          0.34380887299999996,
+          0.3674800119999999
+        ],
+        "cpu_seconds_per_audio_second": 0.0036072909729343277,
+        "rss_before_creation_bytes": 68677632,
+        "rss_after_creation_bytes": 88801280,
+        "rss_after_measurement_bytes": 95768576,
+        "peak_rss_bytes": 101068800,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.23253657299999997
+            ],
+            "cpu_seconds_per_audio_second": 0.003394334932923337,
+            "rss_before_creation_bytes": 68677632,
+            "rss_after_creation_bytes": 88801280,
+            "rss_after_measurement_bytes": 95768576,
+            "peak_rss_bytes": 101068800,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.2356143049999999
+            ],
+            "cpu_seconds_per_audio_second": 0.0034392605680911687,
+            "rss_before_creation_bytes": 68653056,
+            "rss_after_creation_bytes": 88768512,
+            "rss_after_measurement_bytes": 94720000,
+            "peak_rss_bytes": 100884480,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.24712560700000008
+            ],
+            "cpu_seconds_per_audio_second": 0.0036072909729343277,
+            "rss_before_creation_bytes": 68542464,
+            "rss_after_creation_bytes": 88567808,
+            "rss_after_measurement_bytes": 94588928,
+            "peak_rss_bytes": 100732928,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.34380887299999996
+            ],
+            "cpu_seconds_per_audio_second": 0.00501857601502067,
+            "rss_before_creation_bytes": 68603904,
+            "rss_after_creation_bytes": 88694784,
+            "rss_after_measurement_bytes": 95604736,
+            "peak_rss_bytes": 100904960,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "stream_decoder",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.3674800119999999
+            ],
+            "cpu_seconds_per_audio_second": 0.005364103486132854,
+            "rss_before_creation_bytes": 68546560,
+            "rss_after_creation_bytes": 88637440,
+            "rss_after_measurement_bytes": 95559680,
+            "peak_rss_bytes": 100814848,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "frontend": {
+        "stage": "frontend",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.1263605200000001,
+          0.12993280100000004,
+          0.13432742499999994,
+          0.12727335399999995,
+          0.139547686
+        ],
+        "cpu_seconds_per_audio_second": 0.0018966283009893524,
+        "rss_before_creation_bytes": 68702208,
+        "rss_after_creation_bytes": 87638016,
+        "rss_after_measurement_bytes": 99917824,
+        "peak_rss_bytes": 100036608,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": null,
+        "engine_configuration": null,
+        "push_calls_per_run": null,
+        "cpu_microseconds_per_push": null,
+        "trials": [
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.1263605200000001
+            ],
+            "cpu_seconds_per_audio_second": 0.0018444837370952326,
+            "rss_before_creation_bytes": 68702208,
+            "rss_after_creation_bytes": 87638016,
+            "rss_after_measurement_bytes": 99917824,
+            "peak_rss_bytes": 99917824,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.12993280100000004
+            ],
+            "cpu_seconds_per_audio_second": 0.0018966283009893524,
+            "rss_before_creation_bytes": 68739072,
+            "rss_after_creation_bytes": 87756800,
+            "rss_after_measurement_bytes": 100036608,
+            "peak_rss_bytes": 100036608,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.13432742499999994
+            ],
+            "cpu_seconds_per_audio_second": 0.0019607766006216124,
+            "rss_before_creation_bytes": 68558848,
+            "rss_after_creation_bytes": 87588864,
+            "rss_after_measurement_bytes": 99868672,
+            "peak_rss_bytes": 99868672,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.12727335399999995
+            ],
+            "cpu_seconds_per_audio_second": 0.0018578083694065536,
+            "rss_before_creation_bytes": 68665344,
+            "rss_after_creation_bytes": 87646208,
+            "rss_after_measurement_bytes": 99926016,
+            "peak_rss_bytes": 99926016,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          },
+          {
+            "stage": "frontend",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.139547686
+            ],
+            "cpu_seconds_per_audio_second": 0.0020369767184898564,
+            "rss_before_creation_bytes": 68538368,
+            "rss_after_creation_bytes": 87552000,
+            "rss_after_measurement_bytes": 99840000,
+            "peak_rss_bytes": 99840000,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": null,
+            "engine_configuration": null,
+            "push_calls_per_run": null,
+            "cpu_microseconds_per_push": null
+          }
+        ]
+      },
+      "engine_128": {
+        "stage": "engine_128",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          0.9375143620000002,
+          1.0544241770000002,
+          0.8207272159999999,
+          0.8214897060000002,
+          0.844477675
+        ],
+        "cpu_seconds_per_audio_second": 0.012326835453648752,
+        "rss_before_creation_bytes": 68579328,
+        "rss_after_creation_bytes": 89231360,
+        "rss_after_measurement_bytes": 92663808,
+        "peak_rss_bytes": 92737536,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": 128,
+        "engine_configuration": {
+          "networks": 8,
+          "precision": "float32",
+          "simd": false
+        },
+        "push_calls_per_run": 23603,
+        "cpu_microseconds_per_push": 35.77840422827607,
+        "trials": [
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.9375143620000002
+            ],
+            "cpu_seconds_per_audio_second": 0.013684891404389691,
+            "rss_before_creation_bytes": 68579328,
+            "rss_after_creation_bytes": 89231360,
+            "rss_after_measurement_bytes": 92663808,
+            "peak_rss_bytes": 92663808,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 39.720135660721105
+          },
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.0544241770000002
+            ],
+            "cpu_seconds_per_audio_second": 0.015391423258439613,
+            "rss_before_creation_bytes": 68599808,
+            "rss_after_creation_bytes": 89321472,
+            "rss_after_measurement_bytes": 92639232,
+            "peak_rss_bytes": 92639232,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 44.67331174003305
+          },
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.8207272159999999
+            ],
+            "cpu_seconds_per_audio_second": 0.011980150148982014,
+            "rss_before_creation_bytes": 68689920,
+            "rss_after_creation_bytes": 89350144,
+            "rss_after_measurement_bytes": 92704768,
+            "peak_rss_bytes": 92704768,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 34.772156759733925
+          },
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.8214897060000002
+            ],
+            "cpu_seconds_per_audio_second": 0.011991280210845468,
+            "rss_before_creation_bytes": 68640768,
+            "rss_after_creation_bytes": 89288704,
+            "rss_after_measurement_bytes": 92737536,
+            "peak_rss_bytes": 92737536,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 34.804461551497695
+          },
+          {
+            "stage": "engine_128",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.844477675
+            ],
+            "cpu_seconds_per_audio_second": 0.012326835453648752,
+            "rss_before_creation_bytes": 68640768,
+            "rss_after_creation_bytes": 89305088,
+            "rss_after_measurement_bytes": 92721152,
+            "peak_rss_bytes": 92721152,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 128,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 23603,
+            "cpu_microseconds_per_push": 35.77840422827607
+          }
+        ]
+      },
+      "engine_441": {
+        "stage": "engine_441",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.1660283519999999,
+          1.1510914730000001,
+          1.164393782,
+          1.1460641520000001,
+          1.143619285
+        ],
+        "cpu_seconds_per_audio_second": 0.016802475186533695,
+        "rss_before_creation_bytes": 68628480,
+        "rss_after_creation_bytes": 89337856,
+        "rss_after_measurement_bytes": 90038272,
+        "peak_rss_bytes": 90189824,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": 441,
+        "engine_configuration": {
+          "networks": 8,
+          "precision": "float32",
+          "simd": false
+        },
+        "push_calls_per_run": 6851,
+        "cpu_microseconds_per_push": 168.01802262443442,
+        "trials": [
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.1660283519999999
+            ],
+            "cpu_seconds_per_audio_second": 0.017020508717880817,
+            "rss_before_creation_bytes": 68628480,
+            "rss_after_creation_bytes": 89337856,
+            "rss_after_measurement_bytes": 90038272,
+            "peak_rss_bytes": 90038272,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 170.1982706174281
+          },
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.1510914730000001
+            ],
+            "cpu_seconds_per_audio_second": 0.016802475186533695,
+            "rss_before_creation_bytes": 68718592,
+            "rss_after_creation_bytes": 89366528,
+            "rss_after_measurement_bytes": 90079232,
+            "peak_rss_bytes": 90079232,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 168.01802262443442
+          },
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.164393782
+            ],
+            "cpu_seconds_per_audio_second": 0.01699664890959463,
+            "rss_before_creation_bytes": 68763648,
+            "rss_after_creation_bytes": 89473024,
+            "rss_after_measurement_bytes": 90189824,
+            "peak_rss_bytes": 90189824,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 169.95968209020583
+          },
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.1460641520000001
+            ],
+            "cpu_seconds_per_audio_second": 0.01672909141266463,
+            "rss_before_creation_bytes": 68485120,
+            "rss_after_creation_bytes": 89108480,
+            "rss_after_measurement_bytes": 89858048,
+            "peak_rss_bytes": 89858048,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 167.2842142752883
+          },
+          {
+            "stage": "engine_441",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.143619285
+            ],
+            "cpu_seconds_per_audio_second": 0.01669340370402857,
+            "rss_before_creation_bytes": 68501504,
+            "rss_after_creation_bytes": 89214976,
+            "rss_after_measurement_bytes": 89911296,
+            "peak_rss_bytes": 89911296,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 441,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 6851,
+            "cpu_microseconds_per_push": 166.92735148153554
+          }
+        ]
+      },
+      "engine_2048": {
+        "stage": "engine_2048",
+        "audio_seconds": 68.50725623582767,
+        "cpu_seconds": [
+          1.072307158,
+          1.065725405,
+          1.0915628170000002,
+          1.027149187,
+          1.1717428200000002
+        ],
+        "cpu_seconds_per_audio_second": 0.015652461022650166,
+        "rss_before_creation_bytes": 68554752,
+        "rss_after_creation_bytes": 89333760,
+        "rss_after_measurement_bytes": 89501696,
+        "peak_rss_bytes": 89571328,
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "binary_sha256": {
+          "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+          "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+          "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+        },
+        "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+        "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "engine_chunk_samples": 2048,
+        "engine_configuration": {
+          "networks": 8,
+          "precision": "float32",
+          "simd": false
+        },
+        "push_calls_per_run": 1476,
+        "cpu_microseconds_per_push": 726.495364498645,
+        "trials": [
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.072307158
+            ],
+            "cpu_seconds_per_audio_second": 0.015652461022650166,
+            "rss_before_creation_bytes": 68554752,
+            "rss_after_creation_bytes": 89333760,
+            "rss_after_measurement_bytes": 89501696,
+            "peak_rss_bytes": 89501696,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 726.495364498645
+          },
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.065725405
+            ],
+            "cpu_seconds_per_audio_second": 0.015556387214390451,
+            "rss_before_creation_bytes": 68595712,
+            "rss_after_creation_bytes": 89337856,
+            "rss_after_measurement_bytes": 89571328,
+            "peak_rss_bytes": 89571328,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 722.0361822493226
+          },
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.0915628170000002
+            ],
+            "cpu_seconds_per_audio_second": 0.015933535759225733,
+            "rss_before_creation_bytes": 68521984,
+            "rss_after_creation_bytes": 89174016,
+            "rss_after_measurement_bytes": 89341952,
+            "peak_rss_bytes": 89341952,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 739.5412039295395
+          },
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.027149187
+            ],
+            "cpu_seconds_per_audio_second": 0.014993290396336519,
+            "rss_before_creation_bytes": 68562944,
+            "rss_after_creation_bytes": 89260032,
+            "rss_after_measurement_bytes": 89419776,
+            "peak_rss_bytes": 89419776,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 695.900533197832
+          },
+          {
+            "stage": "engine_2048",
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.1717428200000002
+            ],
+            "cpu_seconds_per_audio_second": 0.017103922772303447,
+            "rss_before_creation_bytes": 68579328,
+            "rss_after_creation_bytes": 89260032,
+            "rss_after_measurement_bytes": 89427968,
+            "peak_rss_bytes": 89427968,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f77ee550d024dc9314b1b03447c803e35d45751c07bc5bab0a1eee006530818f",
+              "layers": "22305fca9eeac0de74b6aeab097215511a15ee1788d57c864e0b3c58fcbcb92f",
+              "core": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398"
+            },
+            "network_module_sha256": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+            "streaming_wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+            "engine_chunk_samples": 2048,
+            "engine_configuration": {
+              "networks": 8,
+              "precision": "float32",
+              "simd": false
+            },
+            "push_calls_per_run": 1476,
+            "cpu_microseconds_per_push": 793.8636991869921
+          }
+        ]
+      }
+    }
+  },
+  "provenance": {
+    "before_revision": "38c4b6371049daa24ba537c197908b4d2102bd46",
+    "after_revision": "20e6bc16a33a007166db398beff047e478254803",
+    "runtime_revision": "20e6bc16a33a007166db398beff047e478254803"
+  },
+  "source_sha256": {
+    "native/src/online.cpp": "8d486bf13a81feea0bee9564d316a15ebc26f0dd319519846ddc46c3d9e6a0f7",
+    "native/src/bindings.cpp": "b75d153e301794745dd71f3f4e2286eadb991ead067d85f969d71391c5150e09",
+    "native/src/nn_bindings.cpp": "54b6189ebc5afa92d638e1e3aa2ad56fb01a0ccb4f4ffc5c250304b26573a84a",
+    "native/src/nn.cpp": "0c39659fd087cb79854497b4a87e17aac45e85d7ec41762d5b1e70a25442860f",
+    "native/src/decoders.cpp": "3409028b863f7b33499419cb13ed26b95e6de581af6cc412d9c71a8650e31c73",
+    "native/include/madmom_exports.h": "dbc41b7b0db9ea74ca1c34d4c5c7aad21e8271ee778aa447f6666172cbc65a93",
+    "native/include/madmom_nn_bindings.h": "605328d57fa28585bf4b53d2d02740a80ce062efaa0664142a0f3f799235fb5c",
+    "native/include/madmom_engine.h": "f1e4eb91cdc21962de896b80b680afec8553ee4cc437284c3f5e6e247d0dbd70",
+    "native/include/madmom_decoders.h": "6c0e88c885fb95b2a46a30fe7120c3a2de3aad65092261054ade0557ef0e2c12",
+    "native/include/madmom_native.h": "3816498f67b0ba9b5fb880e8a009073f7b4c679ff2fa1baf8e4705e1d094b342",
+    "native/include/madmom_nn.h": "f36a24a351f566d97082c1c7dd77746cb0ee8adf34685caa53567a9ee9e5cb4a",
+    "madmom/audio/_native.py": "812ab51238f93937bd8aeb03706ffd76df91927fde95fc8f3693cfd4d0025b87",
+    "madmom/ml/nn/_native.py": "b1343259304ebfb0408c1782572d2056d71ca907c7a5532756124f64a6b5434d",
+    "madmom/ml/nn/__init__.py": "5de606bc1c423509318ca8fbbd50495d70f80f6b6faaa9b67e67ebfae0e7c9a7",
+    "madmom/ml/nn/layers.py": "9465ed901ba5244086f6c670432732d501be72f2b85d1acf92348eaa7b84e88b",
+    "madmom/ml/hmm.pyx": "f027648eedab2b15096580e847334c51196ad9f674e01567e71e0b6231dc6736",
+    "madmom/features/beats.py": "564fa9e7009282e40ef7564df9cbf4fd836d8dd97e9b960ed176c7abb2eb95a7",
+    "madmom/_native_decoders.py": "56eefc012960cf3a71aee78a5c4a44a3c3d103ef271e60c0b6876ce5ce638ed8",
+    "madmom/features/onsets.py": "59b13ea385ff7cb3e06c1402ccce7316716624f872ad84d71e5d9ac121280731",
+    "madmom/native.py": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+    "setup.py": "1480eb76271d0cfc3103e7bf799673edc6a73659b8aa217e577e4b89cf40afda",
+    "tools/benchmark_core.py": "e76ac37fc9ba12309ac544466d4895e843057406e0f2ec443c4a77d01c0fc7c3"
+  }
+}

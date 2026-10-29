@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "runtime_revision": "20e6bc1",
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.4.6",
+    "scipy": "1.18.1",
+    "architecture": "x86_64"
+  },
+  "native_binary_sha256": "2861eef42fb76c975b60f7da28d59d620faa00617e3c93a77fa316949c123398",
+  "fixtures": [
+    {
+      "fixture": "sample",
+      "fixture_sha256": "781c3b9400bc94c5444ee89f7bf5b8d59626a8d0bffcf64119ffb10d9ebd2bfe",
+      "frames": 281,
+      "feature_max_abs_error": 2.384185791015625e-07,
+      "python_activation_max_abs_error": 2.086162567138672e-07,
+      "sampled_posterior_max_abs_error": 0.0,
+      "python_beats_exact": true,
+      "native": {
+        "scalar": {
+          "activation_max_abs_error": 2.086162567138672e-07,
+          "beats_exact": true
+        },
+        "simd": {
+          "activation_max_abs_error": 2.086162567138672e-07,
+          "beats_exact": true
+        }
+      }
+    },
+    {
+      "fixture": "sample2",
+      "fixture_sha256": "5e2c7dd798d3316d3106a915e0cb9d607a2de24df46a6a08bc247f727c594c2e",
+      "frames": 406,
+      "feature_max_abs_error": 2.384185791015625e-07,
+      "python_activation_max_abs_error": 3.2782554626464844e-07,
+      "sampled_posterior_max_abs_error": 0.0,
+      "python_beats_exact": true,
+      "native": {
+        "scalar": {
+          "activation_max_abs_error": 3.2782554626464844e-07,
+          "beats_exact": true
+        },
+        "simd": {
+          "activation_max_abs_error": 3.2782554626464844e-07,
+          "beats_exact": true
+        }
+      }
+    }
+  ]
+}

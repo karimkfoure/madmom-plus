@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "runtime_revision": "20e6bc16a33a007166db398beff047e478254803",
+  "environment": {
+    "architecture": "x86_64",
+    "python": "3.12.13",
+    "numpy": "2.4.6",
+    "scipy": "1.18.1",
+    "cython": "3.3.0",
+    "blas_threads": 1,
+    "openmp_threads": 1
+  },
+  "full_suite": {
+    "tests_passed": 1147,
+    "subtests_passed": 217,
+    "warnings": 236,
+    "wall_seconds": 51.73,
+    "log": "build/core-merged/optimized-full-tests.log",
+    "log_sha256": "c14bf4ace0f6cd7d12c5f5a15562e300b03c7024bc411d84511a7c228632ad7e"
+  },
+  "stored_reference_check": "streaming-parity-20e6.json",
+  "paired_benchmark": "streaming-38c-paired-host.json",
+  "source_hashes_match_current_runtime": true,
+  "numpy_1_targeted": {
+    "python": "3.11.15",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1",
+    "tests_passed": 85,
+    "subtests_passed": 62,
+    "wall_seconds": 4.37,
+    "scope": "native neural buffers, frozen release parity, frontend buffers, native decoders and windowed downbeats",
+    "log": "build/core-merged/numpy126-optimized-tests.log",
+    "log_sha256": "681b5fed7ae0e40c9ef880d5f11875b6275ac3797ab110bc5797c8050ecbede5"
+  }
+}

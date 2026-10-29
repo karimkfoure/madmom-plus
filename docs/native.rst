@@ -1,7 +1,7 @@
 Native music-analysis core
 ==========================
 
-The C++ core implements the supported online beat path used by the existing Python processors. It is required in every build, like the Cython extensions. Python and the standalone C engine share frontend, neural, forward recursion of hidden Markov models (HMMs), and beat-event arithmetic. There is no backend selection flag.
+The C++ core implements the supported online beat path used by the existing Python processors. It is required in every build, like the Cython extensions. Python and the standalone C engine share frontend, neural, forward recursion of hidden Markov models (HMMs), and beat-event arithmetic. Existing interface selectors, including the windowed downbeat processor's beat interface, keep these shared kernels.
 
 Build and Python compatibility
 ------------------------------
@@ -31,9 +31,9 @@ The generic C++ HMM kernel performs forward recursion. ``HiddenMarkovModel.forwa
 FFT and streaming design
 -------------------------
 
-The frontend uses a half-size real FFT with precomputed roots and permutation indices. Windowing and FFT arithmetic use double precision; the complex64 cast before magnitude follows upstream. Contiguous filter coefficients, fused logarithm and difference, and fixed audio/history rings reduce repeated work and allocation. A local FFT avoids another runtime dependency and external FFT licensing or binary-distribution constraints. Bulk and frame-at-a-time costs must be measured separately: a faster streaming core does not imply a faster FFT than NumPy in every batch configuration.
+The frontend uses a half-size real FFT with precomputed roots and permutation indices. Double-precision SSE2 or NEON butterflies and contiguous stage tables reduce work for the small streaming transform; the tables add 16 KiB per frontend instance. Magnitude uses a fast square root in the safe range and retains scaled hypot handling for overflow and underflow. The complex64 cast before magnitude follows upstream. Contiguous filter coefficients, fused logarithm and difference, and fixed audio/history rings reduce repeated work and allocation. A local FFT avoids another runtime dependency and external FFT licensing or binary-distribution constraints. Bulk and frame-at-a-time costs are measured separately.
 
-The Python frontend adapter uses a capsule and borrowed buffers. It compares exposed configuration arrays directly to detect in-place edits without allocating configuration copies each frame. It releases the Python GIL during kernel execution and has no NumPy C ABI dependency. Other component adapters retain ctypes or direct Cython function-pointer calls. These adapters share the same native kernels.
+The Python frontend adapter uses a capsule and borrowed buffers. It compares exposed configuration arrays directly to detect in-place edits without allocating configuration copies each frame. The neural ensemble adapter also validates all supported models and synchronizes state through one buffer call per hop. Public weight edits and old state-array references retain their behavior. Beat events use the same buffer mechanism, and HMM state selection shares the normalization pass. These calls release the Python GIL during kernels and have no NumPy C ABI dependency. Other component adapters retain ctypes or direct Cython function-pointer calls.
 
 The neural kernels vectorize independent outputs with SSE2 on supported x86 builds or NEON on AArch64. Other targets use scalar arithmetic. Supported compiler settings disable fused multiply-add contraction to limit numerical changes. Normal processing retains all eight float32 networks. Fewer networks and rounded weights remain explicit experiments; they can change beat events.
 
@@ -68,7 +68,7 @@ Parity and verification
 
 `native-reference.rst <native-reference.rst>`_ documents stored outputs from unmodified madmom 0.16.1 and its original model revision. Two public recordings cover 687 frames, individual networks, default and causal framing, streaming, forward posteriors, beats, peaks, and reset. Tests do not generate expected values with the current fork.
 
-Frontend tolerance is ``atol=2e-6, rtol=2e-5``. Activation tolerance is ``atol=2e-5, rtol=2e-4``. Posterior tolerance is ``atol=1e-9, rtol=2e-6``. Identical input activations must produce exact Python beat and peak times; the native audio path allows one 10 ms frame. Measured maxima are 2.39e-7 for features, 4.48e-7 for Python-API activations, and 2.39e-7 for direct SIMD activations. Sampled posteriors match exactly with identical observations. Beat times match exactly on both clips. These short clips do not establish accuracy on a representative corpus.
+Frontend tolerance is ``atol=2e-6, rtol=2e-5``. Activation tolerance is ``atol=2e-5, rtol=2e-4``. Posterior tolerance is ``atol=1e-9, rtol=2e-6``. Identical input activations must produce exact Python beat and peak times; the native audio path allows one 10 ms frame. Current measured maxima are 2.39e-7 for features and 3.28e-7 for Python-API and direct native activations. Sampled posteriors match exactly with identical observations. Beat times match exactly on both clips. ``docs/benchmarks/streaming-parity-20e6.json`` records the exact binary and fixture hashes. Reproduce those measurements with ``tools/report_core_parity.py``. These short clips do not establish accuracy on a representative corpus.
 
 Run Python and independent native checks::
 
@@ -81,6 +81,62 @@ Run Python and independent native checks::
 
 Host measurements
 -------------------
+
+The current comparison uses merged main ``38c4b6371049daa24ba537c197908b4d2102bd46`` as the baseline and optimized runtime ``20e6bc1`` as the result. Both already contain the required native core. The preserved baseline passes 1,131 tests and 214 subtests on Python 3.12/NumPy 2; the optimized source passes 1,147 tests and 217 subtests. The added cases exercise native windowed downbeat chunking, empty calls, reset, neural buffer validation, model edits, and state lifetime. Verification is recorded in ``docs/benchmarks/merged-main-38c4b63.json`` and ``streaming-verification-20e6.json``.
+
+The primary report, ``docs/benchmarks/streaming-38c-paired-host.json``, records five alternating paired trials in fresh processes. It uses Python 3.12.13, NumPy 2.4.6, SciPy 1.18.1, one pinned core on the AMD Ryzen 9 5900X, one BLAS/OpenMP thread, and 68.507 seconds of repeated public test audio. Loading and initialization are excluded. Individual stages have separate inputs and result collection; their times must not be added to predict complete-path cost.
+
+.. list-table:: Current CPU seconds per audio second
+   :header-rows: 1
+
+   * - Path
+     - Merged main
+     - Optimized
+     - Speed ratio
+   * - Complete frame-at-a-time Python path
+     - 0.051534
+     - 0.027649
+     - 1.86
+   * - Complete causal bulk Python path
+     - 0.011903
+     - 0.007724
+     - 1.54
+   * - Frontend, frame at a time
+     - 0.008406
+     - 0.004280
+     - 1.96
+   * - Neural ensemble, frame at a time
+     - 0.046737
+     - 0.027753
+     - 1.68
+   * - Decoder, frame at a time
+     - 0.004621
+     - 0.003607
+     - 1.28
+   * - Frontend, bulk
+     - 0.005960
+     - 0.001897
+     - 3.14
+
+Streaming peak resident memory is essentially unchanged: 86.11 versus 86.39 MiB. Bulk peak memory rises from 95.64 to 96.50 MiB. The FFT tables trade 16 KiB per instance for less transform work. The optimized neural adapter retains public state copies and mutable model semantics rather than removing those guarantees to reduce cost.
+
+The same report measures the existing scalar ``NativeBeatTracker`` wrapper at 128, 441, and 2048 samples per push. CPU s/audio s falls from 0.018075 to 0.012327, 0.021856 to 0.016802, and 0.019818 to 0.015652, respectively. Different block-size measurements occur at different times on this shared host; absolute rates across rows are not a controlled latency comparison. The isolated wrapper experiment in ``stream-push-adapter.json`` uses the same C++ binary for both variants: removing duplicate validation and small-result concatenation reduces the 128-sample push cost by about 9 percent, the 441-sample cost by about 2 percent, and the 2048-sample cost by less than 1 percent. Large calls still validate the full input before any chunk can advance state.
+
+Normalized profiles in ``stream-profile-host.json`` identify the small FFT, repeated model validation, state synchronization, and ctypes event marshalling. The independent neural report ``native-nn-calls.json`` holds the C++ binary fixed and measures the adapter change alone: 275.67 to 179.11 microseconds per hop, with identical activations. ``engine-scaling-host.json`` records SIMD engine checks at several block sizes. Profile counters include profiler overhead and elapsed time; only the separate paired process-CPU trials support the speed claims.
+
+Reproduce the current paired comparison with independently built baseline and optimized packages::
+
+    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+      python tools/benchmark_core.py --reference-root merged-main-checkout \
+      --reference-revision 38c4b63 --package-root optimized-checkout \
+      --paired --repeats 5 --copies 10 \
+      --stages bulk stream stream_frontend stream_network stream_decoder frontend \
+      --output streaming-38c-paired-host.json
+
+Initial integration measurements
+--------------------------------
+
+The following records describe the earlier core integration under Python 3.11. They preserve historical before/after evidence and use a different baseline from the current streaming comparison. Their ratios must not be chained with the current results.
 
 ``tools/benchmark_core.py`` compares the existing Python APIs with a preserved pre-integration checkout at ``3c7b36a32d4db567542b69e8655d6eea9eed57d8``. It measures bulk and frame-at-a-time frontend, network, decoder, and complete paths in separate processes. All stage measurements, Linux resident memory, dependency versions, audio hashes, source hashes, and loaded extension hashes are recorded in ``docs/benchmarks/core-host.json``.
 

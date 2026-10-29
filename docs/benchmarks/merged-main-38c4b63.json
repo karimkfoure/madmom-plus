@@ -30,7 +30,7 @@
     "log_sha256": "c6e18b62e5db475a3da34ade36c5bacc00001595cf6537ee41d6db5c3370bc39",
     "coverage": [
       "native and Python interfaces retain the same beat grid",
-      "native engine chunks of137,441,4096 samples retain all events",
+      "native engine chunks of 137, 441 and 4096 samples retain all events",
       "empty calls retain the sample clock",
       "reset retains event output and completed-window count"
     ]

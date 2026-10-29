@@ -21,6 +21,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 STAGES = ('frontend', 'network', 'decoder', 'bulk',
           'stream_frontend', 'stream_network', 'stream_decoder', 'stream')
+ALL_STAGES = STAGES + ('engine_128', 'engine_441', 'engine_2048')
 
 
 def worker(args):
@@ -32,6 +33,7 @@ def worker(args):
     import madmom.ml.nn.layers
     from madmom.audio.signal import Signal, FramedSignal
     from madmom.features.beats import RNNBeatProcessor, DBNBeatTrackingProcessor
+    from madmom.native import NativeBeatTracker
 
     def rss():
         return int(Path('/proc/self/statm').read_text().split()[1]) * os.sysconf('SC_PAGE_SIZE')
@@ -48,15 +50,22 @@ def worker(args):
         np.asarray(Signal(str(ROOT / 'tests/data/audio' / name),
                           sample_rate=44100, num_channels=1, dtype=np.float32))
         for name in ('sample.wav', 'sample2.wav')]), args.copies), sample_rate=44100)
-    rnn = RNNBeatProcessor(online=True, origin='online', fps=100, num_threads=1)
+    chunk_size = int(args.stage.split('_')[1]) if args.stage.startswith('engine_') else None
+    engine = NativeBeatTracker() if chunk_size else None
+    rnn = (RNNBeatProcessor(online=True, origin='online', fps=100, num_threads=1)
+           if engine is None else None)
     stream = RNNBeatProcessor(online=True, origin='stream', num_frames=1,
                              fps=100, num_threads=1) if args.stage.startswith('stream') else None
-    dbn = DBNBeatTrackingProcessor(online=True, fps=100)
+    dbn = DBNBeatTrackingProcessor(online=True, fps=100) if engine is None else None
     ready_rss = rss()
     features = rnn[0](audio) if args.stage in ('network', 'stream_network') else None
     activations = rnn(audio) if args.stage in ('decoder', 'stream_decoder') else None
 
     def run():
+        if engine is not None:
+            engine.reset()
+            return [engine.push(audio[first:first + chunk_size])
+                    for first in range(0, len(audio), chunk_size)]
         if args.stage == 'frontend':
             return rnn[0](audio, reset=True)
         if args.stage == 'network':
@@ -90,6 +99,8 @@ def worker(args):
         times.append(time.process_time() - start)
         del output
     final_rss, measured_peak = rss(), peak_rss()
+    if engine is not None:
+        engine.close()
     binaries = {}
     for name, module in (('hmm', madmom.ml.hmm),
                          ('layers', madmom.ml.nn.layers)):
@@ -112,6 +123,11 @@ def worker(args):
         'binary_sha256': binaries,
         'network_module_sha256': hashlib.sha256(
             Path(madmom.ml.nn.__file__).read_bytes()).hexdigest(),
+        'engine_chunk_samples': chunk_size,
+        'engine_configuration': ({'networks': 8, 'precision': 'float32', 'simd': False}
+                                 if chunk_size else None),
+        'push_calls_per_run': ((len(audio) + chunk_size - 1) // chunk_size
+                               if chunk_size else None),
     }
 
 
@@ -125,8 +141,8 @@ def main():
     parser.add_argument('--output', type=Path)
     parser.add_argument('--paired', action='store_true',
                         help='Alternate variants in fresh processes for each trial')
-    parser.add_argument('--stages', choices=STAGES, nargs='+', default=STAGES)
-    parser.add_argument('--stage', choices=STAGES)
+    parser.add_argument('--stages', choices=ALL_STAGES, nargs='+', default=STAGES)
+    parser.add_argument('--stage', choices=ALL_STAGES)
     args = parser.parse_args()
     if args.stage:
         print(json.dumps(worker(args)))

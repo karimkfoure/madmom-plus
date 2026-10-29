@@ -48,7 +48,8 @@ extensions = [
 extensions.append(Extension(
     'madmom._native',
     ['native/src/online.cpp', 'native/src/nn.cpp',
-     'native/src/decoders.cpp', 'native/src/bindings.cpp'],
+     'native/src/decoders.cpp', 'native/src/bindings.cpp',
+     'native/src/nn_bindings.cpp'],
     include_dirs=['native/include'],
     define_macros=[('MADMOM_NATIVE_BUILD', '1')],
     language='c++',

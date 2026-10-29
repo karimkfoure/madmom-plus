@@ -4,6 +4,15 @@ madmom.features.downbeats
 .. automodule:: madmom.features.downbeats
     :members:
 
+Optional meter priors
+---------------------
+
+Both ``DBNDownBeatTrackingProcessor`` and ``OnlineDBNDownBeatTrackingProcessor`` accept ``beats_per_bar_weights`` after the existing constructor arguments. Supply a finite, non-negative vector in the same order as ``beats_per_bar``. At least one weight must be positive. Weights are normalised; a zero weight excludes that meter. For example, ``beats_per_bar=[3, 4], beats_per_bar_weights=[1, 3]`` favours four beats per bar. Omitting the option or using equal weights preserves the default result.
+
+The two decoders apply these priors differently. The offline decoder adds the log prior once when it selects a meter from the complete recording. The online decoder assigns the prior mass at initialisation and reset. New evidence and allowed bar-boundary transitions can change its posterior. A zero-weight meter is absent from the online state space, so transitions cannot restore it. Configure online weights when you create the processor; changing the public weight array later does not rebuild the filter.
+
+The offline weighting idea is adapted from `PR #408 <https://github.com/CPJKU/madmom/pull/408>`_ by declension, commit `fd670e62a0438487f1965a69a5ed6576d291b191 <https://github.com/CPJKU/madmom/commit/fd670e62a0438487f1965a69a5ed6576d291b191>`_. This implementation keeps the existing positional arguments, validates NumPy and malformed vectors, and extracts model scores without converting unequal-length paths to a rectangular array. The online initial-prior implementation is new.
+
 Causal bar tracking
 -------------------
 

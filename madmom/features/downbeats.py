@@ -119,6 +119,32 @@ def _process_dbn(process_tuple):
     return process_tuple[0].viterbi(process_tuple[1])
 
 
+def _normalise_meter_weights(weights, num_meters):
+    """Validate and normalise a vector of non-negative meter weights."""
+    if weights is None:
+        if num_meters < 1:
+            raise ValueError('At least one meter is required.')
+        return np.full(num_meters, 1. / num_meters)
+    try:
+        raw = np.asarray(weights)
+        if not np.isrealobj(raw):
+            raise ValueError('Meter weights must be real numbers.')
+        weights = np.array(raw, dtype=float, copy=True)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError('beats_per_bar_weights must be a finite, '
+                         'non-negative vector with one value per meter.') from error
+    if (weights.ndim != 1 or len(weights) != num_meters or
+            not np.all(np.isfinite(weights)) or np.any(weights < 0) or
+            not np.any(weights > 0)):
+        raise ValueError('beats_per_bar_weights must be a finite, '
+                         'non-negative vector with one value per meter '
+                         'and a positive sum.')
+    # Scaling first prevents overflow when valid finite weights sum to inf.
+    weights /= np.max(weights)
+    weights /= np.sum(weights)
+    return weights
+
+
 class DBNDownBeatTrackingProcessor(Processor):
     """
     Downbeat tracking with RNNs and a dynamic Bayesian network (DBN)
@@ -154,6 +180,10 @@ class DBNDownBeatTrackingProcessor(Processor):
         (down-)beat activation function).
     fps : float, optional
         Frames per second.
+    beats_per_bar_weights : list or numpy array, optional
+        Non-negative meter prior weights, in the order of `beats_per_bar`.
+        Values are normalised to sum to one. Zero excludes a meter. The
+        default gives equal weights and preserves unweighted decoding.
 
     References
     ----------
@@ -201,11 +231,14 @@ class DBNDownBeatTrackingProcessor(Processor):
     def __init__(self, beats_per_bar, min_bpm=MIN_BPM, max_bpm=MAX_BPM,
                  num_tempi=NUM_TEMPI, transition_lambda=TRANSITION_LAMBDA,
                  observation_lambda=OBSERVATION_LAMBDA, threshold=THRESHOLD,
-                 correct=CORRECT, fps=None, **kwargs):
+                 correct=CORRECT, fps=None, beats_per_bar_weights=None,
+                 **kwargs):
         # pylint: disable=unused-argument
         # pylint: disable=no-name-in-module
         # expand arguments to arrays
         beats_per_bar = np.array(beats_per_bar, ndmin=1)
+        meter_weights = _normalise_meter_weights(beats_per_bar_weights,
+                                                 len(beats_per_bar))
         min_bpm = np.array(min_bpm, ndmin=1)
         max_bpm = np.array(max_bpm, ndmin=1)
         num_tempi = np.array(num_tempi, ndmin=1)
@@ -246,6 +279,7 @@ class DBNDownBeatTrackingProcessor(Processor):
             self.hmms.append(HiddenMarkovModel(tm, om))
         # save variables
         self.beats_per_bar = beats_per_bar
+        self.beats_per_bar_weights = meter_weights
         self.threshold = threshold
         self.correct = correct
         self.fps = fps
@@ -268,6 +302,9 @@ class DBNDownBeatTrackingProcessor(Processor):
         """
         # pylint: disable=arguments-differ
         import itertools as it
+        # Validate before decoding; getattr preserves older saved processors.
+        weights = _normalise_meter_weights(
+            getattr(self, 'beats_per_bar_weights', None), len(self.hmms))
         # use only the activations > threshold (init offset to be added later)
         first = 0
         if self.threshold:
@@ -279,8 +316,16 @@ class DBNDownBeatTrackingProcessor(Processor):
         # (parallel) decoding of the activations with HMM
         results = list(self.map(_process_dbn, zip(self.hmms,
                                                   it.repeat(activations))))
-        # choose the best HMM (highest log probability)
-        best = np.argmax(list(r[1] for r in results))
+        # Adapt the meter-selection prior from declension's PR #408,
+        # fd670e62a0438487f1965a69a5ed6576d291b191. Equal weights retain the
+        # exact original score comparison; excluded models cannot win ties.
+        scores = np.array([result[1] for result in results], dtype=float)
+        allowed = np.flatnonzero(weights > 0)
+        if not np.all(weights == weights[0]):
+            scores = scores[allowed] + np.log(weights[allowed])
+            best = allowed[np.argmax(scores)]
+        else:
+            best = np.argmax(scores)
         # the best path through the state space
         path, _ = results[best]
         # the state space and observation model of the best HMM
@@ -560,6 +605,10 @@ class OnlineDBNDownBeatTrackingProcessor(Processor):
         Filtering and the clock continue below this threshold.
     fps : float
         Activation frames per second.
+    beats_per_bar_weights : list or numpy array, optional
+        Non-negative initial meter weights, in the order of `beats_per_bar`.
+        Values are normalised to sum to one. Zero excludes a meter from the
+        filter. The default gives each meter equal initial probability.
 
     Notes
     -----
@@ -570,8 +619,12 @@ class OnlineDBNDownBeatTrackingProcessor(Processor):
     meet this condition. This processor does not include a causal downbeat
     network or a music classifier.
 
-    A joint HMM compares the allowed meters with equal prior probability
-    per meter. Each event uses the current maximum-posterior state. Events
+    A joint HMM compares the allowed meters with equal initial probability
+    unless `beats_per_bar_weights` is supplied. These weights initialise
+    the streaming filter; unlike the offline decoder's selection prior,
+    they are not added to a whole-recording score. Evidence and bar-boundary
+    transitions can change the meter posterior. Each event uses the current
+    maximum-posterior state. Events
     have the current frame time and are never revised or aligned to a future
     peak. A minimum interval of ``60 / max_bpm`` prevents duplicate events.
     The processor retains only the filter state and uses fixed-size internal
@@ -595,7 +648,7 @@ class OnlineDBNDownBeatTrackingProcessor(Processor):
     def __init__(self, beats_per_bar, min_bpm=55., max_bpm=215.,
                  num_tempi=60, transition_lambda=100,
                  observation_lambda=16, meter_change_probability=0.01,
-                 threshold=0.05, fps=None):
+                 threshold=0.05, fps=None, beats_per_bar_weights=None):
         meters = np.atleast_1d(np.asarray(beats_per_bar, dtype=float))
         if (meters.ndim != 1 or not len(meters) or
                 not np.all(np.isfinite(meters)) or
@@ -603,6 +656,8 @@ class OnlineDBNDownBeatTrackingProcessor(Processor):
                 len(np.unique(meters)) != len(meters)):
             raise ValueError('beats_per_bar must contain distinct positive '
                              'integers.')
+        meter_weights = _normalise_meter_weights(beats_per_bar_weights,
+                                                 len(meters))
         values = [fps, min_bpm, max_bpm, observation_lambda,
                   transition_lambda, meter_change_probability, threshold]
         try:
@@ -626,12 +681,15 @@ class OnlineDBNDownBeatTrackingProcessor(Processor):
         if 60. * fps / max_bpm < 1:
             raise ValueError('max_bpm must not exceed 60 * fps.')
         self.beats_per_bar = meters.astype(int)
+        self.beats_per_bar_weights = meter_weights
+        allowed = np.flatnonzero(meter_weights > 0)
+        self._active_beats_per_bar = self.beats_per_bar[allowed]
         self.fps = float(fps)
         self.max_bpm = float(max_bpm)
         self.threshold = float(threshold)
         spaces = [BarStateSpace(meter, 60. * fps / max_bpm,
                                 60. * fps / min_bpm, num_tempi)
-                  for meter in self.beats_per_bar]
+                  for meter in self._active_beats_per_bar]
         self.st = MultiPatternStateSpace(spaces)
         transitions = [BarTransitionModel(space, transition_lambda)
                        for space in spaces]
@@ -639,10 +697,18 @@ class OnlineDBNDownBeatTrackingProcessor(Processor):
             transitions, float(meter_change_probability) or None)
         self.om = RNNDownBeatTrackingObservationModel(
             self.st, observation_lambda)
+        # Preserve the original floating-point state prior for equal weights.
         # A uniform state prior would favour meters with more states.
-        prior = np.concatenate([np.full(space.num_states,
-                                        1. / (len(spaces) * space.num_states))
-                                for space in spaces])
+        active_weights = meter_weights[allowed]
+        if np.all(active_weights == active_weights[0]):
+            prior = np.concatenate([
+                np.full(space.num_states,
+                        1. / (len(spaces) * space.num_states))
+                for space in spaces])
+        else:
+            prior = np.concatenate([
+                np.full(space.num_states, weight / space.num_states)
+                for space, weight in zip(spaces, active_weights)])
         self.hmm = HiddenMarkovModel(self.tm, self.om, prior)
         self.reset()
 
@@ -709,7 +775,10 @@ class OnlineDBNDownBeatTrackingProcessor(Processor):
                     self._last_beat_frame = frame
             state = states[-1]
             pattern = self.st.state_patterns[state]
-            self.meter = int(self.beats_per_bar[pattern])
+            # Older saved processors contain every meter in the state space.
+            active_meters = getattr(self, '_active_beats_per_bar',
+                                    self.beats_per_bar)
+            self.meter = int(active_meters[pattern])
             self.bar_position = float(self.st.state_positions[state])
             self.period = self.st.state_intervals[state] / self.fps
             self.meter_probability = float(np.sum(

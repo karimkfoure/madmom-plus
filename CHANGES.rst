@@ -4,6 +4,9 @@ Release Notes
 Version 0.17.0.dev1 (madmom-plus)
 --------------------------------
 
+* Require the C++17 core in every build and use its fused frontend, float32 neural inference, forward HMM recursion, and event/peak kernels from the existing Python processors. Preserve unsupported operations in their existing implementations. Add ``HiddenMarkovModel.forward_states`` so the online beat DBN keeps one posterior row instead of a frame-by-state array.
+* Add the small versioned C engine interface in ``native/include/madmom_engine.h``, with sample timestamps, bounded output storage, reset/configure, and raw tracker reliability. Preserve the existing Python API and binary model asset format.
+* Store independent numerical fixtures from unmodified `madmom 0.16.1 <https://github.com/CPJKU/madmom/tree/6545fbb3ecdae0aac336a95ec591f642e0b74f3e>`_, by Sebastian Böck and the madmom contributors, commit ``6545fbb3ecdae0aac336a95ec591f642e0b74f3e``. Restore its single-frame network output shape and test frontend customization, state transfer, reset, and serialization. These native changes are original project work; no external native implementation is bundled.
 * Rename the distribution to ``madmom-plus`` and keep the ``madmom`` Python import, processor classes, CLI names, and model references. Use a shared version file so source imports do not depend on installed distribution metadata.
 * Include all beat model years in wheels, including the 2019 TCN models. Fail with a clear submodule initialization command when model sources are missing.
 * Keep doctest output formatting stable on NumPy 2 and correct outdated example dtypes and one displayed FFT decimal. All upstream unit-test assertions and tolerances remain unchanged.

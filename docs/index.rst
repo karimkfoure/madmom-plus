@@ -15,6 +15,8 @@ Madmom documentation
    online-processing
    development
    native
+   native-reference
+   native-wheels
    citation
 
 .. _api_reference:

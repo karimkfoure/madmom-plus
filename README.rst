@@ -61,7 +61,7 @@ Source installation uses PEP 517 build isolation. It installs Cython and NumPy b
 Requirements
 ------------
 
-The package requires Python 3.9 or newer, NumPy 1.23.5 or newer at runtime, SciPy 1.13 or newer, and mido 1.2.6 or newer. The build environment requires setuptools 64 or newer, Cython 3 or newer, and NumPy 2 or newer. A C compiler and matching Python development headers are required for source builds. On Debian or Ubuntu with the system Python, install ``build-essential``, ``python3-dev``, and ``python3-venv``.
+The package requires Python 3.9 or newer, NumPy 1.23.5 or newer at runtime, SciPy 1.13 or newer, and mido 1.2.6 or newer. The build environment requires setuptools 64 or newer, Cython 3 or newer, and NumPy 2 or newer. Source builds require C and C++17 compilers and matching Python development headers because the online Python processors use the required native core. On Debian or Ubuntu with the system Python, install ``build-essential``, ``python3-dev``, and ``python3-venv``.
 
 Install ``ffmpeg`` for compressed audio input, resampling, and the full audio test suite. Optional packages are ``pyaudio`` for microphone input and ``pyfftw`` for FFT acceleration. The `aarch64 guide <docs/aarch64.rst>`_ gives 64-bit ARM Linux instructions and states what was verified under emulation.
 

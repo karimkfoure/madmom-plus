@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "host": {
+    "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+    "machine": "x86_64",
+    "system": "Linux",
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "cpu_affinity": [
+      0
+    ],
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "method": {
+    "repeats": 7,
+    "warm_runs": 1,
+    "chunk_samples": 441,
+    "networks": 8,
+    "precision": "float32",
+    "simd": true,
+    "before_compile_flags": "-std=c++17 -O3 -ffp-contract=off -shared -fPIC",
+    "after_build": "CMake Release; cxx_std_17; -O3 -DNDEBUG -ffp-contract=off; MADMOM_NATIVE_BUILD=1",
+    "timing": "Process CPU seconds; identical ctypes component calls in both libraries; model loading and audio/frame preparation excluded; output allocation and result copies included",
+    "frontend": "2048-sample causal frames; 441-sample hop; window, FFT, magnitude, filterbank, log and positive spectral difference; one call per frame",
+    "engine": "Frontend, full ensemble, forward DBN and beat events; bounded sample pushes",
+    "memory": "Separate process per library; live glibc heap increase after create and a 44100-sample push; process peak RSS includes Python, NumPy, SciPy and audio; freed allocation peaks are not captured by live heap counts",
+    "limitations": "Two short upstream recordings; host frequency and unrelated activity uncontrolled; these costs do not predict AArch64 hardware performance or music-corpus accuracy"
+  },
+  "model_sha256": "12eab992a26a6e3114fe4a64e30f8d9a4d4d2972b2c2204cde0fe0b6f33718fe",
+  "provenance": {
+    "before": {
+      "binary_name": "madmom-core-before.so",
+      "binary_sha256": "9d147567743309a20f94f6fee550a5c92259a1ac50738637a8da0c32749f60f0",
+      "source_revision": "3c7b36a",
+      "online_cpp_sha256": "5c4c47d44565f9a314c23a693b9ab8b5a5aa3ef952804ac76593d58c0128b3a9"
+    },
+    "after": {
+      "binary_name": "libmadmom_native.so",
+      "binary_sha256": "c1d5bf29b8ec320b32a6a921354b9264d23ff199ead61d24d41b4f36285dbc8c",
+      "source_revision": "daca5b4",
+      "online_cpp_sha256": "a58ef12d0e744d12e4ff24a43b495292cf51653bc86e5ebb5f20e0fb7deb5942"
+    },
+    "current_source_sha256": {
+      "native/src/online.cpp": "a58ef12d0e744d12e4ff24a43b495292cf51653bc86e5ebb5f20e0fb7deb5942",
+      "native/src/nn.cpp": "0c39659fd087cb79854497b4a87e17aac45e85d7ec41762d5b1e70a25442860f",
+      "native/src/decoders.cpp": "67898d647df81d6fa163c4c0d2aa946061bc9e7bcd569ea748bd35e3f7006599",
+      "tools/benchmark_engine.py": "8db078676bcfa5bc539e1199cc4f9f6662f0576465bb582e705fcea61833d5aa"
+    }
+  },
+  "clips": [
+    {
+      "audio": "sample.wav",
+      "audio_sha256": "d06b3c39384c4a0cf59f0bd326eda2443edf668fbb90647e37c801e59602866c",
+      "audio_seconds": 2.8000226757369613,
+      "stages": {
+        "frontend": {
+          "timings": {
+            "before": {
+              "cpu_seconds": [
+                0.03088955900000001,
+                0.030818944999999986,
+                0.03044503500000001,
+                0.031212666,
+                0.031484626000000016,
+                0.03031068399999992,
+                0.03092277099999996
+              ],
+              "cpu_seconds_median": 0.03088955900000001,
+              "cpu_seconds_per_audio_second": 0.01103189601558135
+            },
+            "after": {
+              "cpu_seconds": [
+                0.019213358999999985,
+                0.019148115999999993,
+                0.01874999899999996,
+                0.018695947999999962,
+                0.019898313999999973,
+                0.019550950999999928,
+                0.01949844199999995
+              ],
+              "cpu_seconds_median": 0.019213358999999985,
+              "cpu_seconds_per_audio_second": 0.006861858357965998
+            }
+          },
+          "comparison": {
+            "max_abs_error": 0.0,
+            "exact_equal": true,
+            "atol": 2e-06,
+            "rtol": 2e-05
+          }
+        },
+        "engine": {
+          "timings": {
+            "before": {
+              "cpu_seconds": [
+                0.06800387499999994,
+                0.06828176200000002,
+                0.06750162299999984,
+                0.06620335300000013,
+                0.06776054899999995,
+                0.0673089200000001,
+                0.06766271800000001
+              ],
+              "cpu_seconds_median": 0.06766271800000001,
+              "cpu_seconds_per_audio_second": 0.02416506072837117
+            },
+            "after": {
+              "cpu_seconds": [
+                0.05786292100000012,
+                0.05637236500000009,
+                0.0589558240000001,
+                0.05634870000000003,
+                0.05749140399999986,
+                0.05679073099999998,
+                0.05513941400000011
+              ],
+              "cpu_seconds_median": 0.05679073099999998,
+              "cpu_seconds_per_audio_second": 0.020282239673310058
+            }
+          },
+          "comparison": {
+            "max_abs_error": 8.940696716308594e-08,
+            "exact_equal": false,
+            "activation_atol": 2e-05,
+            "activation_rtol": 0.0002,
+            "exact_frame_times_and_events": true,
+            "beat_samples": [
+              20727,
+              34839,
+              65268,
+              95256,
+              110250
+            ]
+          }
+        }
+      }
+    },
+    {
+      "audio": "sample2.wav",
+      "audio_sha256": "b1f19c0a668a6db867d9e277e72dce279830eb93e73e78751645698d8eb9caf5",
+      "audio_seconds": 4.050702947845805,
+      "stages": {
+        "frontend": {
+          "timings": {
+            "before": {
+              "cpu_seconds": [
+                0.043920750999999925,
+                0.04392022600000001,
+                0.044545282999999936,
+                0.04449015799999989,
+                0.04476788300000023,
+                0.04497111199999981,
+                0.044829924999999715
+              ],
+              "cpu_seconds_median": 0.044545282999999936,
+              "cpu_seconds_per_audio_second": 0.010996926601021055
+            },
+            "after": {
+              "cpu_seconds": [
+                0.027727468000000144,
+                0.02766467799999983,
+                0.026819010999999726,
+                0.026353509999999858,
+                0.028726711000000016,
+                0.027944284000000152,
+                0.027544263999999874
+              ],
+              "cpu_seconds_median": 0.02766467799999983,
+              "cpu_seconds_per_audio_second": 0.006829599295774607
+            }
+          },
+          "comparison": {
+            "max_abs_error": 0.0,
+            "exact_equal": true,
+            "atol": 2e-06,
+            "rtol": 2e-05
+          }
+        },
+        "engine": {
+          "timings": {
+            "before": {
+              "cpu_seconds": [
+                0.09668178499999991,
+                0.09678125900000012,
+                0.09813974000000014,
+                0.09884413199999997,
+                0.09590991599999965,
+                0.09607313500000014,
+                0.09616657699999998
+              ],
+              "cpu_seconds_median": 0.09668178499999991,
+              "cpu_seconds_per_audio_second": 0.02386790298987884
+            },
+            "after": {
+              "cpu_seconds": [
+                0.08062269199999994,
+                0.08279444699999994,
+                0.08453108199999981,
+                0.08168355799999993,
+                0.08396806600000017,
+                0.08155433000000034,
+                0.08201988000000027
+              ],
+              "cpu_seconds_median": 0.08201988000000027,
+              "cpu_seconds_per_audio_second": 0.02024830777670801
+            }
+          },
+          "comparison": {
+            "max_abs_error": 2.086162567138672e-07,
+            "exact_equal": false,
+            "activation_atol": 2e-05,
+            "activation_rtol": 0.0002,
+            "exact_frame_times_and_events": true,
+            "beat_samples": [
+              31752,
+              56889,
+              73647,
+              89523,
+              105840,
+              122157,
+              138474,
+              154350,
+              170667
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "audio_seconds": 6.8507256235827665,
+    "frontend": {
+      "cpu_seconds_per_audio_second": {
+        "before": 0.0110112192700179,
+        "after": 0.006842784191885898
+      },
+      "speedup": 1.60917237212813
+    },
+    "engine": {
+      "cpu_seconds_per_audio_second": {
+        "before": 0.023989357044787274,
+        "after": 0.020262176392258666
+      },
+      "speedup": 1.1839476954683215
+    }
+  },
+  "memory": {
+    "before": {
+      "live_heap_increase_after_create_bytes": 1339232,
+      "live_heap_increase_after_push_bytes": 1353856,
+      "process_peak_rss_kib": 63508
+    },
+    "after": {
+      "live_heap_increase_after_create_bytes": 1320976,
+      "live_heap_increase_after_push_bytes": 1321232,
+      "process_peak_rss_kib": 63508
+    }
+  }
+}

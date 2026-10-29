@@ -49,6 +49,24 @@ The state query reports the latest frame index, accepted sample count, last beat
 
 Configuration can reduce the ensemble or round weights for explicit experiments. Reduced precision still uses float32 storage and arithmetic. These settings can change activation values and beat events. Use all eight float32 models when compatibility is required.
 
+## Measured frontend cost
+
+On the AMD Ryzen 9 5900X host, the native frontend uses 0.00684 CPU seconds per audio second, compared with 0.01101 for the previous native implementation at commit `3c7b36a`. This is a 1.61 times speed increase. The complete native engine uses 0.02026 CPU seconds per audio second, compared with 0.02399 before, a 1.18 times speed increase. The comparison uses the same ctypes component calls in both libraries, all eight float32 networks, SIMD, and 441-sample pushes.
+
+The two upstream WAV files contain 6.851 seconds of audio. Frontend outputs match the previous native implementation exactly. The largest activation difference after shared neural inference is 2.09e-7; frame times and beat events match exactly. These comparisons establish continuity with the previous native code; the separate stored 0.16.1 fixtures establish upstream parity.
+
+The live heap increase after model creation falls from 1,339,232 to 1,320,976 bytes. After a one-second input push, it falls from 1,353,856 to 1,321,232 bytes. Both measurement processes reach 63,508 KiB peak resident memory, including Python, NumPy, SciPy, and audio arrays. Live heap counts exclude allocation peaks that were already freed. These measurements do not show a process peak-memory reduction.
+
+The report uses one pinned CPU, one BLAS thread, one warm run, and the median of seven process CPU measurements. It includes result allocation and copying, and excludes model loading and audio/frame preparation. CPU frequency and unrelated host activity were not controlled. Short test recordings do not establish accuracy on a representative music corpus or predict AArch64 hardware cost. Raw runs, model/audio hashes, source hashes, binary hashes, and memory observations are in [engine-host.json](../docs/benchmarks/engine-host.json).
+
+To reproduce the comparison against the previous native source:
+
+```sh
+git show 3c7b36a:native/src/online.cpp > build/native-before.cpp
+c++ -std=c++17 -O3 -ffp-contract=off -shared -fPIC -I native/include build/native-before.cpp -o build/libmadmom_before.so
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 taskset -c 0 python tools/benchmark_engine.py --before-library build/libmadmom_before.so --after-library build/native/libmadmom_native.so --asset online.bin --output engine-host.json
+```
+
 ## Arithmetic and tests
 
 The frontend uses a half-size real FFT, double precision window/FFT arithmetic, madmom's complex64 cast before magnitude, contiguous filterbank coefficients, fused logarithm and positive spectral difference, and fixed rings for audio and difference history. It needs no external FFT library and performs no per-frame audio allocation. The shared neural kernels vectorize independent outputs with SSE2 or AArch64 NEON while preserving the input accumulation order. Fused multiply-add contraction is disabled in supported builds to limit numeric differences.

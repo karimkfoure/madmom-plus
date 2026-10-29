@@ -54,8 +54,34 @@ class TestBeatPeriodProcessor(unittest.TestCase):
                                         min_confidence=0)(beats)
         self.assertAlmostEqual(raw.period, .25)
         self.assertAlmostEqual(preferred.period, .5)
-        self.assertAlmostEqual((preferred.phase - beats[-1]) % .5, 0.)
+        self.assertAlmostEqual(preferred.phase % .5, 0.)
         self.assertTrue(preferred.valid)
+
+    def test_slower_octave_preserves_supported_phase(self):
+        beats = np.arange(40) * .25
+        parameters = dict(preferred_bpm=(80., 160.))
+        proc = BeatPeriodProcessor(**parameters)
+        states = [proc([beat], reset=False) for beat in beats]
+        valid = [state for state in states if state.valid]
+        self.assertGreater(len(valid), 20)
+        for state in valid:
+            self.assertAlmostEqual(state.period, .5)
+            self.assertAlmostEqual(state.phase % .5, 0.)
+        for stop in (8, 17, 40):
+            self.assertEqual(BeatPeriodProcessor(**parameters)(beats[:stop]),
+                             states[stop - 1])
+        chunked = BeatPeriodProcessor(**parameters)
+        chunked(beats[:9])
+        self.assertEqual(chunked(beats[9:], reset=False), states[-1])
+
+    def test_phase_consensus_can_replace_unsupported_prior(self):
+        proc = BeatPeriodProcessor(window_size=8)
+        first = proc(np.arange(12) * .5)
+        self.assertAlmostEqual(first.phase % .5, 0.)
+        shifted = proc(6.25 + np.arange(12) * .5, reset=False)
+        self.assertTrue(shifted.valid)
+        self.assertAlmostEqual(shifted.period, .5)
+        self.assertAlmostEqual(shifted.phase % .5, .25)
 
     def test_tempo_change_adapts_with_bounded_history(self):
         proc = BeatPeriodProcessor(window_size=8)

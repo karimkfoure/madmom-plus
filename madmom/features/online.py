@@ -115,12 +115,25 @@ class BeatPeriodProcessor(Processor):
         period = self._prefer_period(np.median(np.diff(times)))
         tolerance = max(0.01, self.tolerance * period)
         relative = times - times[-1]
-        # Choose a phase with the largest support. Prefer the latest phase on
-        # ties, which makes the optional slower octave use the latest parity.
+        # Choose a phase with the largest support. Preserve a supported prior
+        # phase on ties so a slower octave does not switch subdivision parity
+        # at each detection. A stronger competing phase can still replace it.
         residuals = ((relative[:, None] - relative[None, :] + period / 2.) %
                      period - period / 2.)
         support = np.sum(np.abs(residuals) <= tolerance, axis=0)
         best = len(times) - 1 - np.argmax(support[::-1])
+        previous = self._estimate
+        if (np.isfinite(previous.period) and
+                abs(period - previous.period) <= self.tolerance * period):
+            tied = np.flatnonzero(support == support[best])
+            predicted = (previous.phase +
+                         np.rint((times[-1] - previous.phase) /
+                                 previous.period) * previous.period)
+            distance = np.abs((times[tied] - predicted + period / 2.) %
+                              period - period / 2.)
+            nearest = np.argmin(distance)
+            if distance[nearest] <= tolerance:
+                best = tied[nearest]
         inliers = np.abs(residuals[:, best]) <= tolerance
         angles = 2. * np.pi * residuals[inliers, best] / period
         correction = np.angle(np.mean(np.exp(1j * angles))) * period / (2. * np.pi)

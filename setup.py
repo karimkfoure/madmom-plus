@@ -7,6 +7,7 @@ This file contains the setup for setuptools to distribute everything as a
 """
 
 import glob
+import os
 from distutils.extension import Extension
 
 import numpy as np
@@ -35,6 +36,16 @@ extensions = [
         'madmom.ml.nn.layers', ['madmom/ml/nn/layers.py'], include_dirs=include_dirs
     ),
 ]
+
+# The streaming backend is opt-in so existing installations need no C++ compiler.
+if os.environ.get('MADMOM_BUILD_NATIVE') == '1':
+    extensions.append(Extension(
+        'madmom._native',
+        ['native/src/online.cpp', 'native/src/bindings.cpp'],
+        include_dirs=['native/include'],
+        language='c++',
+        extra_compile_args=['-std=c++17', '-O3', '-ffp-contract=off'],
+    ))
 
 # define scripts to be installed by the PyPI package
 scripts = glob.glob('bin/*')

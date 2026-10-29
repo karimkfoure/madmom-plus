@@ -1,4 +1,4 @@
-"""Check the optional streaming backend against the Python online path."""
+"""Check the required streaming core against the Python processor API."""
 
 import os
 import subprocess
@@ -20,7 +20,7 @@ class TestNativeAvailability(unittest.TestCase):
     def test_availability_is_boolean(self):
         self.assertIsInstance(native.available(), bool)
 
-    def test_python_path_without_native_extension(self):
+    def test_missing_required_core_reports_import_error(self):
         script = """
 import importlib.abc
 import sys
@@ -40,8 +40,12 @@ except ImportError:
     pass
 else:
     raise AssertionError('missing extension must give an actionable error')
-activations = RNNBeatProcessor(online=True, origin='online')(sys.argv[1])
-assert len(activations) > 0
+try:
+    RNNBeatProcessor(online=True, origin='online')(sys.argv[1])
+except ImportError:
+    pass
+else:
+    raise AssertionError('online processors must use the required native core')
 """
         result = subprocess.run([sys.executable, '-c', script,
                                  os.path.join(AUDIO_PATH, 'sample.wav')],
@@ -49,7 +53,6 @@ assert len(activations) > 0
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
-@unittest.skipUnless(native.available(), "optional native backend is not built")
 class TestNativeBeatTracker(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

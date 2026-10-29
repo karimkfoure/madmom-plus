@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "host": {
+    "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+    "architecture": "x86_64",
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "affinity": [
+      4
+    ],
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "method": {
+    "audio_seconds": 34.253628117913834,
+    "copies": 5,
+    "repeats": 3,
+    "warmups_per_trial": 1,
+    "alternating_variants": true,
+    "networks": 8,
+    "precision": "float32",
+    "simd": true,
+    "timing": "Process CPU; includes the exact NativeBeatTracker.push wrapper, native engine, reset and output collection; excludes source loading, audio loading and model creation",
+    "limitations": "Two short public recordings are tiled for timing. Frequency and unrelated host activity are uncontrolled. No corpus accuracy or AArch64 hardware performance conclusion follows."
+  },
+  "provenance": {
+    "before_revision": "38c4b63",
+    "after_revision": "0750259465b08d832857372460972503d96e96ce",
+    "libraries": {
+      "before": {
+        "wrapper_sha256": "692a5b6b9a5452bd953c9bed206253c14dd0982d1ccd6819ad27c58173835221",
+        "binary_name": "_native.cpython-311-x86_64-linux-gnu.so",
+        "binary_sha256": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+      },
+      "after": {
+        "wrapper_sha256": "0cc865d01835878ad890528668f2f54801a1415eeff8d316c1809393ee1da81b",
+        "binary_name": "_native.cpython-311-x86_64-linux-gnu.so",
+        "binary_sha256": "60d32c80a9f4aa4aff905143dd77a39bf5368ed9641572dbf244385bc8b870fb"
+      }
+    },
+    "model_sha256": "12eab992a26a6e3114fe4a64e30f8d9a4d4d2972b2c2204cde0fe0b6f33718fe",
+    "script_sha256": "33a5ddfc7cae3f069f2b5fb4b6dcebc66b0a519cb67aabebb4f4339f0cc7557e",
+    "audio_sha256": {
+      "sample.wav": "d06b3c39384c4a0cf59f0bd326eda2443edf668fbb90647e37c801e59602866c",
+      "sample2.wav": "b1f19c0a668a6db867d9e277e72dce279830eb93e73e78751645698d8eb9caf5"
+    }
+  },
+  "chunks": [
+    {
+      "samples": 441,
+      "hops": 1.0,
+      "cpu_seconds": {
+        "before": [
+          0.528428169,
+          0.5054071489999998,
+          0.5263221589999993
+        ],
+        "after": [
+          0.3532797780000001,
+          0.3588281659999999,
+          0.3631921809999996
+        ]
+      },
+      "cpu_seconds_per_audio_second": {
+        "before": 0.015365442667509588,
+        "after": 0.010475625086042821
+      },
+      "speedup": 1.4667805062994956,
+      "frames": 3426,
+      "exact_chunk_invariance_per_variant": true,
+      "activation_max_abs_error": 1.5795230865478516e-06,
+      "beat_event_indices_equal": true
+    },
+    {
+      "samples": 2205,
+      "hops": 5.0,
+      "cpu_seconds": {
+        "before": [
+          0.4657745609999999,
+          0.46756357699999995,
+          0.46454901300000095
+        ],
+        "after": [
+          0.3444228659999995,
+          0.345475811,
+          0.3408269300000004
+        ]
+      },
+      "cpu_seconds_per_audio_second": {
+        "before": 0.013597816832617824,
+        "after": 0.010055076934167873
+      },
+      "speedup": 1.3523334452480882,
+      "frames": 3426,
+      "exact_chunk_invariance_per_variant": true,
+      "activation_max_abs_error": 1.5795230865478516e-06,
+      "beat_event_indices_equal": true
+    },
+    {
+      "samples": 4410,
+      "hops": 10.0,
+      "cpu_seconds": {
+        "before": [
+          0.4721232879999988,
+          0.4563838380000007,
+          0.45645122400000027
+        ],
+        "after": [
+          0.341283808,
+          0.3429014119999998,
+          0.33544864199999935
+        ]
+      },
+      "cpu_seconds_per_audio_second": {
+        "before": 0.013325631446360191,
+        "after": 0.009963435313338872
+      },
+      "speedup": 1.3374535014564777,
+      "frames": 3426,
+      "exact_chunk_invariance_per_variant": true,
+      "activation_max_abs_error": 1.5795230865478516e-06,
+      "beat_event_indices_equal": true
+    }
+  ]
+}

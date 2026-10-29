@@ -1,0 +1,917 @@
+{
+  "schema_version": 1,
+  "host": {
+    "cpu": "AMD Ryzen 9 5900X",
+    "architecture": "x86_64",
+    "affinity": [
+      4
+    ],
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "method": {
+    "audio_seconds": 68.50725623582767,
+    "audio_copies": 10,
+    "warmups": 1,
+    "measured_runs": 1,
+    "profile_scope": "cProfile includes initialization, a warm run, and one measured run. Timings are profiler elapsed self/cumulative time, include profiler overhead, and must not be treated as process CPU benchmark rates. Cython code without profile hooks can be attributed to its Python caller. Cumulative rows overlap and must not be summed.",
+    "source_paths": "Paths are relative to the repository or package root; raw pstats files remain local.",
+    "benchmark_reference": "Use the separate paired process CPU report for before/after cost claims.",
+    "reproduce": "python -m cProfile -o local-profile.dat tools/benchmark_core.py --stage STAGE --copies 10 --repeats 1 --package-root PRESERVED_SOURCE; normalize pstats source paths before sharing",
+    "stages": [
+      "stream_frontend",
+      "stream_decoder"
+    ],
+    "before_revision_note": "The preserved source and binary were copied before edits at 38c4b63.",
+    "after_revision_note": "Native runtime matches 20e6bc1; later benchmark/documentation commits do not change the profiled runtime."
+  },
+  "before": {
+    "revision": "38c4b6371049daa24ba537c197908b4d2102bd46",
+    "stages": {
+      "stream_frontend": {
+        "call_count": 2657898,
+        "profile_seconds": 2.9327290120000016,
+        "hotspots": [
+          {
+            "source": "~",
+            "line": 0,
+            "function": "<built-in method madmom._native.mm_frontend_process>",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.7983837890000001,
+            "cumulative_profile_seconds": 0.7983837890000001,
+            "self_profile_seconds_per_call": 5.8267682747044233e-05
+          },
+          {
+            "source": "madmom/audio/_native.py",
+            "line": 60,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.280215521,
+            "cumulative_profile_seconds": 1.6383360770000002,
+            "self_profile_seconds_per_call": 2.0450702160268577e-05
+          },
+          {
+            "source": "~",
+            "line": 0,
+            "function": "<built-in method madmom._native.mm_frontend_configure>",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.13173453100000002,
+            "cumulative_profile_seconds": 0.13173453100000002,
+            "self_profile_seconds_per_call": 9.614255656108598e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 260,
+            "function": "_process",
+            "calls": 54808,
+            "primitive_calls": 41106,
+            "self_profile_seconds": 0.062156146,
+            "cumulative_profile_seconds": 1.9421675390000002,
+            "self_profile_seconds_per_call": 1.1340706831119546e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 125,
+            "function": "__call__",
+            "calls": 68510,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.060090524000000006,
+            "cumulative_profile_seconds": 1.976076804,
+            "self_profile_seconds_per_call": 8.771058823529413e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 600,
+            "function": "__new__",
+            "calls": 13705,
+            "primitive_calls": 13705,
+            "self_profile_seconds": 0.047689639000000006,
+            "cumulative_profile_seconds": 0.37221789600000005,
+            "self_profile_seconds_per_call": 3.4797255746078077e-06
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 860,
+            "function": "signal_frame",
+            "calls": 27404,
+            "primitive_calls": 27404,
+            "self_profile_seconds": 0.046855939000000006,
+            "cumulative_profile_seconds": 0.079458474,
+            "self_profile_seconds_per_call": 1.7098211574952565e-06
+          },
+          {
+            "source": "madmom/audio/_native.py",
+            "line": 64,
+            "function": "<genexpr>",
+            "calls": 82212,
+            "primitive_calls": 82212,
+            "self_profile_seconds": 0.038691899,
+            "cumulative_profile_seconds": 0.087559815,
+            "self_profile_seconds_per_call": 4.7063566146061405e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1309,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.036994476000000005,
+            "cumulative_profile_seconds": 0.07814325700000001,
+            "self_profile_seconds_per_call": 2.6999325645891116e-06
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 771,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.03692,
+            "cumulative_profile_seconds": 0.10622759200000001,
+            "self_profile_seconds_per_call": 2.69449715370019e-06
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 634,
+            "function": "__array_finalize__",
+            "calls": 41179,
+            "primitive_calls": 41179,
+            "self_profile_seconds": 0.030955409000000003,
+            "cumulative_profile_seconds": 0.043528112,
+            "self_profile_seconds_per_call": 7.517280409917677e-07
+          },
+          {
+            "source": "madmom/audio/spectrogram.py",
+            "line": 143,
+            "function": "__array_finalize__",
+            "calls": 82204,
+            "primitive_calls": 82204,
+            "self_profile_seconds": 0.030755800000000003,
+            "cumulative_profile_seconds": 0.040150722,
+            "self_profile_seconds_per_call": 3.7413994452824685e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1159,
+            "function": "__getitem__",
+            "calls": 27406,
+            "primitive_calls": 27406,
+            "self_profile_seconds": 0.029333176000000002,
+            "cumulative_profile_seconds": 0.111641286,
+            "self_profile_seconds_per_call": 1.070319492082026e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 327,
+            "function": "__getitem__",
+            "calls": 178126,
+            "primitive_calls": 178126,
+            "self_profile_seconds": 0.026160991,
+            "cumulative_profile_seconds": 0.026160991,
+            "self_profile_seconds_per_call": 1.4686789688198244e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1103,
+            "function": "__init__",
+            "calls": 13704,
+            "primitive_calls": 13704,
+            "self_profile_seconds": 0.023462607,
+            "cumulative_profile_seconds": 0.024698087,
+            "self_profile_seconds_per_call": 1.7120991681260947e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 412,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.022054023000000002,
+            "cumulative_profile_seconds": 1.964221562,
+            "self_profile_seconds_per_call": 1.6095477302583566e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 470,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.012224531,
+            "cumulative_profile_seconds": 1.688568485,
+            "self_profile_seconds_per_call": 8.921712888629397e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1221,
+            "function": "shape",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.007426050000000001,
+            "cumulative_profile_seconds": 0.010737385,
+            "self_profile_seconds_per_call": 5.419683257918552e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1200,
+            "function": "__len__",
+            "calls": 41104,
+            "primitive_calls": 41104,
+            "self_profile_seconds": 0.005629183,
+            "cumulative_profile_seconds": 0.005629183,
+            "self_profile_seconds_per_call": 1.3694976158038147e-07
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 370,
+            "function": "__len__",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.003946211,
+            "cumulative_profile_seconds": 0.005149441,
+            "self_profile_seconds_per_call": 2.8800255437162457e-07
+          }
+        ]
+      },
+      "stream_decoder": {
+        "call_count": 1416667,
+        "profile_seconds": 2.5641470379999993,
+        "hotspots": [
+          {
+            "source": "madmom/features/beats.py",
+            "line": 1195,
+            "function": "process_online",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.45955874,
+            "cumulative_profile_seconds": 0.84034273,
+            "self_profile_seconds_per_call": 3.353953729382572e-05
+          },
+          {
+            "source": "madmom/ml/nn/_native.py",
+            "line": 175,
+            "function": "run",
+            "calls": 8,
+            "primitive_calls": 8,
+            "self_profile_seconds": 0.45591249500000003,
+            "cumulative_profile_seconds": 0.456168147,
+            "self_profile_seconds_per_call": 0.056989061875000004
+          },
+          {
+            "source": "~",
+            "line": 0,
+            "function": "<built-in method madmom._native.mm_frontend_process>",
+            "calls": 108,
+            "primitive_calls": 108,
+            "self_profile_seconds": 0.377287827,
+            "cumulative_profile_seconds": 0.377287827,
+            "self_profile_seconds_per_call": 0.0034934058055555556
+          },
+          {
+            "source": "madmom/_native_decoders.py",
+            "line": 103,
+            "function": "beat_events",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.09463486,
+            "cumulative_profile_seconds": 0.262971632,
+            "self_profile_seconds_per_call": 6.906645745146694e-06
+          },
+          {
+            "source": "madmom/features/beats_hmm.py",
+            "line": 546,
+            "function": "log_densities",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.084633993,
+            "cumulative_profile_seconds": 0.10234154000000001,
+            "self_profile_seconds_per_call": 6.176762005546636e-06
+          },
+          {
+            "source": "madmom/_native_decoders.py",
+            "line": 47,
+            "function": "_pointer",
+            "calls": 27404,
+            "primitive_calls": 27404,
+            "self_profile_seconds": 0.041419812,
+            "cumulative_profile_seconds": 0.10840475200000001,
+            "self_profile_seconds_per_call": 1.5114513209750402e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 144,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.012465663,
+            "cumulative_profile_seconds": 0.852808393,
+            "self_profile_seconds_per_call": 9.097695956794628e-07
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 125,
+            "function": "__call__",
+            "calls": 13718,
+            "primitive_calls": 13703,
+            "self_profile_seconds": 0.009837158,
+            "cumulative_profile_seconds": 1.7365732690000002,
+            "self_profile_seconds_per_call": 7.170985566409097e-07
+          },
+          {
+            "source": "madmom/audio/_native.py",
+            "line": 60,
+            "function": "process",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_profile_seconds": 0.009085148000000001,
+            "cumulative_profile_seconds": 0.409076851,
+            "self_profile_seconds_per_call": 0.009085148000000001
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 860,
+            "function": "signal_frame",
+            "calls": 6851,
+            "primitive_calls": 6851,
+            "self_profile_seconds": 0.0065369880000000005,
+            "cumulative_profile_seconds": 0.011985570000000001,
+            "self_profile_seconds_per_call": 9.541655232812728e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1159,
+            "function": "__getitem__",
+            "calls": 6851,
+            "primitive_calls": 6851,
+            "self_profile_seconds": 0.004224453,
+            "cumulative_profile_seconds": 0.016673669000000002,
+            "self_profile_seconds_per_call": 6.166184498613342e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 634,
+            "function": "__array_finalize__",
+            "calls": 6889,
+            "primitive_calls": 6889,
+            "self_profile_seconds": 0.003546945,
+            "cumulative_profile_seconds": 0.004902912000000001,
+            "self_profile_seconds_per_call": 5.148708085353462e-07
+          },
+          {
+            "source": "madmom/ml/nn/_native.py",
+            "line": 63,
+            "function": "__init__",
+            "calls": 8,
+            "primitive_calls": 8,
+            "self_profile_seconds": 0.0009934380000000001,
+            "cumulative_profile_seconds": 0.004856669,
+            "self_profile_seconds_per_call": 0.00012417975000000002
+          },
+          {
+            "source": "madmom/ml/nn/_native.py",
+            "line": 87,
+            "function": "<genexpr>",
+            "calls": 136,
+            "primitive_calls": 136,
+            "self_profile_seconds": 0.0009586250000000001,
+            "cumulative_profile_seconds": 0.0009586250000000001,
+            "self_profile_seconds_per_call": 7.0487132352941184e-06
+          },
+          {
+            "source": "madmom/ml/nn/_native.py",
+            "line": 127,
+            "function": "array",
+            "calls": 400,
+            "primitive_calls": 400,
+            "self_profile_seconds": 0.0008004500000000001,
+            "cumulative_profile_seconds": 0.0024779980000000004,
+            "self_profile_seconds_per_call": 2.0011250000000003e-06
+          },
+          {
+            "source": "madmom/ml/nn/_native.py",
+            "line": 36,
+            "function": "_pointer",
+            "calls": 424,
+            "primitive_calls": 424,
+            "self_profile_seconds": 0.0006558190000000001,
+            "cumulative_profile_seconds": 0.001658802,
+            "self_profile_seconds_per_call": 1.546742924528302e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 412,
+            "function": "process",
+            "calls": 3,
+            "primitive_calls": 1,
+            "self_profile_seconds": 0.000649032,
+            "cumulative_profile_seconds": 0.874023427,
+            "self_profile_seconds_per_call": 0.00021634400000000001
+          },
+          {
+            "source": "madmom/features/beats_hmm.py",
+            "line": 297,
+            "function": "__init__",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_profile_seconds": 0.000630805,
+            "cumulative_profile_seconds": 0.0027633790000000003,
+            "self_profile_seconds_per_call": 0.000630805
+          },
+          {
+            "source": "madmom/audio/filters.py",
+            "line": 746,
+            "function": "_put_filter",
+            "calls": 81,
+            "primitive_calls": 81,
+            "self_profile_seconds": 0.000523851,
+            "cumulative_profile_seconds": 0.00054232,
+            "self_profile_seconds_per_call": 6.467296296296296e-06
+          },
+          {
+            "source": "madmom/audio/filters.py",
+            "line": 532,
+            "function": "__new__",
+            "calls": 81,
+            "primitive_calls": 81,
+            "self_profile_seconds": 0.00041562900000000004,
+            "cumulative_profile_seconds": 0.0037152950000000004,
+            "self_profile_seconds_per_call": 5.131222222222223e-06
+          }
+        ]
+      }
+    },
+    "binary_sha256": "ca1324d9a0bb5a529e5aac488e1094bf25266d750dbc20c11261efcd31724749"
+  },
+  "after": {
+    "revision": "20e6bc16a33a007166db398beff047e478254803",
+    "stages": {
+      "stream_frontend": {
+        "call_count": 2658032,
+        "profile_seconds": 1.6494709319999983,
+        "hotspots": [
+          {
+            "source": "madmom/audio/_native.py",
+            "line": 60,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.191939685,
+            "cumulative_profile_seconds": 0.7441430840000001,
+            "self_profile_seconds_per_call": 1.4008150999854036e-05
+          },
+          {
+            "source": "~",
+            "line": 0,
+            "function": "<built-in method madmom._native.mm_frontend_process>",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.154460711,
+            "cumulative_profile_seconds": 0.154460711,
+            "self_profile_seconds_per_call": 1.1272858779740185e-05
+          },
+          {
+            "source": "~",
+            "line": 0,
+            "function": "<built-in method madmom._native.mm_frontend_configure>",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.106023082,
+            "cumulative_profile_seconds": 0.106023082,
+            "self_profile_seconds_per_call": 7.73778149175303e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 260,
+            "function": "_process",
+            "calls": 54808,
+            "primitive_calls": 41106,
+            "self_profile_seconds": 0.043688204,
+            "cumulative_profile_seconds": 0.9556575970000001,
+            "self_profile_seconds_per_call": 7.971136330462706e-07
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 125,
+            "function": "__call__",
+            "calls": 68510,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.041118451,
+            "cumulative_profile_seconds": 0.979553577,
+            "self_profile_seconds_per_call": 6.001817398919866e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 600,
+            "function": "__new__",
+            "calls": 13705,
+            "primitive_calls": 13705,
+            "self_profile_seconds": 0.03188664,
+            "cumulative_profile_seconds": 0.25915371000000004,
+            "self_profile_seconds_per_call": 2.326642831083546e-06
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 860,
+            "function": "signal_frame",
+            "calls": 27404,
+            "primitive_calls": 27404,
+            "self_profile_seconds": 0.031083371000000002,
+            "cumulative_profile_seconds": 0.054172428,
+            "self_profile_seconds_per_call": 1.134264012552912e-06
+          },
+          {
+            "source": "madmom/audio/_native.py",
+            "line": 64,
+            "function": "<genexpr>",
+            "calls": 82212,
+            "primitive_calls": 82212,
+            "self_profile_seconds": 0.026033422,
+            "cumulative_profile_seconds": 0.058794965000000005,
+            "self_profile_seconds_per_call": 3.166620687977424e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 771,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.025746605000000002,
+            "cumulative_profile_seconds": 0.07309979900000001,
+            "self_profile_seconds_per_call": 1.87903992117939e-06
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1309,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.024122909,
+            "cumulative_profile_seconds": 0.053046042,
+            "self_profile_seconds_per_call": 1.7605392643409723e-06
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1159,
+            "function": "__getitem__",
+            "calls": 27406,
+            "primitive_calls": 27406,
+            "self_profile_seconds": 0.02205653,
+            "cumulative_profile_seconds": 0.078255928,
+            "self_profile_seconds_per_call": 8.048066116908706e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 634,
+            "function": "__array_finalize__",
+            "calls": 41179,
+            "primitive_calls": 41179,
+            "self_profile_seconds": 0.021726839,
+            "cumulative_profile_seconds": 0.030320850000000003,
+            "self_profile_seconds_per_call": 5.276193933801209e-07
+          },
+          {
+            "source": "madmom/audio/spectrogram.py",
+            "line": 143,
+            "function": "__array_finalize__",
+            "calls": 82204,
+            "primitive_calls": 82204,
+            "self_profile_seconds": 0.021095457,
+            "cumulative_profile_seconds": 0.027501421,
+            "self_profile_seconds_per_call": 2.5662324217799623e-07
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 327,
+            "function": "__getitem__",
+            "calls": 178126,
+            "primitive_calls": 178126,
+            "self_profile_seconds": 0.018056603,
+            "cumulative_profile_seconds": 0.018056603,
+            "self_profile_seconds_per_call": 1.0136983371321425e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1103,
+            "function": "__init__",
+            "calls": 13704,
+            "primitive_calls": 13704,
+            "self_profile_seconds": 0.016578773,
+            "cumulative_profile_seconds": 0.017477313,
+            "self_profile_seconds_per_call": 1.2097761967308815e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 412,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.015526121,
+            "cumulative_profile_seconds": 0.971183718,
+            "self_profile_seconds_per_call": 1.1331280834914611e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 470,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.008809787000000001,
+            "cumulative_profile_seconds": 0.7788735240000001,
+            "self_profile_seconds_per_call": 6.429562837541966e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1221,
+            "function": "shape",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.005593969000000001,
+            "cumulative_profile_seconds": 0.008146637,
+            "self_profile_seconds_per_call": 4.082593052109182e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1200,
+            "function": "__len__",
+            "calls": 41104,
+            "primitive_calls": 41104,
+            "self_profile_seconds": 0.004199821,
+            "cumulative_profile_seconds": 0.004199821,
+            "self_profile_seconds_per_call": 1.0217548170494357e-07
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 370,
+            "function": "__len__",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.002804759,
+            "cumulative_profile_seconds": 0.0036608490000000003,
+            "self_profile_seconds_per_call": 2.0469705152532477e-07
+          }
+        ]
+      },
+      "stream_decoder": {
+        "call_count": 1267680,
+        "profile_seconds": 1.6391427760000017,
+        "hotspots": [
+          {
+            "source": "~",
+            "line": 0,
+            "function": "<built-in method madmom._native.mm_nn_process_many>",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_profile_seconds": 0.389220812,
+            "cumulative_profile_seconds": 0.389220812,
+            "self_profile_seconds_per_call": 0.389220812
+          },
+          {
+            "source": "madmom/features/beats.py",
+            "line": 1195,
+            "function": "process_online",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.341417295,
+            "cumulative_profile_seconds": 0.4983729,
+            "self_profile_seconds_per_call": 2.4917332871113708e-05
+          },
+          {
+            "source": "~",
+            "line": 0,
+            "function": "<built-in method madmom._native.mm_frontend_process>",
+            "calls": 108,
+            "primitive_calls": 108,
+            "self_profile_seconds": 0.070679355,
+            "cumulative_profile_seconds": 0.070679355,
+            "self_profile_seconds_per_call": 0.0006544384722222222
+          },
+          {
+            "source": "madmom/features/beats_hmm.py",
+            "line": 546,
+            "function": "log_densities",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.061792072,
+            "cumulative_profile_seconds": 0.07602903800000001,
+            "self_profile_seconds_per_call": 4.509711866880747e-06
+          },
+          {
+            "source": "madmom/_native_decoders.py",
+            "line": 103,
+            "function": "beat_events",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.031443929,
+            "cumulative_profile_seconds": 0.06923664,
+            "self_profile_seconds_per_call": 2.294842285797694e-06
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 144,
+            "function": "process",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.009374551,
+            "cumulative_profile_seconds": 0.5077474510000001,
+            "self_profile_seconds_per_call": 6.841739162166108e-07
+          },
+          {
+            "source": "~",
+            "line": 0,
+            "function": "<built-in method madmom._native.mm_beat_events>",
+            "calls": 13702,
+            "primitive_calls": 13702,
+            "self_profile_seconds": 0.007923856,
+            "cumulative_profile_seconds": 0.007923856,
+            "self_profile_seconds_per_call": 5.78299226390308e-07
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 125,
+            "function": "__call__",
+            "calls": 13709,
+            "primitive_calls": 13703,
+            "self_profile_seconds": 0.007735877,
+            "cumulative_profile_seconds": 1.005536507,
+            "self_profile_seconds_per_call": 5.642918520679846e-07
+          },
+          {
+            "source": "madmom/audio/_native.py",
+            "line": 60,
+            "function": "process",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_profile_seconds": 0.00632538,
+            "cumulative_profile_seconds": 0.09385818200000001,
+            "self_profile_seconds_per_call": 0.00632538
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 860,
+            "function": "signal_frame",
+            "calls": 6851,
+            "primitive_calls": 6851,
+            "self_profile_seconds": 0.005063833,
+            "cumulative_profile_seconds": 0.009281792,
+            "self_profile_seconds_per_call": 7.391377901036345e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 1159,
+            "function": "__getitem__",
+            "calls": 6851,
+            "primitive_calls": 6851,
+            "self_profile_seconds": 0.003116245,
+            "cumulative_profile_seconds": 0.012753013,
+            "self_profile_seconds_per_call": 4.548598744708802e-07
+          },
+          {
+            "source": "madmom/audio/signal.py",
+            "line": 634,
+            "function": "__array_finalize__",
+            "calls": 6889,
+            "primitive_calls": 6889,
+            "self_profile_seconds": 0.002762136,
+            "cumulative_profile_seconds": 0.0038128460000000004,
+            "self_profile_seconds_per_call": 4.0094875889098564e-07
+          },
+          {
+            "source": "madmom/ml/nn/_native.py",
+            "line": 73,
+            "function": "__init__",
+            "calls": 8,
+            "primitive_calls": 8,
+            "self_profile_seconds": 0.000681189,
+            "cumulative_profile_seconds": 0.004248928,
+            "self_profile_seconds_per_call": 8.5148625e-05
+          },
+          {
+            "source": "madmom/ml/nn/_native.py",
+            "line": 140,
+            "function": "array",
+            "calls": 400,
+            "primitive_calls": 400,
+            "self_profile_seconds": 0.000616543,
+            "cumulative_profile_seconds": 0.0032162420000000002,
+            "self_profile_seconds_per_call": 1.5413575e-06
+          },
+          {
+            "source": "madmom/ml/nn/_native.py",
+            "line": 36,
+            "function": "_pointer",
+            "calls": 424,
+            "primitive_calls": 424,
+            "self_profile_seconds": 0.000473621,
+            "cumulative_profile_seconds": 0.001227112,
+            "self_profile_seconds_per_call": 1.1170306603773586e-06
+          },
+          {
+            "source": "madmom/features/beats_hmm.py",
+            "line": 297,
+            "function": "__init__",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_profile_seconds": 0.000409503,
+            "cumulative_profile_seconds": 0.002239516,
+            "self_profile_seconds_per_call": 0.000409503
+          },
+          {
+            "source": "madmom/processors.py",
+            "line": 412,
+            "function": "process",
+            "calls": 2,
+            "primitive_calls": 1,
+            "self_profile_seconds": 0.000403543,
+            "cumulative_profile_seconds": 0.490088334,
+            "self_profile_seconds_per_call": 0.0002017715
+          },
+          {
+            "source": "madmom/audio/filters.py",
+            "line": 746,
+            "function": "_put_filter",
+            "calls": 81,
+            "primitive_calls": 81,
+            "self_profile_seconds": 0.00036141900000000003,
+            "cumulative_profile_seconds": 0.000373347,
+            "self_profile_seconds_per_call": 4.461962962962964e-06
+          },
+          {
+            "source": "madmom/features/beats_hmm.py",
+            "line": 63,
+            "function": "__init__",
+            "calls": 1,
+            "primitive_calls": 1,
+            "self_profile_seconds": 0.00031102500000000004,
+            "cumulative_profile_seconds": 0.0011817260000000001,
+            "self_profile_seconds_per_call": 0.00031102500000000004
+          },
+          {
+            "source": "madmom/audio/filters.py",
+            "line": 532,
+            "function": "__new__",
+            "calls": 81,
+            "primitive_calls": 81,
+            "self_profile_seconds": 0.000303489,
+            "cumulative_profile_seconds": 0.00260057,
+            "self_profile_seconds_per_call": 3.746777777777778e-06
+          }
+        ]
+      }
+    },
+    "binary_sha256": "60d32c80a9f4aa4aff905143dd77a39bf5368ed9641572dbf244385bc8b870fb"
+  },
+  "changes": [
+    {
+      "commit": "6f2cedf",
+      "reason": "Vectorize independent double-precision FFT butterflies; use sqrt for ordinary float32 magnitudes and hypot at range extremes."
+    },
+    {
+      "commit": "974c4df",
+      "reason": "Replace beat-event ctypes marshalling with borrowed buffers and keep the shared event rule."
+    },
+    {
+      "commit": "f2ebde2",
+      "reason": "Select the best normalized state while updating the posterior, preserving first-NaN and first-tie behavior."
+    },
+    {
+      "commit": "bf0b3b9",
+      "reason": "Use neural buffer bindings to remove repeated Python pointer and descriptor work."
+    }
+  ],
+  "validation": {
+    "native_frontend_decoder_hmm_and_frozen_reference_tests": {
+      "passed": 80,
+      "subtests_passed": 35
+    },
+    "fused_decoder_independent_library_tests": {
+      "passed": 36,
+      "subtests_passed": 10,
+      "random_models": 100
+    },
+    "release_c_abi_ctest": {
+      "passed": 1,
+      "failed": 0,
+      "revision": "974c4df"
+    },
+    "address_undefined_and_leak_sanitizer_c_abi_ctest": {
+      "passed": 1,
+      "failed": 0,
+      "revision": "974c4df"
+    },
+    "fft_input_scales": [
+      0.0,
+      1e-30,
+      1e-20,
+      1.0,
+      1000000000000000.0,
+      1e+30
+    ]
+  }
+}

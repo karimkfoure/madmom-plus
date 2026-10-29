@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include "madmom_native.h"
+#include "madmom_decoders.h"
 
 #include <algorithm>
 #include <cstring>
@@ -25,7 +26,8 @@ struct Buffer {
                           (writable ? PyBUF_WRITABLE : 0);
         if (PyObject_GetBuffer(object, &value, flags) < 0) return false;
         active = true;
-        const size_t item_size = format == 'd' ? sizeof(double) : sizeof(float);
+        const size_t item_size = format == 'd' ? sizeof(double) :
+                                 format == 'B' ? sizeof(uint8_t) : sizeof(float);
         if (!value.format || value.format[0] != format || value.format[1] ||
             value.itemsize != static_cast<Py_ssize_t>(item_size)) {
             PyErr_SetString(PyExc_ValueError, "Native frontend buffer dtype does not match");
@@ -182,7 +184,35 @@ PyObject* process_frontend(PyObject*, PyObject* args) {
     Py_RETURN_NONE;
 }
 
+PyObject* beat_events(PyObject*, PyObject* args) {
+    PyObject *flags, *output;
+    long long first_frame;
+    double fps, max_bpm, last_beat, tempo;
+    if (!PyArg_ParseTuple(args, "OLddddO", &flags, &first_frame,
+                          &fps, &max_bpm, &last_beat, &tempo, &output)) return nullptr;
+    Buffer selected, events;
+    if (!selected.get(flags, 'B') || !events.get(output, 'd', true)) return nullptr;
+    if (selected.value.ndim != 1 || events.value.ndim != 1 ||
+        selected.value.len > events.value.len / static_cast<Py_ssize_t>(sizeof(double))) {
+        PyErr_SetString(PyExc_ValueError, "Invalid beat event buffer dimensions");
+        return nullptr;
+    }
+    ptrdiff_t count;
+    Py_BEGIN_ALLOW_THREADS
+    count = mm_beat_events(static_cast<const uint8_t*>(selected.value.buf),
+        selected.value.len, first_frame, fps, max_bpm, &last_beat, &tempo,
+        static_cast<double*>(events.value.buf));
+    Py_END_ALLOW_THREADS
+    if (count < 0) {
+        PyErr_SetString(PyExc_ValueError, "Invalid beat event dimensions or timing parameters");
+        return nullptr;
+    }
+    return Py_BuildValue("(ndd)", static_cast<Py_ssize_t>(count), last_beat, tempo);
+}
+
 PyMethodDef methods[] = {
+    {"mm_beat_events", beat_events, METH_VARARGS,
+     "Apply the shared beat-event rule to borrowed flag and output buffers."},
     {"mm_frontend_configure", configure_frontend, METH_VARARGS,
      "Configure an internal shared frontend capsule from contiguous buffers."},
     {"mm_frontend_process", process_frontend, METH_VARARGS,

@@ -67,3 +67,20 @@ def test_unaligned_configuration_and_frames_keep_processor_behavior():
                                   offset=1)
     unaligned_frame[...] = frame
     np.testing.assert_array_equal(adapted(Signal(unaligned_frame, sample_rate=44100)), expected)
+
+
+def test_beat_event_binding_validates_buffers_and_uses_shared_rule():
+    flags = np.ones(3, dtype=np.uint8)
+    output = np.empty(3, dtype=np.float64)
+    count, last, tempo = _native.mm_beat_events(flags, 25, 100., 240.,
+                                               0., 0., output)
+    assert count == 1
+    np.testing.assert_array_equal(output[:count], [.25])
+    assert last == .25 and tempo == 240.
+    with pytest.raises(ValueError):
+        _native.mm_beat_events(flags, 25, 100., 240., 0., 0., output[:1])
+    with pytest.raises(ValueError):
+        _native.mm_beat_events(flags.astype(np.float32), 25, 100., 240.,
+                               0., 0., output)
+    with pytest.raises(ValueError):
+        _native.mm_beat_events(flags, 25, 0., 240., 0., 0., output)

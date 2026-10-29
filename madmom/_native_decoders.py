@@ -105,15 +105,10 @@ def beat_events(beat_flags, first_frame, fps, max_bpm, last_beat, tempo):
     flags = np.ascontiguousarray(beat_flags, dtype=np.uint8)
     if flags.ndim != 1:
         raise ValueError('Beat flags must be one-dimensional')
-    if not np.iinfo(np.int64).min <= first_frame <= np.iinfo(np.int64).max:
+    if not -(1 << 63) <= first_frame < (1 << 63):
         raise ValueError('Beat frame counter is outside the int64 range')
     output = np.empty(len(flags), dtype=np.float64)
-    last = ct.c_double(last_beat)
-    bpm = ct.c_double(tempo)
-    count = _library().mm_beat_events(
-        _pointer(flags, ct.c_uint8), len(flags), first_frame, fps, max_bpm,
-        ct.byref(last), ct.byref(bpm), _pointer(output, ct.c_double),
-    )
-    if count < 0:
-        raise ValueError('Invalid beat event dimensions or timing parameters')
-    return output[:count], last.value, bpm.value
+    from . import _native
+    count, last, bpm = _native.mm_beat_events(
+        flags, first_frame, fps, max_bpm, last_beat, tempo, output)
+    return output[:count], last, bpm

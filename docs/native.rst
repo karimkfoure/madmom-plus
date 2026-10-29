@@ -49,7 +49,7 @@ Build the library independently of Python::
 
 The engine accepts finite mono float32 PCM at 44100 Hz. It uses a 2048-sample Hann window, 441-sample hop, 81 logarithmic bands, and 81 positive differences. Each frame uses samples through its integer sample timestamp and pads missing history with zeros. One sample emits the frame at sample zero. There is no end padding or flush. Chunk boundaries do not change output. Audio timestamps exclude delivery, resampling, scheduling, and computation delay.
 
-The output queue has a fixed capacity. ``MM_ENGINE_FULL`` consumes no samples: read pending frames, then retry. Configuration failure preserves the previous engine. Reset clears audio, difference, recurrent, decoder, event, queue, and clock state. Use each handle from one thread at a time; separate handles are independent. Maximum DBN posterior is exposed as raw reliability. It is not a calibrated music-presence probability; downstream applications own that policy.
+The output queue has a fixed capacity. ``MM_ENGINE_FULL`` consumes no samples: read pending frames, then retry. If the chunk produces more frames than the queue's total capacity, split the chunk or configure a larger queue. Configuration failure preserves the previous engine. Reset clears audio, difference, recurrent, decoder, event, queue, and clock state. Use each handle from one thread at a time; separate handles are independent. Maximum DBN posterior is exposed as raw reliability. It is not a calibrated music-presence probability; downstream applications own that policy.
 
 Model assets and Python wrapper
 --------------------------------

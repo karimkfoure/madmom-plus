@@ -4,3 +4,4 @@ include CHANGES.rst
 recursive-include madmom/ *.pyx
 recursive-include madmom/ *.pxd
 recursive-exclude madmom/ *.c
+recursive-include native/ *.cpp *.h CMakeLists.txt

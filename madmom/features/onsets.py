@@ -626,7 +626,7 @@ class SpectralOnsetProcessor(SequentialProcessor):
     <function spectral_flux at 0x...>
     >>> sodf('tests/data/audio/sample.wav')
     ... # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
-    array([ 0. , 100.90121, ..., 26.30577, 20.94439], dtype=float32)
+    array([ 0. , 100.90121, ..., 26.30578, 20.94439], dtype=float32)
 
     The parameters passed to the signal pre-processing chain can be set when
     creating the SpectralOnsetProcessor. E.g. to obtain the SuperFlux [2]_

@@ -6,6 +6,7 @@ Version 0.17.0.dev1 (madmom-plus)
 
 * Rename the distribution to ``madmom-plus`` and keep the ``madmom`` Python import, processor classes, CLI names, and model references. Use a shared version file so source imports do not depend on installed distribution metadata.
 * Include all beat model years in wheels, including the 2019 TCN models. Fail with a clear submodule initialization command when model sources are missing.
+* Keep doctest output formatting stable on NumPy 2 and correct outdated example dtypes and one displayed FFT decimal. All upstream unit-test assertions and tolerances remain unchanged.
 * Build with PEP 517 and Cython 3, using NumPy 2 headers. Use public C declarations so the extensions do not depend on removed NumPy declarations.
 * Use setuptools instead of the removed standard-library distutils module. Include Cython declaration files in source distributions and declare a test extra for modern pip workflows.
 * Align dependency requirements: Python 3.9 or newer, NumPy 1.23.5 or newer at runtime, and SciPy 1.13 or newer. The isolated build requires NumPy 2 or newer.

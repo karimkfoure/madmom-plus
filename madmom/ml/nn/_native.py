@@ -95,6 +95,10 @@ class _Model:
                 descriptor.activation = _ACTIVATIONS[layer.activation_fn]
             except (KeyError, TypeError):
                 raise _Unsupported
+            if descriptor.kind and descriptor.activation == 5:
+                raise _Unsupported
+            if descriptor.kind == 2 and layer.activation_fn is None:
+                raise _Unsupported
             self.functions.append((ref(layer), layer.activation_fn))
             for gate_index, gate in enumerate(gates):
                 target = descriptor.gates[gate_index]
@@ -113,14 +117,12 @@ class _Model:
                     self.functions.append((ref(gate), gate.activation_fn))
                     # Gate.activate applies its function to a vector. Softmax
                     # requires a matrix, so its existing error must remain.
-                    if target.activation == 5:
+                    if target.activation == 5 or gate.activation_fn is None:
                         raise _Unsupported
             if descriptor.kind:
                 self.state(layer, '_prev', 'hidden', descriptor, shape[1])
             if descriptor.kind == 2:
                 self.state(layer, '_state', 'cell', descriptor, shape[1])
-                if descriptor.activation == 5:
-                    raise _Unsupported
 
     def array(self, owner, name, shape, optional=False):
         original = getattr(owner, name, None)

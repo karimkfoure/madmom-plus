@@ -8,6 +8,11 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
+try:
+    from numpy.exceptions import AxisError
+except ImportError:
+    from numpy import AxisError
+
 from madmom.ml.nn import NeuralNetwork
 from madmom.ml.nn import _native
 from madmom.ml.nn.activations import linear, relu, sigmoid, softmax, tanh
@@ -156,3 +161,23 @@ def test_single_frame_prediction_keeps_the_release_time_axis():
     multi = NeuralNetwork([FeedForwardLayer(np.ones((3, 2), np.float32),
                                              np.zeros(2, np.float32))])
     assert multi(np.zeros((1, 3), np.float32)).shape == (1, 2)
+
+
+def test_invalid_recurrent_activation_configurations_keep_their_errors():
+    data = np.zeros((2, 5), np.float32)
+    lstm = _lstm(np.random.default_rng(7))
+    lstm.activation_fn = None
+    assert _native.network(lstm, (lstm,), data, True) is None
+    with pytest.raises(TypeError):
+        lstm(data)
+    lstm.activation_fn = tanh
+    lstm.input_gate.activation_fn = None
+    assert _native.network(lstm, (lstm,), data, True) is None
+    with pytest.raises(TypeError):
+        lstm(data)
+    recurrent = RecurrentLayer(np.zeros((5, 3), np.float32),
+                                np.zeros(3, np.float32),
+                                np.zeros((3, 3), np.float32), softmax)
+    assert _native.network(recurrent, (recurrent,), data, True) is None
+    with pytest.raises(AxisError):
+        recurrent(data)

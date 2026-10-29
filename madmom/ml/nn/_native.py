@@ -16,6 +16,7 @@ from . import activations
 
 
 _FP = ct.POINTER(ct.c_float)
+_FLOAT32 = np.dtype(np.float32)
 _ACTIVATIONS = {None: 0, activations.linear: 0, activations.tanh: 1,
                 np.tanh: 1, activations.sigmoid: 2, activations.relu: 3,
                 activations.elu: 4, activations.softmax: 5}
@@ -48,8 +49,8 @@ def _library():
     from ... import _native
 
     lib = ct.CDLL(_native.__file__)
-    lib.mm_nn_network.argtypes = [_FP, ct.c_size_t, ct.c_size_t,
-                                 ct.POINTER(_Layer), ct.c_size_t, _FP]
+    lib.mm_nn_network.argtypes = [ct.c_void_p, ct.c_size_t, ct.c_size_t,
+                                 ct.POINTER(_Layer), ct.c_size_t, ct.c_void_p]
     lib.mm_nn_network.restype = ct.c_int
     return lib
 
@@ -64,6 +65,8 @@ class _Model:
 
         self._layers = tuple(ref(layer) for layer in layers)
         self.arrays = []
+        self.copies = []
+        self.functions = []
         self.states = []
         self._gates = []
         self.descriptors = (_Layer * len(layers))()
@@ -92,6 +95,7 @@ class _Model:
                 descriptor.activation = _ACTIVATIONS[layer.activation_fn]
             except (KeyError, TypeError):
                 raise _Unsupported
+            self.functions.append((ref(layer), layer.activation_fn))
             for gate_index, gate in enumerate(gates):
                 target = descriptor.gates[gate_index]
                 target.weights = self.array(gate, 'weights', shape)
@@ -106,6 +110,7 @@ class _Model:
                         target.activation = _ACTIVATIONS[gate.activation_fn]
                     except (KeyError, TypeError):
                         raise _Unsupported
+                    self.functions.append((ref(gate), gate.activation_fn))
                     # Gate.activate applies its function to a vector. Softmax
                     # requires a matrix, so its existing error must remain.
                     if target.activation == 5:
@@ -126,6 +131,8 @@ class _Model:
                 or original.shape != shape):
             raise _Unsupported
         contiguous = np.ascontiguousarray(original)
+        if contiguous is not original:
+            self.copies.append((original, contiguous))
         self.arrays.append((ref(owner), name, original, original.shape,
                             original.strides, contiguous))
         return _pointer(contiguous)
@@ -148,21 +155,19 @@ class _Model:
                 return False
             if value is not None and (value.shape != shape or
                                       value.strides != strides or
-                                      value.dtype != np.float32):
+                                      value.dtype != _FLOAT32):
+                return False
+        for owner, function in self.functions:
+            if owner().activation_fn is not function:
                 return False
         for owner, descriptor, original_gates in zip(
                 self._layers, self.descriptors, self._gates):
             layer = owner()
-            if _activation(layer.activation_fn) != descriptor.activation:
-                return False
             if descriptor.kind == 2:
                 gates = (layer.input_gate, layer.forget_gate,
                          layer.cell, layer.output_gate)
                 if gates != tuple(gate() for gate in original_gates):
                     return False
-                for gate, target in zip(gates, descriptor.gates):
-                    if _activation(gate.activation_fn) != target.activation:
-                        return False
         return True
 
     def run(self, data, reset):
@@ -172,12 +177,11 @@ class _Model:
             for layer in self._layers:
                 layer().reset()
         # Copies are needed only for strided model arrays or explicit resets.
-        for owner, name, original, _, _, contiguous in self.arrays:
-            if original is not None and contiguous is not original:
-                np.copyto(contiguous, original)
+        for original, contiguous in self.copies:
+            np.copyto(contiguous, original)
         for owner, name, value in self.states:
             source = getattr(owner(), name)
-            if (not isinstance(source, np.ndarray) or source.dtype != np.float32
+            if (not isinstance(source, np.ndarray) or source.dtype != _FLOAT32
                     or source.shape != value.shape):
                 raise _Unsupported
             if source is not value:
@@ -186,8 +190,8 @@ class _Model:
         if len(data):
             data = np.ascontiguousarray(data)
             status = _library().mm_nn_network(
-                _pointer(data), len(data), data.shape[1],
-                self.descriptors, len(self.descriptors), _pointer(result))
+                data.ctypes.data, len(data), data.shape[1],
+                self.descriptors, len(self.descriptors), result.ctypes.data)
             if status:
                 raise RuntimeError('Native neural kernel failed')
             for owner, name, value in self.states:
@@ -202,7 +206,7 @@ _MODELS = WeakKeyDictionary()
 
 def network(owner, layers, data, reset):
     """Return native output, or None when this model has no matching kernel."""
-    if not isinstance(data, np.ndarray) or data.dtype != np.float32:
+    if not isinstance(data, np.ndarray) or data.dtype != _FLOAT32:
         return None
     data = np.atleast_2d(data)
     if data.ndim != 2:

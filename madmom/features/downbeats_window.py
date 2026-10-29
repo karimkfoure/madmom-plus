@@ -173,8 +173,7 @@ class BarPhaseVotingProcessor(Processor):
                                abs(interval / previous_period - candidate) <= .2)
                 if regular_gap:
                     steps = candidate
-                    self._changes.clear()
-                elif abs(interval / previous_period - 1.) > self.tempo_change:
+                if abs(interval / previous_period - 1.) > self.tempo_change:
                     self._changes.append(interval)
                     if (len(self._changes) == 3 and
                             np.ptp(self._changes) <= .1 * np.mean(self._changes)):
@@ -182,6 +181,9 @@ class BarPhaseVotingProcessor(Processor):
                         self._intervals.clear()
                         self._intervals.extend(self._changes)
                         self._changes.clear()
+                        # Repeated integer gaps can be a new, slower tempo.
+                        # Isolated missed detections still keep their indices.
+                        steps = 1
                 else:
                     self._changes.clear()
             if (steps > 1 and self.fill_gaps and self.meter is not None and
@@ -240,8 +242,19 @@ class BarPhaseVotingProcessor(Processor):
         for meter in self.beats_per_bar[1:]:
             if self._scores[meter] > self.meter_hysteresis * self._scores[best]:
                 best = meter
+        # Equal contrasts cannot distinguish a bar from two identical bars.
+        # Permit recovery to a smaller divisor through a narrower tie band;
+        # requiring a separated phase and a narrower band avoids chattering.
+        preferred_multiple = False
+        if self.meter is not None and best < self.meter and self.meter % best == 0:
+            ordered = np.sort(self._votes[best])
+            preferred_multiple = (
+                self._scores[best] * np.sqrt(self.meter_hysteresis) >=
+                self._scores[self.meter] and
+                ordered[-1] > self.phase_hysteresis * ordered[-2])
         if (self._scores[best] >= self.min_score and
                 (self.meter is None or
+                 preferred_multiple or
                  self._scores[best] > self.meter_hysteresis * self._scores[self.meter])):
             if best != self.meter:
                 self.meter = best

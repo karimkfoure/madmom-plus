@@ -37,7 +37,7 @@ def window_activations(start, stop, meter=4, phase=0, strength=.95,
 
 
 def stream_votes(processor, stop=30., meter=4, phase=0, change=None, window=6.):
-    """Publish beats first, then submit only completed six-second windows."""
+    """Publish beats first, then submit only completed audio windows."""
     rows = []
     for time in np.arange(0., stop + .25, .5):
         rows.append(processor([time], now=time, reset=False))
@@ -82,6 +82,37 @@ class TestBarPhaseVotingProcessor(unittest.TestCase):
         stream_votes(processor, meter=6, window=6.)
         self.assertIsNone(processor.meter)
         self.assertEqual(processor.confidence, 0)
+
+    def test_larger_meter_can_release_a_multiple_after_song_change(self):
+        processor = BarPhaseVotingProcessor(beats_per_bar=(3, 6))
+        rows = stream_votes(processor, stop=72, meter=6,
+                            change=(40., 3, 0), window=8.)
+        old = rows[(rows[:, 0] >= 24) & (rows[:, 0] < 40)]
+        new = rows[rows[:, 0] >= 62]
+        assert_array_equal(old[:, 1], np.rint(old[:, 0] * 2).astype(int) % 6 + 1)
+        assert_array_equal(new[:, 1], np.rint(new[:, 0] * 2).astype(int) % 3 + 1)
+        self.assertEqual(processor.meter, 3)
+
+    def test_repeated_integer_gaps_reacquire_a_slower_tempo(self):
+        for fill in (False, True):
+            with self.subTest(fill=fill):
+                processor = BarPhaseVotingProcessor(beats_per_bar=(4,), fill_gaps=fill)
+                stream_votes(processor, stop=20)
+                rows = []
+                for time in np.arange(21., 51.):
+                    rows.append(processor([time], now=time, reset=False))
+                    if time >= 30 and time % 2 == 0:
+                        activation = np.full((1000, 2), 1e-4)
+                        for beat in np.arange(time - 10, time):
+                            frame = int((beat - time + 10) * 100)
+                            downbeat = .95 if (beat - 20) % 4 == 0 else .01
+                            activation[frame] = [.99 - downbeat, downbeat]
+                        processor([], activation, start=time - 10, now=time, reset=False)
+                self.assertAlmostEqual(processor.period, 1.)
+                settled = np.vstack(rows)
+                settled = settled[settled[:, 0] >= 42]
+                assert_array_equal(settled[:, 1], (settled[:, 0] - 20) % 4 + 1)
+                self.assertEqual(len(settled), 9)
 
     def test_meter_recovers_after_change_without_reset(self):
         processor = BarPhaseVotingProcessor()

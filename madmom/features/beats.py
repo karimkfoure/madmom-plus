@@ -1036,6 +1036,8 @@ class DBNBeatTrackingProcessor(OnlineProcessor):
     -----
     Instead of the originally proposed state space and transition model for
     the DBN [1]_, the more efficient version proposed in [2]_ is used.
+    Online decoding uses bounded forward blocks, so its temporary posterior
+    storage does not grow with the duration of the activation input.
 
     References
     ----------
@@ -1212,10 +1214,13 @@ class DBNBeatTrackingProcessor(OnlineProcessor):
         # reset to initial state
         if reset:
             self.reset()
-        # use forward path to get best state
-        fwd = self.hmm.forward(activations, reset=reset)
-        # choose the best state for each step
-        states = np.argmax(fwd, axis=1)
+        # Keep only the selected state per frame. Materializing all forward
+        # posteriors for a long input would require frames * states storage.
+        states = np.empty(len(activations), dtype=int)
+        for start in range(0, len(activations), 64):
+            stop = min(start + 64, len(activations))
+            fwd = self.hmm.forward(activations[start:stop], reset=False)
+            states[start:stop] = np.argmax(fwd, axis=1)
         # decide which time steps are beats
         beats = self.om.pointers[states] == 1
         # the positions inside the beats

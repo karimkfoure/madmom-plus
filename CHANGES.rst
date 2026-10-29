@@ -8,6 +8,7 @@ Version 0.17.0.dev1 (madmom-plus)
 * Use setuptools instead of the removed standard-library distutils module. Include Cython declaration files in source distributions and declare a test extra for modern pip workflows.
 * Align dependency requirements: Python 3.9 or newer, NumPy 1.23.5 or newer at runtime, and SciPy 1.13 or newer. The isolated build requires NumPy 2 or newer.
 * Accept scalar beat observations with NumPy 2 and decode microphone bytes with ``frombuffer``. Remove obsolete SciPy version checks and use current SciPy import paths and NumPy output arguments.
+* Preserve historical 16-bit ``Signal`` resampling results with FFmpeg 6.1 and newer by selecting its integer internal format for signed 16-bit input and output. File decoding and higher-precision paths keep FFmpeg's defaults. Combine ReplayGain, channel selection, and resampling in one filter chain so all requested operations apply. Cause: `FFmpeg commit 3bef108fa9302844180aad8632d54e1b7be1f4a3 <https://github.com/FFmpeg/FFmpeg/commit/3bef108fa9302844180aad8632d54e1b7be1f4a3>`_ by Paul B Mahol changed the resampling default; this is an independent compatibility fix, with no FFmpeg code copied.
 
 
 Version 0.17.dev0

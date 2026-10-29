@@ -7,10 +7,11 @@ from unittest.mock import Mock
 import numpy as np
 import pytest
 
-from madmom.audio.signal import Stream
+from madmom.audio.signal import Signal, Stream
 from madmom.features.beats_hmm import (
     BeatStateSpace, RNNBeatTrackingObservationModel,
 )
+from madmom.io.audio import _ffmpeg_call
 
 
 @pytest.mark.parametrize('observations', [0.25, [0.25], np.array([0.25])])
@@ -43,3 +44,25 @@ def test_stream_decodes_binary_audio(monkeypatch, dtype):
         assert second.start == 2 / 8000
     finally:
         stream.close()
+
+
+def test_resampling_keeps_gain_and_channel_filters():
+    """Use one filter chain so resampling does not discard other options."""
+    signal = Signal(np.zeros(4, dtype=np.int16), sample_rate=44100)
+    call = _ffmpeg_call(signal, 'output.wav', fmt='s16le',
+                        sample_rate=22050, num_channels=1, channel=1,
+                        replaygain_mode='track', replaygain_preamp=2)
+    assert call.count('-af') == 1
+    assert call[call.index('-af') + 1] == (
+        'volume=replaygain=track:replaygain_preamp=2.0,'
+        'pan=mono|c0=c1,aresample=internal_sample_fmt=s16p')
+
+
+@pytest.mark.parametrize('input_dtype, output_format', [
+    (np.int16, 'f32le'), (np.float32, 's16le'), (np.int32, 's16le')])
+def test_float_resampling_keeps_ffmpeg_precision(input_dtype, output_format):
+    """Higher-precision input and output keep FFmpeg's default precision."""
+    signal = Signal(np.zeros(4, dtype=input_dtype), sample_rate=44100)
+    call = _ffmpeg_call(signal, 'output.wav', fmt=output_format,
+                        sample_rate=22050)
+    assert '-af' not in call

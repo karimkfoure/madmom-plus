@@ -131,6 +131,13 @@ def _ffmpeg_call(infile, output, fmt='f32le', sample_rate=None, num_channels=1,
     if skip:
         # use "%f" to avoid scientific float notation
         call.extend(["-ss", "%f" % float(skip)])
+    # Preserve legacy rounding only for known 16-bit integer signal input.
+    # File decoders and higher-precision input retain FFmpeg's defaults.
+    integer_resampling = (isinstance(infile, Signal) and
+                          infile.dtype.kind == 'i' and
+                          infile.dtype.itemsize == 2 and
+                          fmt in ('s16le', 's16be') and sample_rate and
+                          sample_rate != infile.sample_rate)
     # if we decode from STDIN, the format must be specified
     if isinstance(infile, Signal):
         in_fmt = _ffmpeg_fmt(infile.dtype)
@@ -143,10 +150,11 @@ def _ffmpeg_call(infile, output, fmt='f32le', sample_rate=None, num_channels=1,
     else:
         infile = str(infile)
     call.extend(["-i", infile])
+    audio_filters = []
     if replaygain_mode:
         audio_filter = ("volume=replaygain=%s:replaygain_preamp=%.1f"
                         % (replaygain_mode, replaygain_preamp))
-        call.extend(["-af", audio_filter])
+        audio_filters.append(audio_filter)
     # output options
     call.extend(["-f", str(fmt)])
     if max_len:
@@ -157,9 +165,15 @@ def _ffmpeg_call(infile, output, fmt='f32le', sample_rate=None, num_channels=1,
         call.extend(["-ac", str(int(num_channels))])
     if channel is not None and (num_channels == 1 or num_channels is None):
         # Calling with channel=x and num_channels
-        call.extend(["-af", "pan=mono|c0=c%d" % int(channel)])
+        audio_filters.append("pan=mono|c0=c%d" % int(channel))
     if sample_rate:
+        if integer_resampling:
+            # FFmpeg 6.1 changed the internal resampling default to float.
+            # Preserve madmom's integer-output rounding and model features.
+            audio_filters.append("aresample=internal_sample_fmt=s16p")
         call.extend(["-ar", str(int(sample_rate))])
+    if audio_filters:
+        call.extend(["-af", ','.join(audio_filters)])
     call.append(output)
     return call
 

@@ -1,0 +1,663 @@
+{
+  "schema_version": 1,
+  "host": {
+    "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+    "machine": "x86_64",
+    "system": "Linux",
+    "kernel": "7.0.0-38-generic",
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "compiler_available": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "cpu_affinity": [
+      0
+    ],
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": null
+    }
+  },
+  "provenance": {
+    "git_revision": "40c1485833c9d02eb678141d2e245f8ede6895dd",
+    "native_binary": {
+      "filename": "_native.cpython-311-x86_64-linux-gnu.so",
+      "sha256": "37b02e56626003cc50c1b3abbcbed7de1bd9cf51298e36d5daa39959432605e5"
+    },
+    "source_sha256": {
+      "native/src/online.cpp": "5c4c47d44565f9a314c23a693b9ab8b5a5aa3ef952804ac76593d58c0128b3a9",
+      "native/include/madmom_native.h": "2184b464ead9b110f61c1b7839197c5abb0b123ea15667f0658ce97073ba2a13",
+      "native/src/bindings.cpp": "33e15fb8bfa96c61db43257def1183da881357579399cf06d603106f36072632",
+      "madmom/native.py": "3185e227533196d29ce7167c9860bd8f5a5f20874a95cd14fd2b0af0180044d4",
+      "setup.py": "7e45a771bc95a615162bfe7a4d6fb04f296e8cba1a12ffeb02db3ada36a32b20",
+      "tools/benchmark_native.py": "d2e94a499c8c2c5eec49a5fff3cdd8b6b898c6081291eb023c7608cb95611247"
+    }
+  },
+  "settings": {
+    "sample_rate": 44100,
+    "fps": 100,
+    "frame_size": 2048,
+    "hop_size": 441,
+    "native_chunk_samples": 441,
+    "repeats": 5,
+    "warm_runs": 1,
+    "network_selection": "First N released online LSTMs in model order",
+    "quantization": "Weights are rounded and decoded to float32 before inference",
+    "timing_scope": "Process CPU time includes frontend, networks, DBN, Python calls and result collection; excludes model export/loading, audio loading and scoring",
+    "time_reference": "Frames end at their reported reference time; caller delivery and computation delay are excluded from beat times",
+    "limitations": "The test recordings do not establish accuracy on a representative music corpus; host cost does not predict Raspberry Pi cost"
+  },
+  "clips": [
+    {
+      "audio": "sample.wav",
+      "audio_sha256": "d06b3c39384c4a0cf59f0bd326eda2443edf668fbb90647e37c801e59602866c",
+      "audio_seconds": 2.8000226757369613,
+      "annotations": "sample.beats",
+      "variants": {
+        "python-bulk": {
+          "cpu_seconds": [
+            0.10766437500000003,
+            0.14163565300000003,
+            0.10423810700000002,
+            0.14287074200000005,
+            0.10590648899999988
+          ],
+          "cpu_seconds_median": 0.10766437500000003,
+          "cpu_seconds_per_audio_second": 0.038451251103408635,
+          "frames": 281,
+          "activation_max_abs_error": 0.0,
+          "activation_rmse": 0.0,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.48,
+            2.16,
+            2.5
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6666666666666665,
+            "precision": 0.6,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        },
+        "python-stream": {
+          "cpu_seconds": [
+            0.22502197199999996,
+            0.23160470500000008,
+            0.21894128199999985,
+            0.218740178,
+            0.22756489000000002
+          ],
+          "cpu_seconds_median": 0.22502197199999996,
+          "cpu_seconds_per_audio_second": 0.08036433917120851,
+          "frames": 281,
+          "activation_max_abs_error": 8.940696716308594e-08,
+          "activation_rmse": 9.255536217476491e-09,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.48,
+            2.16,
+            2.5
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6666666666666665,
+            "precision": 0.6,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        },
+        "native-8-scalar": {
+          "configuration": {
+            "networks": 8,
+            "precision": "float32",
+            "simd": false
+          },
+          "cpu_seconds": [
+            0.09702139199999982,
+            0.07946294699999967,
+            0.08078923400000004,
+            0.08120009800000005,
+            0.09537077100000024
+          ],
+          "cpu_seconds_median": 0.08120009800000005,
+          "cpu_seconds_per_audio_second": 0.028999800145771436,
+          "frames": 281,
+          "activation_max_abs_error": 1.1920928955078125e-07,
+          "activation_rmse": 1.562470035136567e-08,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.48,
+            2.16,
+            2.5
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6666666666666665,
+            "precision": 0.6,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        },
+        "native-8-simd": {
+          "configuration": {
+            "networks": 8,
+            "precision": "float32",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.056937237000000085,
+            0.056131355999999855,
+            0.06586286000000019,
+            0.06805080499999994,
+            0.05503041899999994
+          ],
+          "cpu_seconds_median": 0.056937237000000085,
+          "cpu_seconds_per_audio_second": 0.020334562821000834,
+          "frames": 281,
+          "activation_max_abs_error": 1.1920928955078125e-07,
+          "activation_rmse": 1.1881022209626415e-08,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.48,
+            2.16,
+            2.5
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6666666666666665,
+            "precision": 0.6,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        },
+        "native-4-simd": {
+          "configuration": {
+            "networks": 4,
+            "precision": "float32",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.04502055400000016,
+            0.05383680299999982,
+            0.05595716800000039,
+            0.04590734800000007,
+            0.045986525
+          ],
+          "cpu_seconds_median": 0.045986525,
+          "cpu_seconds_per_audio_second": 0.016423625922206656,
+          "frames": 281,
+          "activation_max_abs_error": 0.11053788661956787,
+          "activation_rmse": 0.012750954552239756,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.48,
+            1.83,
+            2.16,
+            2.5
+          ],
+          "same_event_count_as_python": false,
+          "beat_max_abs_error_seconds": null,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6,
+            "precision": 0.5,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        },
+        "native-2-simd": {
+          "configuration": {
+            "networks": 2,
+            "precision": "float32",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.04085945899999999,
+            0.04251219899999992,
+            0.05419317899999987,
+            0.042309387999999615,
+            0.0412452120000002
+          ],
+          "cpu_seconds_median": 0.042309387999999615,
+          "cpu_seconds_per_audio_second": 0.015110373343267248,
+          "frames": 281,
+          "activation_max_abs_error": 0.15415608882904053,
+          "activation_rmse": 0.019058983947958085,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.47,
+            1.83,
+            2.16,
+            2.5
+          ],
+          "same_event_count_as_python": false,
+          "beat_max_abs_error_seconds": null,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6,
+            "precision": 0.5,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        },
+        "native-1-simd": {
+          "configuration": {
+            "networks": 1,
+            "precision": "float32",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.0381173859999997,
+            0.037895739000000095,
+            0.04118151099999956,
+            0.051061155999999386,
+            0.04184631100000047
+          ],
+          "cpu_seconds_median": 0.04118151099999956,
+          "cpu_seconds_per_audio_second": 0.014707563391128843,
+          "frames": 281,
+          "activation_max_abs_error": 0.17271247506141663,
+          "activation_rmse": 0.026444421800665786,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.47,
+            1.83,
+            2.15,
+            2.5
+          ],
+          "same_event_count_as_python": false,
+          "beat_max_abs_error_seconds": null,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6,
+            "precision": 0.5,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        },
+        "native-8-float16-simd": {
+          "configuration": {
+            "networks": 8,
+            "precision": "float16",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.06101311900000006,
+            0.056779884,
+            0.06426410100000002,
+            0.06752702100000008,
+            0.05501468200000037
+          ],
+          "cpu_seconds_median": 0.06101311900000006,
+          "cpu_seconds_per_audio_second": 0.02179022317522536,
+          "frames": 281,
+          "activation_max_abs_error": 0.00018596649169921875,
+          "activation_rmse": 2.4207253532008766e-05,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.48,
+            2.16,
+            2.5
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6666666666666665,
+            "precision": 0.6,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        },
+        "native-8-int8-simd": {
+          "configuration": {
+            "networks": 8,
+            "precision": "int8",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.05673657200000015,
+            0.066696533,
+            0.06609268400000001,
+            0.05490742699999984,
+            0.05694702299999932
+          ],
+          "cpu_seconds_median": 0.05694702299999932,
+          "cpu_seconds_per_audio_second": 0.02033805779269661,
+          "frames": 281,
+          "activation_max_abs_error": 0.00468599796295166,
+          "activation_rmse": 0.0005614119640364284,
+          "beat_times_seconds": [
+            0.47,
+            0.79,
+            1.48,
+            2.16,
+            2.5
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": {
+            "fmeasure_window_seconds": 0.07,
+            "fmeasure": 0.6666666666666665,
+            "precision": 0.6,
+            "recall": 0.75,
+            "annotation_count": 4
+          }
+        }
+      }
+    },
+    {
+      "audio": "sample2.wav",
+      "audio_sha256": "b1f19c0a668a6db867d9e277e72dce279830eb93e73e78751645698d8eb9caf5",
+      "audio_seconds": 4.050702947845805,
+      "annotations": null,
+      "variants": {
+        "python-bulk": {
+          "cpu_seconds": [
+            0.2281233889999994,
+            0.1537728549999997,
+            0.15555819800000048,
+            0.15321873899999972,
+            0.1554437740000001
+          ],
+          "cpu_seconds_median": 0.1554437740000001,
+          "cpu_seconds_per_audio_second": 0.03837451820125845,
+          "frames": 406,
+          "activation_max_abs_error": 0.0,
+          "activation_rmse": 0.0,
+          "beat_times_seconds": [
+            0.72,
+            1.29,
+            1.67,
+            2.03,
+            2.4,
+            2.77,
+            3.14,
+            3.5,
+            3.87
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": null
+        },
+        "python-stream": {
+          "cpu_seconds": [
+            0.30713431099999955,
+            0.29849964799999995,
+            0.304668339,
+            0.3159537590000001,
+            0.3102494120000001
+          ],
+          "cpu_seconds_median": 0.30713431099999955,
+          "cpu_seconds_per_audio_second": 0.07582247203867071,
+          "frames": 406,
+          "activation_max_abs_error": 2.384185791015625e-07,
+          "activation_rmse": 3.002582889000258e-08,
+          "beat_times_seconds": [
+            0.72,
+            1.29,
+            1.67,
+            2.03,
+            2.4,
+            2.77,
+            3.14,
+            3.5,
+            3.87
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": null
+        },
+        "native-8-scalar": {
+          "configuration": {
+            "networks": 8,
+            "precision": "float32",
+            "simd": false
+          },
+          "cpu_seconds": [
+            0.11577325000000016,
+            0.11476744900000035,
+            0.11687712999999889,
+            0.11625753000000039,
+            0.11651079100000139
+          ],
+          "cpu_seconds_median": 0.11625753000000039,
+          "cpu_seconds_per_audio_second": 0.02870058147853746,
+          "frames": 406,
+          "activation_max_abs_error": 4.470348358154297e-07,
+          "activation_rmse": 4.73497392706498e-08,
+          "beat_times_seconds": [
+            0.72,
+            1.29,
+            1.67,
+            2.03,
+            2.4,
+            2.77,
+            3.14,
+            3.5,
+            3.87
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": null
+        },
+        "native-8-simd": {
+          "configuration": {
+            "networks": 8,
+            "precision": "float32",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.08008783600000058,
+            0.08031247099999916,
+            0.08348344799999907,
+            0.08071575399999986,
+            0.08778601700000088
+          ],
+          "cpu_seconds_median": 0.08071575399999986,
+          "cpu_seconds_per_audio_second": 0.019926357237063045,
+          "frames": 406,
+          "activation_max_abs_error": 2.384185791015625e-07,
+          "activation_rmse": 2.496973034150235e-08,
+          "beat_times_seconds": [
+            0.72,
+            1.29,
+            1.67,
+            2.03,
+            2.4,
+            2.77,
+            3.14,
+            3.5,
+            3.87
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": null
+        },
+        "native-4-simd": {
+          "configuration": {
+            "networks": 4,
+            "precision": "float32",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.07530196899999986,
+            0.06586202500000127,
+            0.08468459900000092,
+            0.06649875000000094,
+            0.08312535600000004
+          ],
+          "cpu_seconds_median": 0.07530196899999986,
+          "cpu_seconds_per_audio_second": 0.01858985217369396,
+          "frames": 406,
+          "activation_max_abs_error": 0.08370313048362732,
+          "activation_rmse": 0.011538508849675713,
+          "beat_times_seconds": [
+            0.72,
+            1.29,
+            1.67,
+            2.03,
+            2.4,
+            2.77,
+            3.14,
+            3.5,
+            3.86
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.010000000000000231,
+          "accuracy": null
+        },
+        "native-2-simd": {
+          "configuration": {
+            "networks": 2,
+            "precision": "float32",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.059971549000000124,
+            0.06271854699999935,
+            0.07208952100000054,
+            0.059093760999999745,
+            0.05962943900000006
+          ],
+          "cpu_seconds_median": 0.059971549000000124,
+          "cpu_seconds_per_audio_second": 0.01480522017342532,
+          "frames": 406,
+          "activation_max_abs_error": 0.12132750451564789,
+          "activation_rmse": 0.017754589936083483,
+          "beat_times_seconds": [
+            0.72,
+            1.29,
+            1.67,
+            2.03,
+            2.4,
+            2.77,
+            3.14,
+            3.5,
+            3.87
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": null
+        },
+        "native-1-simd": {
+          "configuration": {
+            "networks": 1,
+            "precision": "float32",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.06018409600000041,
+            0.055457091999999264,
+            0.05494441600000144,
+            0.07145391099999898,
+            0.05525197399999904
+          ],
+          "cpu_seconds_median": 0.055457091999999264,
+          "cpu_seconds_per_audio_second": 0.013690732871313551,
+          "frames": 406,
+          "activation_max_abs_error": 0.25688305497169495,
+          "activation_rmse": 0.033320457868596,
+          "beat_times_seconds": [
+            0.72,
+            1.3,
+            1.67,
+            2.03,
+            2.4,
+            2.78,
+            3.5,
+            3.86
+          ],
+          "same_event_count_as_python": false,
+          "beat_max_abs_error_seconds": null,
+          "accuracy": null
+        },
+        "native-8-float16-simd": {
+          "configuration": {
+            "networks": 8,
+            "precision": "float16",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.07993512500000044,
+            0.09980411100000097,
+            0.07949934300000017,
+            0.08101673800000064,
+            0.10179966299999954
+          ],
+          "cpu_seconds_median": 0.08101673800000064,
+          "cpu_seconds_per_audio_second": 0.020000661377326118,
+          "frames": 406,
+          "activation_max_abs_error": 0.0011152029037475586,
+          "activation_rmse": 0.00012684478033406378,
+          "beat_times_seconds": [
+            0.72,
+            1.29,
+            1.67,
+            2.03,
+            2.4,
+            2.77,
+            3.14,
+            3.5,
+            3.87
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": null
+        },
+        "native-8-int8-simd": {
+          "configuration": {
+            "networks": 8,
+            "precision": "int8",
+            "simd": true
+          },
+          "cpu_seconds": [
+            0.08270030699999964,
+            0.08867787900000046,
+            0.09988983199999879,
+            0.08402488299999966,
+            0.08421634900000008
+          ],
+          "cpu_seconds_median": 0.08421634900000008,
+          "cpu_seconds_per_audio_second": 0.020790551685550527,
+          "frames": 406,
+          "activation_max_abs_error": 0.010244935750961304,
+          "activation_rmse": 0.0010311278624269516,
+          "beat_times_seconds": [
+            0.72,
+            1.29,
+            1.67,
+            2.03,
+            2.4,
+            2.77,
+            3.14,
+            3.5,
+            3.87
+          ],
+          "same_event_count_as_python": true,
+          "beat_max_abs_error_seconds": 0.0,
+          "accuracy": null
+        }
+      }
+    }
+  ],
+  "model_sha256": "12eab992a26a6e3114fe4a64e30f8d9a4d4d2972b2c2204cde0fe0b6f33718fe"
+}

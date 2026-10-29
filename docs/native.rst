@@ -1,7 +1,7 @@
 Native music-analysis core
 ==========================
 
-The C++ core implements the supported online beat path used by the existing Python processors. It is required in every build, like the Cython extensions. Python and the standalone C engine share frontend, neural, forward-HMM, and beat-event arithmetic. There is no backend selection flag.
+The C++ core implements the supported online beat path used by the existing Python processors. It is required in every build, like the Cython extensions. Python and the standalone C engine share frontend, neural, forward recursion of hidden Markov models (HMMs), and beat-event arithmetic. There is no backend selection flag.
 
 Build and Python compatibility
 ------------------------------
@@ -32,6 +32,8 @@ FFT and streaming design
 -------------------------
 
 The frontend uses a half-size real FFT with precomputed roots and permutation indices. Windowing and FFT arithmetic use double precision; the complex64 cast before magnitude follows upstream. Contiguous filter coefficients, fused logarithm and difference, and fixed audio/history rings reduce repeated work and allocation. A local FFT avoids another runtime dependency and external FFT licensing or binary-distribution constraints. Bulk and frame-at-a-time costs must be measured separately: a faster streaming core does not imply a faster FFT than NumPy in every batch configuration.
+
+The Python frontend adapter uses a capsule and borrowed buffers. It compares exposed configuration arrays directly to detect in-place edits without allocating configuration copies each frame. It releases the Python GIL during kernel execution and has no NumPy C ABI dependency. Other component adapters retain ctypes or direct Cython function-pointer calls. These adapters share the same native kernels.
 
 The neural kernels vectorize independent outputs with SSE2 on supported x86 builds or NEON on AArch64. Other targets use scalar arithmetic. Supported compiler settings disable fused multiply-add contraction to limit numerical changes. Normal processing retains all eight float32 networks. Fewer networks and rounded weights remain explicit experiments; they can change beat events.
 
@@ -80,7 +82,46 @@ Run Python and independent native checks::
 Host measurements
 -------------------
 
-``tools/benchmark_core.py`` compares the existing Python APIs with a preserved pre-integration checkout. It measures bulk and frame-at-a-time frontend, network, decoder, and complete paths in separate processes. All CPU runs, Linux resident memory, dependency versions, audio hashes, and source hashes are recorded in ``docs/benchmarks/core-host.json``. ``tools/benchmark_engine.py`` compares the independent C engine with the pre-optimization native library. The README summarizes verified results.
+``tools/benchmark_core.py`` compares the existing Python APIs with a preserved pre-integration checkout at ``3c7b36a32d4db567542b69e8655d6eea9eed57d8``. It measures bulk and frame-at-a-time frontend, network, decoder, and complete paths in separate processes. All stage measurements, Linux resident memory, dependency versions, audio hashes, source hashes, and loaded extension hashes are recorded in ``docs/benchmarks/core-host.json``.
+
+The primary comparison in ``docs/benchmarks/core-paired-host.json`` uses five paired trials. Each trial warms and measures a fresh process; variant order alternates between trials to reduce host drift. Both paths use Python 3.11.15, NumPy 2.4.6, SciPy 1.17.1, one pinned core on an AMD Ryzen 9 5900X, and one BLAS/OpenMP thread. The two upstream WAVs are concatenated and repeated ten times, providing 68.507 seconds of audio. The memory values below are the largest process peaks observed across the five trials.
+
+.. list-table:: Python processor cost on this host
+   :header-rows: 1
+
+   * - Path
+     - Before CPU s / audio s
+     - After CPU s / audio s
+     - Observed change
+   * - Complete causal bulk path
+     - 0.046163
+     - 0.011968
+     - 3.86 times faster
+   * - Complete frame-at-a-time path
+     - 0.061631
+     - 0.045742
+     - 1.35 times faster
+   * - Frontend, frame at a time
+     - 0.010241
+     - 0.008577
+     - 1.19 times faster
+   * - Frontend, bulk
+     - 0.002018
+     - 0.005239
+     - 2.60 times slower
+
+Bulk peak resident memory falls from 238.01 to 90.02 MiB. Streaming peak resident memory is essentially unchanged at 80.59 versus 80.33 MiB. The standalone NumPy bulk frontend is faster than the fused native frontend in this workload. Native neural inference and fewer temporary arrays improve the complete bulk path despite that stage regression.
+
+The sequential all-stage run also records a streaming comparison of 0.06445 versus 0.06924 CPU s/audio s, which reverses the paired run's result. This shows material host variation; the paired medians do not establish a guaranteed streaming speedup or a callback deadline. Both reports are retained. CPU frequency and unrelated host work were not controlled.
+
+``tools/benchmark_engine.py`` separately compares the independent C engine with the previous native library. ``docs/benchmarks/engine-host.json`` records a frontend improvement from 0.011011 to 0.006843 CPU s/audio s and a complete-engine improvement from 0.023989 to 0.020262. Live native heap after a one-second push falls from 1,353,856 to 1,321,232 bytes. Peak process RSS is unchanged in that short check. These are C API measurements, separate from Python adapter costs.
+
+Reproduce the paired comparison with an independently built reference checkout::
+
+    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+      python tools/benchmark_core.py --reference-root reference-checkout \
+      --reference-revision 3c7b36a --paired --repeats 5 --copies 10 \
+      --stages bulk stream stream_frontend frontend --output core-paired-host.json
 
 CPU measurements exclude loading, model initialization, export, and scoring. Process memory includes Python and imported dependencies; it is not the isolated native allocation size. CPU frequency and other host work were not controlled. Repeated short recordings are a compatibility workload, not a representative corpus. Earlier optional-backend results remain in ``docs/benchmarks/native-host.json`` and describe the prior implementation.
 

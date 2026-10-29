@@ -27,8 +27,21 @@ def worker(args):
     sys.path.insert(0, str(Path(args.package_root).resolve()))
     import numpy as np
     import scipy
+    import madmom.ml.hmm
+    import madmom.ml.nn
+    import madmom.ml.nn.layers
     from madmom.audio.signal import Signal, FramedSignal
     from madmom.features.beats import RNNBeatProcessor, DBNBeatTrackingProcessor
+
+    binaries = {}
+    for name, module in (('hmm', madmom.ml.hmm),
+                         ('layers', madmom.ml.nn.layers)):
+        binaries[name] = hashlib.sha256(Path(module.__file__).read_bytes()).hexdigest()
+    try:
+        from madmom import _native
+        binaries['core'] = hashlib.sha256(Path(_native.__file__).read_bytes()).hexdigest()
+    except ImportError:
+        binaries['core'] = None
 
     def rss():
         return int(Path('/proc/self/statm').read_text().split()[1]) * os.sysconf('SC_PAGE_SIZE')
@@ -96,12 +109,16 @@ def worker(args):
         'peak_rss_bytes': peak_rss(),
         'python': platform.python_version(), 'numpy': np.__version__,
         'scipy': scipy.__version__,
+        'binary_sha256': binaries,
+        'network_module_sha256': hashlib.sha256(
+            Path(madmom.ml.nn.__file__).read_bytes()).hexdigest(),
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--reference-root', type=Path)
+    parser.add_argument('--reference-revision', help='Git revision of the preserved checkout')
     parser.add_argument('--package-root', type=Path, default=ROOT)
     parser.add_argument('--repeats', type=int, default=5)
     parser.add_argument('--copies', type=int, default=10)
@@ -133,6 +150,11 @@ def main():
         'audio_sha256': {name: hashlib.sha256((ROOT / 'tests/data/audio' / name).read_bytes()).hexdigest()
                          for name in ('sample.wav', 'sample2.wav')},
         'variants': {},
+        'provenance': {
+            'before_revision': args.reference_revision,
+            'after_revision': subprocess.check_output(
+                ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+        },
     }
     for name, root in (('before', args.reference_root), ('after', args.package_root)):
         stages = {}
@@ -152,7 +174,9 @@ def main():
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for pattern in ('native/src/*.cpp', 'native/include/*.h', 'madmom/audio/_native.py',
                         'madmom/ml/nn/_native.py', 'madmom/ml/nn/__init__.py',
-                        'madmom/ml/nn/layers.py', 'madmom/ml/hmm.pyx', 'madmom/features/beats.py')
+                        'madmom/ml/nn/layers.py', 'madmom/ml/hmm.pyx', 'madmom/features/beats.py',
+                        'madmom/_native_decoders.py', 'madmom/features/onsets.py',
+                        'setup.py', 'tools/benchmark_core.py')
         for path in ROOT.glob(pattern)}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + '\n')

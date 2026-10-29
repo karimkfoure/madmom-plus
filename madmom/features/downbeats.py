@@ -25,6 +25,10 @@ from ..ml.hmm import HiddenMarkovModel
 from ..processors import ParallelProcessor, Processor, SequentialProcessor
 from ..utils import string_types
 
+# Separate implementation keeps the window scheduler independent of the DBNs.
+from .downbeats_window import (BarPhaseVotingProcessor,
+                               WindowedDownBeatTrackingProcessor)
+
 
 # downbeat tracking, i.e. track beats and downbeats directly from signal
 class RNNDownBeatProcessor(SequentialProcessor):

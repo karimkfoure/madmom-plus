@@ -1,36 +1,30 @@
 """Native implementation of the released online beat feature chain."""
 
-import ctypes as ct
 from functools import lru_cache
 import inspect
 
 import numpy as np
 
 from ..processors import BufferProcessor, SequentialProcessor
+from .filters import Filterbank
+from .signal import FramedSignalProcessor
+from .spectrogram import (FilteredSpectrogramProcessor,
+                          LogarithmicSpectrogramProcessor, Spectrogram,
+                          SpectrogramDifferenceProcessor, _diff_frames)
+from .stft import ShortTimeFourierTransformProcessor, fft_frequencies
+
+
+_EXPECTED_PROCESSORS = (
+    FramedSignalProcessor, ShortTimeFourierTransformProcessor,
+    FilteredSpectrogramProcessor, LogarithmicSpectrogramProcessor,
+    SpectrogramDifferenceProcessor)
+_PCM_DTYPES = (np.dtype('int16'), np.dtype('float32'))
 
 
 @lru_cache(maxsize=1)
 def _api():
     from .. import _native
-
-    lib = ct.CDLL(_native.__file__)
-    fp, dp, handle = ct.POINTER(ct.c_float), ct.POINTER(ct.c_double), ct.c_void_p
-    signatures = {
-        'create': ([dp, fp, ct.c_size_t], handle),
-        'destroy': ([handle], None),
-        'reset': ([handle], ct.c_int),
-        'history': ([handle, fp, ct.c_size_t], ct.c_int),
-        'process': ([handle, fp, ct.c_size_t, fp], ct.c_int),
-    }
-    for name, (args, result) in signatures.items():
-        function = getattr(lib, 'mm_frontend_' + name)
-        function.argtypes, function.restype = args, result
-    lib.mm_online_error.restype = ct.c_char_p
-    return lib
-
-
-def _pointer(array, dtype=ct.c_float):
-    return array.ctypes.data_as(ct.POINTER(dtype))
+    return _native
 
 
 class NativeBeatFrontend(SequentialProcessor):
@@ -45,49 +39,30 @@ class NativeBeatFrontend(SequentialProcessor):
     def __init__(self, processors):
         super(NativeBeatFrontend, self).__init__(processors)
         self._handle = None
-        self._key = None
         self._native_buffer = None
-        self._history = None
         # Fail immediately if a source installation omitted the required core.
         self._lib = _api()
 
     def _close(self):
-        if getattr(self, '_handle', None):
-            self._lib.mm_frontend_destroy(self._handle)
-            self._handle = None
-
-    def __del__(self):
-        self._close()
+        self._handle = None
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        for key in ('_handle', '_lib', '_key', '_native_buffer', '_history'):
+        for key in ('_handle', '_lib', '_native_buffer'):
             state.pop(key, None)
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
-        self._handle, self._key, self._native_buffer = None, None, None
-        self._history = None
+        self._handle, self._native_buffer = None, None
         self._lib = _api()
 
     def process(self, data, reset=True, **kwargs):
-        from .filters import Filterbank
-        from .signal import FramedSignalProcessor
-        from .spectrogram import (FilteredSpectrogramProcessor,
-                                  LogarithmicSpectrogramProcessor,
-                                  Spectrogram, SpectrogramDifferenceProcessor,
-                                  _diff_frames)
-        from .stft import ShortTimeFourierTransformProcessor, fft_frequencies
-
         # Modified chains and precision modes without a matching native kernel
         # still use their existing processors.
-        expected = (FramedSignalProcessor, ShortTimeFourierTransformProcessor,
-                    FilteredSpectrogramProcessor, LogarithmicSpectrogramProcessor,
-                    SpectrogramDifferenceProcessor)
         if (len(self) != 5 or kwargs or
                 any(type(processor) is not cls or 'process' in processor.__dict__
-                    for processor, cls in zip(self, expected))):
+                    for processor, cls in zip(self, _EXPECTED_PROCESSORS))):
             return super(NativeBeatFrontend, self).process(data, reset=reset,
                                                           **kwargs)
         frames_processor, stft, filt, spec, diff = self
@@ -99,7 +74,7 @@ class NativeBeatFrontend(SequentialProcessor):
             # caller changes batch size without resetting the processor.
             return super(NativeBeatFrontend, self).process(data, reset=reset)
         if (frames.shape[1:] != (2048,) or
-                frames.signal.dtype not in (np.dtype('int16'), np.dtype('float32')) or
+                frames.signal.dtype not in _PCM_DTYPES or
                 stft.fft_size not in (None, 2048) or stft.circular_shift or
                 stft.include_nyquist or spec.log is not np.log10 or
                 spec.mul != 1 or spec.add != 1 or not diff.positive_diffs or
@@ -113,6 +88,8 @@ class NativeBeatFrontend(SequentialProcessor):
                 window = window / float(np.iinfo(frames.signal.dtype).max)
             stft.fft_window = np.ascontiguousarray(window, dtype=np.float64)
         window = np.ascontiguousarray(stft.fft_window, dtype=np.float64)
+        if not window.flags.aligned:
+            window = window.copy()
         if window.shape != (2048,):
             return super(NativeBeatFrontend, self).process(data, reset=reset)
         bank = filt.filterbank
@@ -122,43 +99,42 @@ class NativeBeatFrontend(SequentialProcessor):
                         fref=filt.fref, norm_filters=filt.norm_filters,
                         unique_filters=filt.unique_filters)
             filt.filterbank = bank
-        if np.shape(bank) != (1024, 81):
+        if not isinstance(bank, Filterbank) or bank.shape != (1024, 81):
             return super(NativeBeatFrontend, self).process(data, reset=reset)
         if diff.diff_frames is None:
             diff.diff_frames = _diff_frames(diff.diff_ratio, frames.hop_size,
                                            2048, stft.window)
         lag = diff.diff_frames
-        # Byte keys also detect in-place edits to the public window/filterbank.
-        key = (window.tobytes(), np.asarray(bank).tobytes(), lag)
-        reconfigured = key != self._key
-        if reconfigured:
-            self._close()
-            bank = np.ascontiguousarray(bank, dtype=np.float32)
-            self._handle = self._lib.mm_frontend_create(
-                _pointer(window, ct.c_double), _pointer(bank), lag)
-            if not self._handle:
-                raise ValueError(self._lib.mm_online_error().decode())
-            self._key = key
-        if reset or diff._buffer is None:
-            self._lib.mm_frontend_reset(self._handle)
-        else:
-            history = np.ascontiguousarray(diff._buffer.data[-lag:], dtype=np.float32)
-            if (reconfigured or diff._buffer is not self._native_buffer or
-                    not np.array_equal(history, self._history)):
-                if self._lib.mm_frontend_history(
-                        self._handle, _pointer(history), len(history)) < 0:
-                    raise ValueError(self._lib.mm_online_error().decode())
+        # The capsule compares borrowed buffers without copying their bytes.
+        # This also detects in-place edits to the exposed window/filterbank.
+        bank = np.ascontiguousarray(bank, dtype=np.float32)
+        if not bank.flags.aligned:
+            bank = bank.copy()
+        self._handle = self._lib.mm_frontend_configure(
+            self._handle, window, bank, lag)
+        clear_history = reset or diff._buffer is None
+        history = None if clear_history else np.ascontiguousarray(
+            diff._buffer.data[-lag:], dtype=np.float32)
+        if history is not None and not history.flags.aligned:
+            history = history.copy()
 
         result = np.empty((len(frames), 162), dtype=np.float32)
-        block = np.empty((min(64, len(frames)), 2048), dtype=np.float32)
-        for start in range(0, len(frames), 64):
-            count = min(64, len(frames) - start)
-            for index in range(count):
-                block[index] = frames[start + index]
-            if self._lib.mm_frontend_process(
-                    self._handle, _pointer(block), count,
-                    _pointer(result[start:start + count])) < 0:
-                raise ValueError(self._lib.mm_online_error().decode())
+        if len(frames) == 1:
+            block = np.ascontiguousarray(frames[0], dtype=np.float32)
+            if not block.flags.aligned:
+                block = block.copy()
+            self._lib.mm_frontend_process(
+                self._handle, block, 1, result, history, clear_history)
+        else:
+            block = np.empty((min(64, len(frames)), 2048), dtype=np.float32)
+            for start in range(0, len(frames), 64):
+                count = min(64, len(frames) - start)
+                for index in range(count):
+                    block[index] = frames[start + index]
+                self._lib.mm_frontend_process(
+                    self._handle, block, count, result[start:start + count],
+                    history if start == 0 else None,
+                    clear_history if start == 0 else False)
         # Preserve the public difference processor's reset and history behavior.
         if len(result):
             # A Spectrogram view keeps the original difference processor
@@ -168,8 +144,15 @@ class NativeBeatFrontend(SequentialProcessor):
                 history = np.full((lag, 81), np.inf, dtype=np.float32)
                 initial = np.concatenate((history, logged), axis=0).view(Spectrogram)
                 diff._buffer = BufferProcessor(init=initial)
+            elif (type(diff._buffer) is BufferProcessor and
+                  'process' not in diff._buffer.__dict__):
+                # Match BufferProcessor's replacement semantics without a
+                # general roll: eligibility fixes its length to lag + frames.
+                buffered = np.empty_like(diff._buffer.data)
+                buffered[:lag] = diff._buffer.data[-lag:]
+                buffered[lag:] = logged
+                diff._buffer.data = buffered
             else:
                 diff._buffer(logged)
             self._native_buffer = diff._buffer
-            self._history = np.array(diff._buffer.data[-lag:], copy=True)
         return result

@@ -60,6 +60,10 @@ class Processor(object):
             """Rebuild legacy NumPy dtypes without integer align arguments."""
 
             def find_class(self, module, name):
+                # The 2018 note models reference NumPy's former internal
+                # location. Resolve that known function through its public API.
+                if module == 'numpy.lib.shape_base' and name == 'dstack':
+                    return np.dstack
                 obj = super().find_class(module, name)
                 if module == 'numpy' and name == 'dtype':
                     def _coerce(*args, **kwargs):

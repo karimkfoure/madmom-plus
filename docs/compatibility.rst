@@ -62,7 +62,39 @@ The first full run produced 809 passes and two failures in 52.22 seconds. Both f
 
 `Paul B Mahol's FFmpeg change 3bef108fa9302844180aad8632d54e1b7be1f4a3 <https://github.com/FFmpeg/FFmpeg/commit/3bef108fa9302844180aad8632d54e1b7be1f4a3>`_, committed on 2023-09-25, switched sample-rate conversion to floating-point intermediates to improve precision. madmom-plus selects the historical integer intermediate format only when resampling a known signed 16-bit ``Signal`` to signed 16-bit output. This reproduces the complete fixture exactly and preserves the existing chroma result. File decoding and higher-precision input or output keep FFmpeg's defaults. The tradeoff is historical integer rounding for that specific compatibility path.
 
-The option is documented in the `FFmpeg resampler reference <https://ffmpeg.org/ffmpeg-resampler.html>`_. This fix is original maintenance work; no FFmpeg source code was copied. This release does not adopt an external fork patch.
+The option is documented in the `FFmpeg resampler reference <https://ffmpeg.org/ffmpeg-resampler.html>`_. This fix is original maintenance work; no FFmpeg source code was copied.
+
+Ecosystem priorities
+--------------------
+
+The `ecosystem catalogue <ecosystem.md>`_ assigns four modernization priorities. Their integration status is recorded below. Source patches retain madmom's inherited BSD source terms; the model terms remain separate. The changes do not package the test suite or ecosystem inventory as runtime assets.
+
+.. list-table:: Adopted or independently matched changes
+   :header-rows: 1
+
+   * - Priority
+     - Source and provenance
+     - Scope and checks
+   * - 1
+     - PR #548, chadawagner, ``868e004eb3e36f4359d11458e5849f9d7e52b644``
+     - The existing independent ``libc.math`` changes match this patch. All supported builds and HMM/CRF tests pass.
+   * - 2
+     - PR #532, Carl Thomé, ``8bba9971075316210f1c8efd9ad005e5a6486793``
+     - The independent packaging fix includes 2019 models plus older omitted files. Installed-wheel tests and the 92-file model comparison validate the complete model set.
+   * - 2
+     - PR #559, gzivdo, ``e6a2b0e6b7d70071636087af2cb49ad1edd64c8b``
+     - Adapt the scoped legacy dtype unpickler. Test positional and keyword integer alignment, protocols 0/2/current, Latin-1 strings, current processor round trips, error propagation, and unchanged global NumPy state. Its setuptools import commit ``9addc37c3aa3e3601c2f2791f702ae86060e0f85`` matches the earlier independent build fix.
+   * - 3
+     - PR #562, Emil Zimmermann, ``a7ed9984b60495c448146c3a55d837eeb4dbea9d``
+     - Adopt the patch and both asymmetric-tolerance tests. All 58 beat evaluation tests pass; equal default tolerances keep their scores.
+   * - 4
+     - PR #505, Igal Cohen-Hadria, ``0e0a47fb51a00de7066b24b6e559aeb5f26c987a``
+     - Adapt per-call owned pools, repair the undefined worker count, and add caller-owned pool injection. Six lifecycle tests cover repeated construction/calls, normal and exceptional cleanup, borrowed pool reuse, serialization, legacy state, and empty input.
+   * - 4
+     - Issue #471, snownstone; issue #508, fdlm; no source commits
+     - Independently fix the omitted online keyword and floating-point stereo downmix. Direct calls, explicit device listing, file/stream/channel parity, ReplayGain, resampling, and unchanged surround policies have regression coverage. No issue code was copied.
+
+Each PR and issue URL, author, and source commit is also recorded in ``CHANGES.rst`` and the corresponding integration commit. Pool ownership follows the scoped design from #505 rather than retaining an owned process pool for the lifetime of a processor. This releases workers reliably but adds pool-startup cost to each parallel decoding call; callers that need reuse can supply their own pool. The existing one-worker default has no pool-startup cost.
 
 Reproduce the checks
 --------------------

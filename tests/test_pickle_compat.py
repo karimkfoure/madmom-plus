@@ -4,11 +4,13 @@ import io
 import pickle
 import warnings
 from functools import partial
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 from madmom.processors import Processor
+from madmom.models import MODEL_PATH
 
 
 class LegacyDtype:
@@ -64,3 +66,14 @@ def test_load_preserves_type_errors():
     # Do not retry from the middle of a stream when reconstruction fails.
     with pytest.raises(TypeError):
         Processor.load(io.BytesIO(b'\x80\x02cbuiltins\nlen\n)R.'))
+
+
+def test_legacy_numpy_function_reference():
+    function = Processor.load(io.BytesIO(b'cnumpy.lib.shape_base\ndstack\n.'))
+    assert function is np.dstack
+
+
+@pytest.mark.parametrize('model', sorted(Path(MODEL_PATH).rglob('*.pkl')),
+                         ids=lambda path: str(path.relative_to(MODEL_PATH)))
+def test_all_packaged_model_pickles_load(model):
+    assert Processor.load(str(model)) is not None

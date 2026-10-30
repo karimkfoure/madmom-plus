@@ -6,7 +6,7 @@ The distribution name changes to ``madmom-plus``. Python imports, processor name
 Validation
 ----------
 
-The Python 3.12.13 installed wheel passed 968 tests and 28 subtests in 82.33 seconds, plus 46 module doctests in 21.65 seconds. The environment used NumPy 2.4.6, SciPy 1.18.1, Cython 3.3.0, FFmpeg 6.1.1, and one BLAS/OpenMP thread on Linux x86-64. The upstream numerical assertions and tolerances remain unchanged. NumPy 2 doctests use the legacy array display format so display changes do not hide numerical failures.
+The Python 3.12.13 installed wheel passed 968 tests and 28 subtests in 82.33 seconds, plus 46 module doctests in 21.65 seconds. The environment used NumPy 2.4.6, SciPy 1.18.1, Cython 3.3.0, FFmpeg 6.1.1, and one BLAS/OpenMP thread on Linux x86-64. Separate isolated source builds on Python 3.11.15 (NumPy 2.4.6/SciPy 1.17.1) and Python 3.13.14 (NumPy 2.5.4/SciPy 1.18.1) each passed the same 968 tests and 28 subtests. The upstream numerical assertions and tolerances remain unchanged. NumPy 2 doctests use the legacy array display format so display changes do not hide numerical failures.
 
 .. list-table:: Packaging checks
    :header-rows: 1

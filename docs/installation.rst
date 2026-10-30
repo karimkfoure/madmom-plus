@@ -16,7 +16,7 @@ Requirements
    * - Runtime
      - NumPy >= 1.23.5, SciPy >= 1.13, mido >= 1.2.6
    * - Source build
-     - C compiler and Python headers; isolated builds install NumPy 2 and Cython 3
+     - C and C++17 compilers and Python headers; isolated builds install NumPy 2 and Cython 3
    * - Audio decoding
      - FFmpeg for compressed audio and resampling
    * - Optional

@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "note": "Direct comparison: compatibility fixes only versus the shared native core. Five alternating fresh-process trials; repeated public test audio; shared host.",
+  "comparisons": [
+    {
+      "host": {
+        "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+        "architecture": "x86_64",
+        "affinity": [
+          3
+        ],
+        "thread_environment": {
+          "OPENBLAS_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        }
+      },
+      "settings": {
+        "repeats": 5,
+        "warmups": 1,
+        "audio_copies": 10,
+        "paired_trials": true,
+        "sample_rate": 44100,
+        "fps": 100,
+        "timing": "Process CPU; excludes loading and initialization",
+        "memory": "Fresh Linux process RSS per variant and stage; includes dependencies"
+      },
+      "audio_sha256": {
+        "sample.wav": "d06b3c39384c4a0cf59f0bd326eda2443edf668fbb90647e37c801e59602866c",
+        "sample2.wav": "b1f19c0a668a6db867d9e277e72dce279830eb93e73e78751645698d8eb9caf5"
+      },
+      "provenance": {
+        "before_revision": "d3e30b5",
+        "after_revision": "bf438cd17d3563b8b29bb24078dab9a681c54ad6"
+      },
+      "stages": {
+        "bulk": {
+          "before": {
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              3.0633517639999996,
+              2.986232577,
+              3.1089616670000004,
+              2.865363783,
+              2.818484509
+            ],
+            "cpu_seconds_per_audio_second": 0.04359001865029111,
+            "peak_rss_bytes": 504786944,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f498858e128eacb16bae954dac08fa1c01c2d0419f6fbaeba108c03aa3c57e84",
+              "layers": "869a5a26cb2865cac98081d502e5bd07b3cf6be90d0065f4b962a90d42c23b1d",
+              "core": null
+            }
+          },
+          "after": {
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              0.532965538,
+              0.5354432670000001,
+              0.536738265,
+              0.5309116380000001,
+              0.5303623060000001
+            ],
+            "cpu_seconds_per_audio_second": 0.0077796946963593575,
+            "peak_rss_bytes": 101056512,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "11123aaaed72d31bca7d5b2d1960c6e7816de2094b8f1a206a168880e3f48ff7",
+              "layers": "f5da88409759e8a09cb1f0c3e91b958b2adf74e2037e973a5a0fcd29b6b88fb8",
+              "core": "07fc57630e30313e81ce045acb1b663a3f9a476839a3c4f2f5495f1f84e4ef47"
+            }
+          }
+        },
+        "stream": {
+          "before": {
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              4.30861223,
+              4.356795376000001,
+              4.390601628,
+              4.35423195,
+              4.347862501000001
+            ],
+            "cpu_seconds_per_audio_second": 0.06355869712561689,
+            "peak_rss_bytes": 90636288,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "f498858e128eacb16bae954dac08fa1c01c2d0419f6fbaeba108c03aa3c57e84",
+              "layers": "869a5a26cb2865cac98081d502e5bd07b3cf6be90d0065f4b962a90d42c23b1d",
+              "core": null
+            }
+          },
+          "after": {
+            "audio_seconds": 68.50725623582767,
+            "cpu_seconds": [
+              1.9152205530000002,
+              1.881512312,
+              1.9182009490000005,
+              2.050237986,
+              2.00077827
+            ],
+            "cpu_seconds_per_audio_second": 0.027999967512884087,
+            "peak_rss_bytes": 90935296,
+            "python": "3.12.13",
+            "numpy": "2.4.6",
+            "scipy": "1.18.1",
+            "binary_sha256": {
+              "hmm": "11123aaaed72d31bca7d5b2d1960c6e7816de2094b8f1a206a168880e3f48ff7",
+              "layers": "f5da88409759e8a09cb1f0c3e91b958b2adf74e2037e973a5a0fcd29b6b88fb8",
+              "core": "07fc57630e30313e81ce045acb1b663a3f9a476839a3c4f2f5495f1f84e4ef47"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

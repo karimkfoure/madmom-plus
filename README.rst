@@ -6,7 +6,7 @@ madmom-plus maintains `madmom <https://github.com/CPJKU/madmom>`_, the music-ana
 Install from source
 -------------------
 
-Use Python 3.11–3.13, FFmpeg, and a C compiler. The model submodule is required::
+Use Python 3.11–3.13, FFmpeg, a C compiler, and a C++17 compiler. The model submodule is required::
 
     git clone --recurse-submodules https://github.com/karimkfoure/madmom-plus.git
     cd madmom-plus
@@ -33,11 +33,37 @@ What madmom-plus changes
    * - Compatibility
      - Scoped legacy unpickling, audio gain, evaluation, worker cleanup
      - Regression tests; model bytes and default parameters retained
+   * - Native core
+     - Shared C++ kernels for the online path; direct C ABI and Python interface
+     - Release-fixture parity; CPU and memory comparison below
+
+Native online path
+------------------
+
+.. image:: docs/images/native-path.svg
+   :alt: Mono audio passes through causal spectral features, an LSTM ensemble, and forward DBN decoding to produce beat events and raw reliability.
+
+The Python processors and direct engine use the same C++ kernels. ``NativeBeatTracker`` accepts mono float32 audio at 44100 Hz. The C ABI is declared in ``native/include/madmom_engine.h``. See the `native guide <docs/native.rst>`_ and `reference checks <docs/native-reference.rst>`_ for limits and verification commands.
+
+.. list-table:: Complete Python online path: compatibility baseline → shared native core
+   :header-rows: 1
+
+   * - Path
+     - CPU seconds / audio second, before → after
+     - Peak resident MiB, before → after
+   * - Frame at a time
+     - 0.063559 → 0.028000
+     - 86.44 → 86.72
+   * - Causal bulk
+     - 0.043590 → 0.007780
+     - 481.40 → 96.38
+
+Hardware: AMD Ryzen 9 5900X, one pinned core, one BLAS thread. Five alternating trials repeat 68.507 seconds of public test audio. Loading is excluded; memory includes Python and dependencies. Shared-host timings do not establish callback deadlines or accuracy across a music collection. See the `method and compact data <docs/native.rst>`_.
 
 Documentation and credit
 ------------------------
 
-`API and tutorials <https://madmom.readthedocs.io/>`_ · `compatibility and provenance <docs/compatibility.rst>`_ · `release notes <CHANGES.rst>`_ · `citation <docs/citation.rst>`_
+`API and tutorials <https://madmom.readthedocs.io/>`_ · `compatibility and provenance <docs/compatibility.rst>`_ · `native core <docs/native.rst>`_ · `release notes <CHANGES.rst>`_ · `citation <docs/citation.rst>`_
 
 The original library comes from the Department of Computational Perception at Johannes Kepler University, Linz, and the Austrian Research Institute for Artificial Intelligence, Vienna. Research references remain in the module documentation and `introduction <docs/introduction.rst>`_. Funding acknowledgements remain in the `documentation index <docs/index.rst>`_.
 

@@ -18,15 +18,18 @@ def main():
     args = parser.parse_args()
     report = json.loads(args.data.read_text())['comparisons'][-1]
     parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="760" height="350" viewBox="0 0 760 350" role="img" aria-labelledby="title desc">',
-             '<title id="title">Native streaming optimization: CPU and memory</title>',
-             '<desc id="desc">Historical comparison of commits 38c4b63 and 20e6bc1 on AMD Ryzen 9 5900X. Streaming CPU decreases while peak process memory changes little.</desc>',
+             '<title id="title">Native core integration: CPU and memory</title>',
+             '<desc id="desc">Complete Python online paths before and after shared native kernels on AMD Ryzen 9 5900X.</desc>',
              '<rect width="760" height="350" fill="#fff"/>',
              '<g font-family="sans-serif" font-size="14" fill="#14253d">',
-             '<text x="22" y="29" font-size="19" font-weight="bold">Native streaming optimization</text>',
+             '<text x="22" y="29" font-size="19" font-weight="bold">Native core integration</text>',
              '<text x="22" y="52">AMD Ryzen 9 5900X · one core · five alternating trials</text>',
-             '<rect x="23" y="73" width="15" height="15" fill="#9babc0"/><text x="46" y="86">Before: 38c4b63</text>',
-             '<rect x="250" y="73" width="15" height="15" fill="#167c80"/><text x="273" y="86">After: 20e6bc1</text>']
+             '<rect x="23" y="73" width="15" height="15" fill="#9babc0"/><text x="46" y="86">Before: compatibility fixes</text>',
+             '<rect x="250" y="73" width="15" height="15" fill="#167c80"/><text x="273" y="86">After: shared core</text>']
     for x, metric, title, limit, scale in [(22, 'cpu_seconds_per_audio_second', 'CPU seconds / audio second', .06, 1), (410, 'peak_rss_bytes', 'Peak process memory (MiB)', 100, 2**20)]:
+        limit = max(report['stages'][stage][variant][metric] / scale
+                    for stage in ('stream', 'bulk')
+                    for variant in ('before', 'after')) * 1.25
         parts.append('<text x="%d" y="119" font-weight="bold">%s</text>' % (x, escape(title)))
         for index, stage in enumerate(['stream', 'bulk']):
             y = 147 + index * 78

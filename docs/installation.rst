@@ -1,136 +1,71 @@
 Installation
 ============
 
-Please do not try to install from the .zip files provided by GitHub. Rather
-install either install :ref:`from package <install_from_package>` (if you just
-want to use it) or :ref:`from source <install_from_source>` (if you plan to
-use it for development). Whichever variant you choose, please make sure that
-all :ref:`prerequisites <install_prerequisites>` are installed.
-
 .. _install_prerequisites:
 
-Prerequisites
--------------
+Requirements
+------------
 
-To install the ``madmom`` package, you must have either Python 2.7 or Python
-3.3 or newer and the following packages installed:
+.. list-table::
+   :header-rows: 1
 
-To install the ``madmom`` package, you must have either Python 2.7 or Python
-3.5 or newer and the following packages installed:
-
-- `numpy <http://www.numpy.org>`_
-- `scipy <http://www.scipy.org>`_
-- `cython <http://www.cython.org>`_
-- `mido <https://github.com/olemb/mido>`_
-
-In order to test your installation, process live audio input, or have improved
-FFT performance, additionally install these packages:
-
-- `pytest <https://www.pytest.org/>`_
-- `pyaudio <http://people.csail.mit.edu/hubert/pyaudio/>`_
-- `pyfftw <https://github.com/pyFFTW/pyFFTW/>`_
-
-If you need support for audio files other than ``.wav`` with a sample rate of
-44.1kHz and 16 bit depth, you need ``ffmpeg`` (``avconv`` on Ubuntu Linux has
-some decoding bugs, so we advise not to use it!).
-
-Please refer to the ``requirements.txt`` file for the minimum required versions
-and make sure that these modules are up to date, otherwise it can result in
-unexpected errors or false computations!
-
-.. _install_from_package:
-
-Install from package
---------------------
-
-The instructions given here should be used if you just want to install the
-package, e.g. to run the bundled programs or use some functionality for your
-own project. If you intend to change anything within the `madmom` package,
-please follow the steps in :ref:`the next section <install_from_source>`.
-
-The easiest way to install the package is via ``pip`` from the `PyPI (Python
-Package Index) <https://pypi.python.org/pypi>`_::
-
-  pip install madmom
-
-This includes the latest code and trained models and will install all
-dependencies automatically.
-
-You might need higher privileges (use su or sudo) to install the package, model
-files and scripts globally. Alternatively you can install the package locally
-(i.e. only for you) by adding the ``--user`` argument::
-
-  pip install --user madmom
-
-This will also install the executable programs to a common place (e.g.
-``/usr/local/bin``), which should be in your ``$PATH`` already. If you
-installed the package locally, the programs will be copied to a folder which
-might not be included in your ``$PATH`` (e.g. ``~/Library/Python/2.7/bin``
-on Mac OS X or ``~/.local/bin`` on Ubuntu Linux, ``pip`` will tell you). Thus
-the programs need to be called explicitely or you can add their install path
-to your ``$PATH`` environment variable::
-
-    export PATH='path/to/scripts':$PATH
+   * - Component
+     - Requirement
+   * - Python
+     - 3.9 or newer; validation targets 3.11–3.13
+   * - Runtime
+     - NumPy >= 1.23.5, SciPy >= 1.13, mido >= 1.2.6
+   * - Source build
+     - C compiler and Python headers; isolated builds install NumPy 2 and Cython 3
+   * - Audio decoding
+     - FFmpeg for compressed audio and resampling
+   * - Optional
+     - PyAudio for microphone input; pyFFTW for supported FFT paths
 
 .. _install_from_source:
 
-Install from source
--------------------
+Build from source
+-----------------
 
-If you plan to use the package as a developer, clone the Git repository::
+Clone with models, then install into a virtual environment::
 
-  git clone --recursive https://github.com/CPJKU/madmom.git
+    git clone --recurse-submodules https://github.com/karimkfoure/madmom-plus.git
+    cd madmom-plus
+    python -m venv .venv
+    . .venv/bin/activate
+    python -m pip install --upgrade pip
+    python -m pip install '.[test]'
+    DBNBeatTracker single tests/data/audio/sample.wav
 
-Since the pre-trained model/data files are not included in this repository but
-rather added as a Git submodule, you either have to clone the repo recursively.
-This is equivalent to these steps::
+For an existing clone, run ``git submodule update --init --recursive``. Keep the pinned model revision: ``--remote`` selects different model files.
 
-  git clone  https://github.com/CPJKU/madmom.git
-  cd madmom
-  git submodule update --init --remote
+.. _install_from_package:
 
-Then you can simply install the package in development mode::
+Install a built wheel
+---------------------
 
-  python setup.py develop --user
+Build the source archive and wheel, then install the wheel in a separate environment::
 
-To run the included tests::
+    python -m pip install build
+    python -m build
+    python -m pip install dist/madmom_plus-*.whl
 
-  python setup.py pytest
+Source archives contain the models and Cython declarations. Wheels contain the models and executable programs. The Python import remains ``madmom``. Use only one distribution per environment because upstream ``madmom`` uses the same import and program names.
+
+Development checks
+------------------
+
+Install an editable build and run the tests with one numerical-library thread::
+
+    python -m pip install -e '.[test]'
+    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m pytest tests
+    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m pytest --import-mode=importlib --doctest-modules madmom
+
+For documentation, install ``docs/requirements.txt`` and run ``sphinx-build -b html docs docs/_build/html``.
 
 .. _upgrading:
 
-Upgrade of existing installations
----------------------------------
+Update a source installation
+----------------------------
 
-To upgrade the package, please use the same mechanism (pip vs. source) as you
-did for installation. If you want to change from package to source, please
-uninstall the package first.
-
-Upgrade a package
-~~~~~~~~~~~~~~~~~
-
-Simply upgrade the package via pip::
-
-  pip install --upgrade madmom [--user]
-
-If some of the provided programs or models changed (please refer to the
-CHANGELOG) you should first uninstall the package and then reinstall::
-
-  pip uninstall madmom
-  pip install madmom [--user]
-
-Upgrade from source
-~~~~~~~~~~~~~~~~~~~
-
-Simply pull the latest sources::
-
-  git pull
-
-To update the models contained in the submodule::
-
-  git submodule update
-
-If any of the ``.pyx`` or ``.pxd`` files changed, you have to recompile the
-modules with Cython::
-
-  python setup.py build_ext --inplace
+After updating the source, run ``git submodule update --init --recursive`` and repeat the editable install. This rebuilds changed extensions. Existing processors and command-line program names remain available.

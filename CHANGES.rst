@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+Version 0.17.0.dev1 (madmom-plus)
+--------------------------------
+
+* Support current Python, NumPy 2, and Cython 3 with isolated setuptools builds.
+* Distribute as ``madmom-plus`` while keeping ``import madmom`` and existing command-line programs.
+* Include all 92 upstream model files and preserve their bytes and licences.
+* Fix legacy processor loading, asymmetric continuity tolerances, worker cleanup, stereo gain, and integer resampling compatibility.
+* Fix scalar and empty online tempo updates without changing offline defaults.
+
+See `compatibility and source credits <docs/compatibility.rst>`_ for source URLs, authors, commits, tradeoffs, and verification.
+
 Version 0.17.dev0
 -----------------
 

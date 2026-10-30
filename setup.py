@@ -7,14 +7,20 @@ This file contains the setup for setuptools to distribute everything as a
 """
 
 import glob
-from distutils.extension import Extension
+from pathlib import Path
+from runpy import run_path
 
 import numpy as np
 from Cython.Build import cythonize, build_ext
-from setuptools import setup, find_packages
+from setuptools import Extension, setup, find_packages
 
 # define version
-version = '0.17.dev0'
+version = run_path('madmom/_version.py')['__version__']
+
+if not Path('madmom/models/__init__.py').is_file():
+    raise RuntimeError('Model files are missing. Run '
+                       '`git submodule update --init --recursive` before '
+                       'building, or use a complete source distribution.')
 
 # define which extensions to compile
 include_dirs = [np.get_include()]
@@ -43,11 +49,11 @@ scripts = glob.glob('bin/*')
 package_data = [
     'models/LICENSE',
     'models/README.rst',
-    'models/beats/201[56]/*',
+    'models/beats/*/*',
     'models/chords/*/*',
     'models/chroma/*/*',
     'models/downbeats/*/*',
-    'models/key/2018/*',
+    'models/key/*/*',
     'models/notes/*/*',
     'models/onsets/*/*',
     'models/patterns/*/*',
@@ -60,6 +66,7 @@ classifiers = [
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Environment :: Console',
     'License :: OSI Approved :: BSD License',
     'License :: Free for non-commercial use',
@@ -69,7 +76,7 @@ classifiers = [
 
 # requirements
 requirements = [
-    'numpy>=1.13.4',
+    'numpy>=1.23.5',
     'scipy>=1.13',
     'mido>=1.2.6',
 ]
@@ -84,7 +91,7 @@ except TypeError:
 
 # the actual setup routine
 setup(
-    name='madmom',
+    name='madmom-plus',
     version=version,
     description='Python audio signal processing library',
     long_description=long_description,
@@ -92,16 +99,20 @@ setup(
     'University, Linz, Austria and Austrian Research Institute for '
     'Artificial Intelligence (OFAI), Vienna, Austria',
     author_email='madmom-users@googlegroups.com',
-    url='https://github.com/CPJKU/madmom',
+    url='https://github.com/karimkfoure/madmom-plus',
+    project_urls={
+        'Upstream': 'https://github.com/CPJKU/madmom',
+        'Documentation': 'https://madmom.readthedocs.io/',
+    },
     license='BSD, CC BY-NC-SA',
     packages=find_packages(exclude=['tests', 'docs']),
-    ext_modules=cythonize(extensions),
+    ext_modules=cythonize(extensions, compiler_directives={'language_level': 3}),
     package_data={'madmom': package_data},
     exclude_package_data={'': ['tests', 'docs']},
     scripts=scripts,
     install_requires=requirements,
     cmdclass={'build_ext': build_ext},
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
+    python_requires='>=3.9',
+    extras_require={'test': ['pytest>=7']},
     classifiers=classifiers,
 )

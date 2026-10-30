@@ -154,6 +154,10 @@ class DBNDownBeatTrackingProcessor(Processor):
         (down-)beat activation function).
     fps : float, optional
         Frames per second.
+    pool : multiprocessing.pool.Pool, optional
+        Caller-owned worker pool. The processor does not close this pool.
+        Without a supplied pool, parallel workers are created for each
+        decoding call and released when that call completes.
 
     References
     ----------
@@ -201,7 +205,7 @@ class DBNDownBeatTrackingProcessor(Processor):
     def __init__(self, beats_per_bar, min_bpm=MIN_BPM, max_bpm=MAX_BPM,
                  num_tempi=NUM_TEMPI, transition_lambda=TRANSITION_LAMBDA,
                  observation_lambda=OBSERVATION_LAMBDA, threshold=THRESHOLD,
-                 correct=CORRECT, fps=None, **kwargs):
+                 correct=CORRECT, fps=None, *, pool=None, **kwargs):
         # pylint: disable=unused-argument
         # pylint: disable=no-name-in-module
         # expand arguments to arrays
@@ -227,12 +231,12 @@ class DBNDownBeatTrackingProcessor(Processor):
                              'and `transition_lambda` must all have the same '
                              'length.')
         # get num_threads from kwargs
-        num_threads = min(len(beats_per_bar), kwargs.get('num_threads', 1))
-        # init a pool of workers (if needed)
-        self.map = map
-        if num_threads != 1:
-            import multiprocessing as mp
-            self.map = mp.Pool(num_threads).map
+        self.num_threads = min(len(beats_per_bar), kwargs.get('num_threads', 1))
+        if self.num_threads < 1:
+            raise ValueError('num_threads must be at least 1')
+        # A supplied pool remains under the caller's control. Owned pools
+        # are scoped to process(), so construction does not retain workers.
+        self.map = map if pool is None else pool.map
         # convert timing information to construct a beat state space
         min_interval = 60. * fps / max_bpm
         max_interval = 60. * fps / min_bpm
@@ -277,8 +281,13 @@ class DBNDownBeatTrackingProcessor(Processor):
         if not activations.any():
             return np.empty((0, 2))
         # (parallel) decoding of the activations with HMM
-        results = list(self.map(_process_dbn, zip(self.hmms,
-                                                  it.repeat(activations))))
+        work = zip(self.hmms, it.repeat(activations))
+        if self.map is map and getattr(self, 'num_threads', 1) > 1:
+            import multiprocessing as mp
+            with mp.Pool(self.num_threads) as pool:
+                results = list(pool.map(_process_dbn, work))
+        else:
+            results = list(self.map(_process_dbn, work))
         # choose the best HMM (highest log probability)
         best = np.argmax(list(r[1] for r in results))
         # the best path through the state space

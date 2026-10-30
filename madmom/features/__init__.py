@@ -292,7 +292,8 @@ from .chords import (CNNChordFeatureProcessor, CRFChordRecognitionProcessor,
                      DeepChromaChordRecognitionProcessor)
 from .downbeats import (RNNDownBeatProcessor, DBNDownBeatTrackingProcessor,
                         PatternTrackingProcessor, RNNBarProcessor,
-                        DBNBarTrackingProcessor)
+                        DBNBarTrackingProcessor,
+                        OnlineDBNDownBeatTrackingProcessor)
 from .key import CNNKeyRecognitionProcessor
 from .notes import (CNNPianoNoteProcessor, ADSRNoteTrackingProcessor,
                     NoteOnsetPeakPickingProcessor, NotePeakPickingProcessor,

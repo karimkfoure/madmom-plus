@@ -1,5 +1,5 @@
 madmom 0.16.1 reference outputs
-==============================
+===============================
 
 Stored release outputs make parity tests independent of the current implementation. The tests cannot hide an error shared by two paths in this fork.
 

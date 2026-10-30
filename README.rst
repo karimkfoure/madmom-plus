@@ -37,6 +37,10 @@ What madmom-plus changes
      - Shared C++ kernels for the online path; direct C ABI and Python interface
      - Release-fixture parity; CPU and memory comparison below
 
+   * - Online downbeats
+     - Optional windowed bar voting, meter priors, and forward-only bar decoding
+     - Default-preservation tests; music accuracy is not established
+
 Native online path
 ------------------
 
@@ -63,7 +67,7 @@ Hardware: AMD Ryzen 9 5900X, one pinned core, one BLAS thread. Five alternating 
 Documentation and credit
 ------------------------
 
-`API and tutorials <https://madmom.readthedocs.io/>`_ · `compatibility and provenance <docs/compatibility.rst>`_ · `native core <docs/native.rst>`_ · `release notes <CHANGES.rst>`_ · `citation <docs/citation.rst>`_
+`API and tutorials <https://madmom.readthedocs.io/>`_ · `compatibility and provenance <docs/compatibility.rst>`_ · `native core <docs/native.rst>`_ · `online downbeats <docs/online-processing.rst>`_ · `release notes <CHANGES.rst>`_ · `citation <docs/citation.rst>`_
 
 The original library comes from the Department of Computational Perception at Johannes Kepler University, Linz, and the Austrian Research Institute for Artificial Intelligence, Vienna. Research references remain in the module documentation and `introduction <docs/introduction.rst>`_. Funding acknowledgements remain in the `documentation index <docs/index.rst>`_.
 

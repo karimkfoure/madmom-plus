@@ -4,6 +4,7 @@ Release Notes
 Version 0.17.0.dev1 (madmom-plus)
 --------------------------------
 
+* Add opt-in completed-window bar voting, validated meter priors, and forward-only bar decoding. Existing defaults remain unchanged; see ``docs/online-processing.rst`` and ``docs/windowed-downbeats.rst`` for provenance and timing/accuracy limits.
 * Share the C++17 frontend, neural, forward HMM, and event kernels across Python processors and a versioned standalone C engine. Keep one posterior row for online beat decoding.
 * Restore the madmom 0.16.1 time axis for single-frame neural output; add independent release fixtures and native API tests.
 * Support current Python, NumPy 2, and Cython 3 with isolated setuptools builds.

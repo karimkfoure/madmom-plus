@@ -12,6 +12,8 @@ Madmom documentation
    native
    native-reference
    native-wheels
+   online-processing
+   windowed-downbeats
    usage
    tutorial
    development

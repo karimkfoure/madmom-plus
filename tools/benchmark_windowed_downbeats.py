@@ -71,6 +71,11 @@ def worker(args):
         wall_seconds = time.perf_counter() - wall_start
         peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         peak_mib = peak / (1024. ** 2 if sys.platform == 'darwin' else 1024.)
+        if sys.platform.startswith('linux'):
+            # VmHWM excludes a larger high-water mark inherited before exec.
+            peak_mib = next(int(line.split()[1]) / 1024. for line in
+                            Path('/proc/self/status').read_text().splitlines()
+                            if line.startswith('VmHWM:'))
         return dict(variant=args.worker, audio_seconds=len(audio) / 44100.,
                     cpu_seconds=cpu_seconds, wall_seconds=wall_seconds,
                     cpu_per_audio_second=cpu_seconds / (len(audio) / 44100.),
@@ -107,7 +112,8 @@ def main(args):
     for variant in ('beats', 'windowed'):
         rows = [row for row in trials if row['variant'] == variant]
         summary[variant] = {key: statistics.median(row[key] for row in rows)
-                            for key in ('cpu_seconds', 'cpu_per_audio_second', 'peak_mib')}
+                            for key in ('cpu_seconds', 'cpu_per_audio_second')}
+        summary[variant]['peak_mib'] = max(row['peak_mib'] for row in rows)
     model = platform.processor()
     cpuinfo = Path('/proc/cpuinfo')
     if cpuinfo.exists():
@@ -125,7 +131,7 @@ def main(args):
                               warmup_runs=1, trials_per_variant=args.trials,
                               window_seconds=6., hop_seconds=2., background=False,
                               cpu_excludes='model construction, loading, warmup and reset',
-                              peak_includes='process setup, models, audio and warmup'),
+                              peak_includes='largest process peak across trials; setup, models, audio and warmup'),
                   beat_times_equal=True, beat_count=len(reference), summary=summary, trials=trials)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + '\n')

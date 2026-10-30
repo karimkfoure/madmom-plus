@@ -8,6 +8,7 @@ Madmom documentation
 
    introduction
    installation
+   compatibility
    usage
    tutorial
    development

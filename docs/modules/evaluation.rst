@@ -9,7 +9,6 @@ Submodules
 
 .. toctree::
 
-   evaluation/alignment
    evaluation/beats
    evaluation/chords
    evaluation/key

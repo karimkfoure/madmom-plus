@@ -23,10 +23,74 @@ cimport numpy as np
 cimport cython
 np.import_array()
 
-from numpy.math cimport INFINITY
+from libc.math cimport INFINITY
+from libc.stddef cimport size_t
+from libc.stdint cimport uintptr_t
 
 
 ctypedef np.uint32_t uint32_t
+
+ctypedef int (*NativeHMMForward)(
+    const uint32_t *, const uint32_t *, const double *, size_t, size_t,
+    const uint32_t *, const double *, size_t, size_t, double *, double *
+) noexcept nogil
+ctypedef int (*NativeHMMStates)(
+    const uint32_t *, const uint32_t *, const double *, size_t, size_t,
+    const uint32_t *, const double *, size_t, size_t, double *, uint32_t *
+) noexcept nogil
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef object _forward_native(object tm, object observation_pointers,
+                            object densities, object previous,
+                            bint states_only=False):
+    """Call the shared C++ kernel directly to avoid per-frame ctypes adapters."""
+    from .._native_decoders import hmm_forward_address
+
+    cdef const uint32_t [::1] states = tm.states
+    cdef const uint32_t [::1] pointers = tm.pointers
+    cdef const double [::1] probabilities = tm.probabilities
+    cdef const uint32_t [::1] observations = observation_pointers
+    cdef const double [:, ::1] values = np.ascontiguousarray(densities,
+                                                           dtype=np.float64)
+    cdef double [::1] prior = previous
+    cdef size_t num_states = tm.num_states
+    cdef size_t num_transitions = states.shape[0]
+    cdef size_t num_frames = values.shape[0]
+    cdef size_t num_densities = values.shape[1]
+    cdef double [:, ::1] output
+    cdef uint32_t [::1] selected
+    cdef NativeHMMForward forward
+    cdef NativeHMMStates forward_states
+    cdef int status
+
+    if (probabilities.shape[0] != num_transitions or
+            pointers.shape[0] != num_states + 1 or
+            observations.shape[0] != num_states or
+            prior.shape[0] != num_states):
+        raise ValueError('Invalid forward HMM array dimensions or state buffer')
+    if states_only:
+        result = np.empty(num_frames, dtype=np.uint32)
+        selected = result
+        forward_states = <NativeHMMStates><uintptr_t>hmm_forward_address(True)
+        with nogil:
+            status = forward_states(
+                &states[0], &pointers[0], &probabilities[0], num_states,
+                num_transitions, &observations[0], &values[0, 0], num_frames,
+                num_densities, &prior[0], &selected[0])
+    else:
+        result = np.empty((num_frames, num_states), dtype=np.float64)
+        output = result
+        forward = <NativeHMMForward><uintptr_t>hmm_forward_address(False)
+        with nogil:
+            status = forward(
+                &states[0], &pointers[0], &probabilities[0], num_states,
+                num_transitions, &observations[0], &values[0, 0], num_frames,
+                num_densities, &prior[0], &output[0, 0])
+    if status:
+        raise ValueError('Invalid forward HMM transition or observation index')
+    return result
 
 
 class TransitionModel(object):
@@ -608,55 +672,29 @@ class HiddenMarkovModel(object):
             Forward variables.
 
         """
-        # transition model stuff
-        tm = self.transition_model
-        cdef uint32_t [::1] tm_states = tm.states
-        cdef uint32_t [::1] tm_pointers = tm.pointers
-        cdef double [::1] tm_probabilities = tm.probabilities
-        cdef unsigned int num_states = tm.num_states
-
-        # observation model stuff
-        om = self.observation_model
-        cdef uint32_t [::1] om_pointers = om.pointers
-        cdef double [:, ::1] om_densities = om.densities(observations)
-        cdef unsigned int num_observations = len(om_densities)
-
-        # reset HMM
+        # Observation models retain their Python API; the state recursion is
+        # implemented once in the C++ core and uses the original double dtype.
+        densities = self.observation_model.densities(observations)
         if reset:
             self.reset()
+        return _forward_native(self.transition_model,
+                               self.observation_model.pointers,
+                               densities, self._prev)
 
-        # forward variables
-        cdef double[::1] fwd_prev = self._prev
-        cdef double[:, ::1] fwd = np.zeros((num_observations, num_states),
-                                           dtype=float)
+    def forward_states(self, observations, reset=True):
+        """Return each frame's most likely forward state with bounded memory.
 
-        # define counters etc.
-        cdef unsigned int prev_pointer, frame, state
-        cdef double prob_sum, norm_factor
-
-        # iterate over all observations
-        for frame in range(num_observations):
-            # keep track of the normalisation sum
-            prob_sum = 0
-            # iterate over all states
-            for state in range(num_states):
-                # sum over all possible predecessors
-                for prev_pointer in range(tm_pointers[state],
-                                          tm_pointers[state + 1]):
-                    fwd[frame, state] += (fwd_prev[tm_states[prev_pointer]] *
-                                          tm_probabilities[prev_pointer])
-                # multiply with the observation probability
-                fwd[frame, state] *= om_densities[frame, om_pointers[state]]
-                prob_sum += fwd[frame, state]
-            # normalise
-            norm_factor = 1. / prob_sum
-            for state in range(num_states):
-                fwd[frame, state] *= norm_factor
-                # also save it as the previous variables for the next frame
-                fwd_prev[state] = fwd[frame, state]
-
-        # return the forward variables
-        return np.asarray(fwd)
+        The result is identical to ``forward(...).argmax(axis=1)``. The
+        recursion keeps only one posterior row, so long recordings do not
+        require a dense frame-by-state matrix. State and reset behavior match
+        :meth:`forward`.
+        """
+        densities = self.observation_model.densities(observations)
+        if reset:
+            self.reset()
+        return _forward_native(self.transition_model,
+                               self.observation_model.pointers,
+                               densities, self._prev, states_only=True)
 
     @cython.cdivision(True)
     @cython.boundscheck(False)
@@ -685,69 +723,22 @@ class HiddenMarkovModel(object):
             Forward variables.
 
         """
-        # transition model stuff
-        tm = self.transition_model
-        cdef uint32_t [::1] tm_states = tm.states
-        cdef uint32_t [::1] tm_ptrs = tm.pointers
-        cdef double [::1] tm_probabilities = tm.probabilities
-        cdef unsigned int num_states = tm.num_states
-
-        # observation model stuff
-        om = self.observation_model
-        cdef unsigned int num_observations = len(observations)
-        cdef uint32_t [::1] om_pointers = om.pointers
-        cdef double [:, ::1] om_densities
-
-        # forward variables
-        cdef double[::1] fwd_cur = np.zeros(num_states, dtype=float)
-        cdef double[::1] fwd_prev = self.initial_distribution.copy()
-
-        # define counters etc.
-        cdef unsigned int prev_pointer, state
-        cdef unsigned int obs_start, obs_end, frame, block_sz
-        cdef double prob_sum, norm_factor
-
-        # keep track which observations om_densities currently contains
-        # obs_start is the first observation index, obs_end the last one
-        obs_start = 0
-        obs_end = 0
-
-        # compute everything at once if block_size was set to None
-        block_sz = num_observations if block_size is None else block_size
-
-        # iterate over all observations
-        for frame in range(num_observations):
-            # keep track of the normalisation sum
-            prob_sum = 0
-
-            # initialise forward variables
-            fwd_cur[:] = 0.0
-
-            # check if we have to compute another block of observation densities
-            if frame >= obs_end:
-                obs_start = frame
-                obs_end = obs_start + block_sz
-                om_densities = om.densities(observations[obs_start:obs_end])
-
-            # iterate over all states
-            for state in range(num_states):
-                # sum over all possible predecessors
-                for prev_pointer in range(tm_ptrs[state], tm_ptrs[state + 1]):
-                    fwd_cur[state] += fwd_prev[tm_states[prev_pointer]] * \
-                                      tm_probabilities[prev_pointer]
-                # multiply with the observation probability
-                fwd_cur[state] *= om_densities[frame - obs_start,
-                                               om_pointers[state]]
-                prob_sum += fwd_cur[state]
-            # normalise
-            norm_factor = 1. / prob_sum
-            for state in range(num_states):
-                fwd_cur[state] *= norm_factor
-
-            # yield the current forward variables
-            yield np.asarray(fwd_cur).copy()
-
-            fwd_cur, fwd_prev = fwd_prev, fwd_cur
+        # Keep generator state independent from forward(), as before. Only
+        # one posterior row is allocated at a time, even for long recordings.
+        previous = self.initial_distribution.copy()
+        num_observations = len(observations)
+        if not num_observations:
+            return
+        block_sz = num_observations if block_size is None else int(block_size)
+        if block_sz <= 0:
+            raise ValueError('block_size must be positive')
+        for start in range(0, num_observations, block_sz):
+            densities = self.observation_model.densities(
+                observations[start:start + block_sz])
+            for frame in range(len(densities)):
+                yield _forward_native(self.transition_model,
+                                      self.observation_model.pointers,
+                                      densities[frame:frame + 1], previous)[0]
 
 # alias
 HMM = HiddenMarkovModel

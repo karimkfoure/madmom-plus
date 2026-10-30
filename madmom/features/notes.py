@@ -359,7 +359,8 @@ class ADSRNoteTrackingProcessor(Processor):
     >>> proc = CNNPianoNoteProcessor()
     >>> act = proc('tests/data/audio/stereo_sample.wav')
 
-    Track the notes by means on ADSR note tracking:
+    Track the notes with ADSR note tracking:
+
     >>> adsr = ADSRNoteTrackingProcessor()
     >>> adsr(act)  # doctest: +NORMALIZE_WHITESPACE
     array([[ 0.12, 72. , 1.44],

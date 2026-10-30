@@ -112,10 +112,18 @@ class NeuralNetwork(Processor):
         # make data at least 2d (required by NN-layers)
         if isinstance(data, np.ndarray) and data.ndim < 2:
             data = np.array(data, subok=True, copy=False, ndmin=2)
+        from ._native import network as native_network
+        result = native_network(self, self.layers, data, reset)
+        if result is not None:
+            # Keep the time axis for one frame, as in madmom 0.16.1.
+            return result.ravel() if result.shape[1] == 1 else result
         # loop over all layers
         for layer in self.layers:
             # activate the layer and feed the output into the next one
             data = layer(data, reset=reset)
+        # Preserve the frame axis of the original two-dimensional API.
+        if isinstance(data, np.ndarray) and data.ndim == 2:
+            return data.ravel() if data.shape[1] == 1 else data
         # squeeze predictions to contain only true dimensions
         try:
             return data.squeeze()
@@ -172,6 +180,17 @@ class NeuralNetworkEnsemble(SequentialProcessor):
                                                num_threads=num_threads)
         super(NeuralNetworkEnsemble, self).__init__((networks_processor,
                                                      ensemble_fn))
+
+    def process(self, data, **kwargs):
+        """Process ordinary ensemble members in one call to the shared core."""
+        if (len(self.processors) == 2 and type(self[0]) is ParallelProcessor and
+                'process' not in self[0].__dict__):
+            from ._native import ensemble as native_ensemble
+            from ...processors import _process
+            result = native_ensemble(self[0], data, kwargs.get('reset', True))
+            if result is not None:
+                return _process((self[1], result, kwargs))
+        return super(NeuralNetworkEnsemble, self).process(data, **kwargs)
 
     @classmethod
     def load(cls, nn_files, **kwargs):

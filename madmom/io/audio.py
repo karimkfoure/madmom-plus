@@ -131,6 +131,13 @@ def _ffmpeg_call(infile, output, fmt='f32le', sample_rate=None, num_channels=1,
     if skip:
         # use "%f" to avoid scientific float notation
         call.extend(["-ss", "%f" % float(skip)])
+    # Preserve legacy rounding only for known 16-bit integer signal input.
+    # File decoders and higher-precision input retain FFmpeg's defaults.
+    integer_resampling = (isinstance(infile, Signal) and
+                          infile.dtype.kind == 'i' and
+                          infile.dtype.itemsize == 2 and
+                          fmt in ('s16le', 's16be') and sample_rate and
+                          sample_rate != infile.sample_rate)
     # if we decode from STDIN, the format must be specified
     if isinstance(infile, Signal):
         in_fmt = _ffmpeg_fmt(infile.dtype)
@@ -143,10 +150,11 @@ def _ffmpeg_call(infile, output, fmt='f32le', sample_rate=None, num_channels=1,
     else:
         infile = str(infile)
     call.extend(["-i", infile])
+    audio_filters = []
     if replaygain_mode:
         audio_filter = ("volume=replaygain=%s:replaygain_preamp=%.1f"
                         % (replaygain_mode, replaygain_preamp))
-        call.extend(["-af", audio_filter])
+        audio_filters.append(audio_filter)
     # output options
     call.extend(["-f", str(fmt)])
     if max_len:
@@ -157,9 +165,15 @@ def _ffmpeg_call(infile, output, fmt='f32le', sample_rate=None, num_channels=1,
         call.extend(["-ac", str(int(num_channels))])
     if channel is not None and (num_channels == 1 or num_channels is None):
         # Calling with channel=x and num_channels
-        call.extend(["-af", "pan=mono|c0=c%d" % int(channel)])
+        audio_filters.append("pan=mono|c0=c%d" % int(channel))
     if sample_rate:
+        if integer_resampling:
+            # FFmpeg 6.1 changed the internal resampling default to float.
+            # Preserve madmom's integer-output rounding and model features.
+            audio_filters.append("aresample=internal_sample_fmt=s16p")
         call.extend(["-ar", str(int(sample_rate))])
+    if audio_filters:
+        call.extend(["-af", ','.join(audio_filters)])
     call.append(output)
     return call
 
@@ -559,6 +573,16 @@ def load_ffmpeg_file(filename, sample_rate=None, num_channels=None,
     # set default dtype
     if dtype is None:
         dtype = np.int16
+    if channel is not None and num_channels is None:
+        num_channels = 1
+    # Use the WAV loader's arithmetic mean for floating-point stereo output.
+    # FFmpeg already normalizes integer output and its rounding is retained.
+    info = None
+    mix_stereo = False
+    if num_channels == 1 and channel is None and np.dtype(dtype).kind == 'f':
+        info = get_file_info(filename, cmd=cmd_probe)
+        mix_stereo = info['num_channels'] == 2
+    decode_channels = 2 if mix_stereo else num_channels
     # ffmpeg output format
     fmt = _ffmpeg_fmt(dtype)
     # start and stop position
@@ -570,7 +594,7 @@ def load_ffmpeg_file(filename, sample_rate=None, num_channels=None,
     # convert the audio signal using ffmpeg
     signal = np.frombuffer(
         decode_to_memory(filename, fmt=fmt, sample_rate=sample_rate,
-                         num_channels=num_channels, channel=channel,
+                         num_channels=decode_channels, channel=channel,
                          skip=start, max_len=max_len,
                          cmd_decode=cmd_decode, cmd_probe=cmd_probe,
                          replaygain_mode=replaygain_mode,
@@ -579,7 +603,8 @@ def load_ffmpeg_file(filename, sample_rate=None, num_channels=None,
         dtype=dtype)
     # get the needed information from the file
     if sample_rate is None or num_channels is None:
-        info = get_file_info(filename, cmd=cmd_probe)
+        if info is None:
+            info = get_file_info(filename, cmd=cmd_probe)
         if sample_rate is None:
             sample_rate = info['sample_rate']
         if num_channels is None:
@@ -587,6 +612,9 @@ def load_ffmpeg_file(filename, sample_rate=None, num_channels=None,
     # reshape the audio signal
     if num_channels > 1:
         signal = signal.reshape((-1, num_channels))
+    elif mix_stereo:
+        from ..audio.signal import remix
+        signal = remix(signal.reshape((-1, 2)), 1)
     return signal, sample_rate
 
 

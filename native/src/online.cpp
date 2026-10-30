@@ -1,0 +1,939 @@
+/* Native causal frontend, online LSTM ensemble and forward DBN.
+ * The madmom project licence applies. See LICENSE and docs/native.rst.
+ */
+#include "madmom_native.h"
+#include "madmom_engine.h"
+#include "madmom_nn.h"
+#include "madmom_decoders.h"
+
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <complex>
+#include <cstdint>
+#include <cstring>
+#include <fstream>
+#include <limits>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+
+
+#if defined(__aarch64__)
+#include <arm_neon.h>
+#elif defined(__SSE2__)
+#include <emmintrin.h>
+#endif
+
+namespace {
+thread_local std::string last_error;
+const int frame_size = 2048;
+const int num_bands = 81;
+const int hop_size = 441;
+const int hidden_size = 25;
+const double pi = 3.14159265358979323846264338327950288;
+
+template <typename T>
+std::vector<T> read_values(std::ifstream& stream, size_t count) {
+    std::vector<T> values(count);
+    stream.read(reinterpret_cast<char*>(values.data()), count * sizeof(T));
+    if (!stream) {
+        throw std::runtime_error("Truncated native model asset");
+    }
+    // Model assets use little-endian IEEE-754 values.
+    const uint16_t endian = 1;
+    if (*reinterpret_cast<const unsigned char*>(&endian) != 1) {
+        for (size_t i = 0; i < values.size(); ++i) {
+            unsigned char* first = reinterpret_cast<unsigned char*>(&values[i]);
+            std::reverse(first, first + sizeof(T));
+        }
+    }
+    return values;
+}
+
+template <typename T>
+void require_finite(const std::vector<T>& values) {
+    for (size_t i = 0; i < values.size(); ++i) {
+        if (!std::isfinite(values[i])) {
+            throw std::runtime_error("Non-finite native model value");
+        }
+    }
+}
+
+void check_input(const float* values, size_t count, const char* message) {
+    if (!values && count) {
+        throw std::runtime_error(message);
+    }
+    for (size_t i = 0; i < count; ++i) {
+        if (!std::isfinite(values[i])) {
+            throw std::runtime_error("Non-finite native input");
+        }
+    }
+}
+
+float fp16_roundtrip(float value) {
+    // Binary16 has ten fraction bits, a minimum normal exponent of -14,
+    // and a minimum subnormal quantum of 2^-24. Round ties to even.
+    const double magnitude = std::abs(static_cast<double>(value));
+    if (magnitude == 0) {
+        return value;
+    }
+    if (magnitude > 65504.) {
+        throw std::runtime_error("Weight is outside the finite fp16 range");
+    }
+    int exponent;
+    std::frexp(magnitude, &exponent);
+    const double quantum = std::ldexp(1., std::max(exponent - 11, -24));
+    const double scaled = magnitude / quantum;
+    double rounded = std::floor(scaled);
+    const double remainder = scaled - rounded;
+    if (remainder > .5 || (remainder == .5 && std::fmod(rounded, 2.) != 0)) {
+        rounded += 1;
+    }
+    return std::copysign(static_cast<float>(rounded * quantum), value);
+}
+
+void quantize(std::vector<float>& values, size_t columns, int mode) {
+    require_finite(values);
+    if (mode == 1) {
+        for (size_t i = 0; i < values.size(); ++i) {
+            values[i] = fp16_roundtrip(values[i]);
+        }
+    } else if (mode == 2) {
+        // Symmetric per-row int8 quantization, with deterministic ties away
+        // from zero. Decode once; inference retains float32 accumulation.
+        for (size_t first = 0; first < values.size(); first += columns) {
+            float maximum = 0;
+            for (size_t j = first; j < first + columns; ++j) {
+                maximum = std::max(maximum, std::abs(values[j]));
+            }
+            if (maximum == 0) {
+                continue;
+            }
+            const double scale = static_cast<double>(maximum) / 127.;
+            for (size_t j = first; j < first + columns; ++j) {
+                values[j] = static_cast<float>(std::round(values[j] / scale) * scale);
+            }
+        }
+    }
+}
+
+class FFT {
+    // Pack even and odd real samples into one half-size complex transform.
+    // Separate real/imaginary arrays permit SIMD across independent butterflies.
+    // Twiddle order and double precision remain the same as the scalar FFT.
+    static const size_t packed_size = frame_size / 2;
+    std::array<size_t, packed_size> reversed;
+    std::array<double, packed_size> root_real, root_imag;
+    std::array<double, packed_size> stage_real, stage_imag;
+    std::array<double, packed_size> real, imag;
+
+    static float magnitude(double re, double im) {
+        // Keep madmom's complex64 cast before magnitude. A scaled hypot is
+        // needed only when the ordinary squared norm overflows or underflows.
+        const float r = static_cast<float>(re), i = static_cast<float>(im);
+        const float squared = r * r + i * i;
+        if (std::isnormal(squared)) return std::sqrt(squared);
+        if (r == 0 && i == 0) return 0;
+        return std::hypot(r, i);
+    }
+
+public:
+    FFT() {
+        for (size_t i = 0; i < packed_size; ++i) {
+            size_t value = i, result = 0;
+            for (int bit = 0; bit < 10; ++bit) {
+                result = (result << 1) | (value & 1);
+                value >>= 1;
+            }
+            reversed[i] = result;
+            const double phase = -2 * pi * i / frame_size;
+            root_real[i] = std::cos(phase);
+            root_imag[i] = std::sin(phase);
+        }
+        for (size_t length = 2; length <= packed_size; length *= 2) {
+            const size_t half = length / 2, stride = frame_size / length;
+            for (size_t j = 0; j < half; ++j) {
+                stage_real[half - 1 + j] = root_real[j * stride];
+                stage_imag[half - 1 + j] = root_imag[j * stride];
+            }
+        }
+    }
+
+    void magnitudes(const float* frame, const std::vector<double>& window,
+                    float* output) {
+        for (size_t i = 0; i < packed_size; ++i) {
+            real[reversed[i]] = frame[2 * i] * window[2 * i];
+            imag[reversed[i]] = frame[2 * i + 1] * window[2 * i + 1];
+        }
+        for (size_t length = 2; length <= packed_size; length *= 2) {
+            const size_t half = length / 2;
+            const double* wr = stage_real.data() + half - 1;
+            const double* wi = stage_imag.data() + half - 1;
+            for (size_t first = 0; first < packed_size; first += length) {
+                size_t j = 0;
+#if defined(__aarch64__)
+                for (; j + 2 <= half; j += 2) {
+                    const float64x2_t er = vld1q_f64(real.data() + first + j);
+                    const float64x2_t ei = vld1q_f64(imag.data() + first + j);
+                    const float64x2_t br = vld1q_f64(real.data() + first + j + half);
+                    const float64x2_t bi = vld1q_f64(imag.data() + first + j + half);
+                    const float64x2_t tr = vsubq_f64(vmulq_f64(br, vld1q_f64(wr + j)),
+                                                   vmulq_f64(bi, vld1q_f64(wi + j)));
+                    const float64x2_t ti = vaddq_f64(vmulq_f64(br, vld1q_f64(wi + j)),
+                                                   vmulq_f64(bi, vld1q_f64(wr + j)));
+                    vst1q_f64(real.data() + first + j, vaddq_f64(er, tr));
+                    vst1q_f64(imag.data() + first + j, vaddq_f64(ei, ti));
+                    vst1q_f64(real.data() + first + j + half, vsubq_f64(er, tr));
+                    vst1q_f64(imag.data() + first + j + half, vsubq_f64(ei, ti));
+                }
+#elif defined(__SSE2__)
+                for (; j + 2 <= half; j += 2) {
+                    const __m128d er = _mm_loadu_pd(real.data() + first + j);
+                    const __m128d ei = _mm_loadu_pd(imag.data() + first + j);
+                    const __m128d br = _mm_loadu_pd(real.data() + first + j + half);
+                    const __m128d bi = _mm_loadu_pd(imag.data() + first + j + half);
+                    const __m128d tr = _mm_sub_pd(_mm_mul_pd(br, _mm_loadu_pd(wr + j)),
+                                                  _mm_mul_pd(bi, _mm_loadu_pd(wi + j)));
+                    const __m128d ti = _mm_add_pd(_mm_mul_pd(br, _mm_loadu_pd(wi + j)),
+                                                  _mm_mul_pd(bi, _mm_loadu_pd(wr + j)));
+                    _mm_storeu_pd(real.data() + first + j, _mm_add_pd(er, tr));
+                    _mm_storeu_pd(imag.data() + first + j, _mm_add_pd(ei, ti));
+                    _mm_storeu_pd(real.data() + first + j + half, _mm_sub_pd(er, tr));
+                    _mm_storeu_pd(imag.data() + first + j + half, _mm_sub_pd(ei, ti));
+                }
+#endif
+                for (; j < half; ++j) {
+                    const double er = real[first + j], ei = imag[first + j];
+                    const double br = real[first + j + half], bi = imag[first + j + half];
+                    const double tr = br * wr[j] - bi * wi[j];
+                    const double ti = br * wi[j] + bi * wr[j];
+                    real[first + j] = er + tr;
+                    imag[first + j] = ei + ti;
+                    real[first + j + half] = er - tr;
+                    imag[first + j + half] = ei - ti;
+                }
+            }
+        }
+        output[0] = std::abs(static_cast<float>(real[0] + imag[0]));
+        for (size_t i = 1; i < packed_size; ++i) {
+            const double er = (real[i] + real[packed_size - i]) * .5;
+            const double ei = (imag[i] - imag[packed_size - i]) * .5;
+            const double odd_real = (imag[i] + imag[packed_size - i]) * .5;
+            const double odd_imag = (real[packed_size - i] - real[i]) * .5;
+            output[i] = magnitude(
+                er + (root_real[i] * odd_real - root_imag[i] * odd_imag),
+                ei + (root_real[i] * odd_imag + root_imag[i] * odd_real));
+        }
+    }
+};
+
+struct Frontend {
+    struct Band {
+        size_t first;
+        std::vector<float> weights;
+    };
+    std::vector<double> window;
+    std::array<Band, num_bands> bank;
+    std::vector<std::array<float, num_bands> > history;
+    size_t history_count, history_cursor;
+    FFT fft;
+
+    Frontend(const double* fft_window, const float* dense, size_t lag)
+        : window(fft_window, fft_window + frame_size), history(lag) {
+        if (lag < 1 || lag > 100000) {
+            throw std::runtime_error("Invalid spectral difference lag");
+        }
+        require_finite(window);
+        check_input(dense, (frame_size / 2) * num_bands,
+                    "Missing native filterbank");
+        for (int j = 0; j < num_bands; ++j) {
+            size_t first = 0, end = frame_size / 2;
+            while (first < end && dense[first * num_bands + j] == 0) {
+                ++first;
+            }
+            while (end > first && dense[(end - 1) * num_bands + j] == 0) {
+                --end;
+            }
+            bank[j].first = first;
+            bank[j].weights.reserve(end - first);
+            for (size_t k = first; k < end; ++k) {
+                bank[j].weights.push_back(dense[k * num_bands + j]);
+            }
+        }
+        reset();
+    }
+
+    void reset() {
+        history_count = history_cursor = 0;
+    }
+
+    void seed(const float* values, size_t count) {
+        if (count > history.size() || (count && !values)) {
+            throw std::runtime_error("Invalid native frontend history count or buffer");
+        }
+        size_t padding = 0;
+        bool finite_seen = false;
+        for (size_t i = 0; i < count; ++i) {
+            bool all_finite = true, all_padding = true;
+            for (size_t j = 0; j < num_bands; ++j) {
+                const float value = values[i * num_bands + j];
+                all_finite = all_finite && std::isfinite(value);
+                all_padding = all_padding && std::isinf(value) && value > 0;
+            }
+            if (all_padding && !finite_seen) {
+                ++padding;
+            } else if (all_finite) {
+                finite_seen = true;
+            } else {
+                throw std::runtime_error("Invalid native frontend history values");
+            }
+        }
+        reset();
+        for (size_t i = padding; i < count; ++i) {
+            std::copy(values + i * num_bands, values + (i + 1) * num_bands,
+                      history[history_cursor].begin());
+            ++history_count;
+            history_cursor = (history_cursor + 1) % history.size();
+        }
+    }
+
+    void features(const float* frame, float* result) {
+        float magnitude[frame_size / 2];
+        fft.magnitudes(frame, window, magnitude);
+        std::array<float, num_bands>& previous = history[history_cursor];
+        for (int j = 0; j < num_bands; ++j) {
+            float sum = 0;
+            const Band& band = bank[j];
+            for (size_t k = 0; k < band.weights.size(); ++k) {
+                // Skip interior zeros too, to retain the previous sparse
+                // accumulation order for custom non-triangular filterbanks.
+                if (band.weights[k] != 0) {
+                    sum += magnitude[band.first + k] * band.weights[k];
+                }
+            }
+            const float current = std::log10(1.f + sum);
+            result[j] = current;
+            result[num_bands + j] = history_count >= history.size()
+                ? std::max(0.f, current - previous[j]) : 0;
+            previous[j] = current;
+        }
+        if (history_count < history.size()) {
+            ++history_count;
+        }
+        history_cursor = (history_cursor + 1) % history.size();
+    }
+};
+
+void transpose_gates(std::vector<float>& values, size_t width) {
+    std::vector<float> transposed(values.size());
+    for (size_t gate = 0; gate < 4; ++gate) {
+        const size_t offset = gate * hidden_size * width;
+        for (size_t row = 0; row < hidden_size; ++row) {
+            for (size_t column = 0; column < width; ++column) {
+                transposed[offset + column * hidden_size + row] =
+                    values[offset + row * width + column];
+            }
+        }
+    }
+    values.swap(transposed);
+}
+
+struct LSTM {
+    int width;
+    std::vector<float> weights, recurrent, bias, peepholes, initial, cell_initial;
+    std::array<float, hidden_size> hidden, cell;
+
+    LSTM(std::ifstream& stream, int input_width, int mode)
+        : width(input_width),
+          weights(read_values<float>(stream, 4 * hidden_size * input_width)),
+          recurrent(read_values<float>(stream, 4 * hidden_size * hidden_size)),
+          bias(read_values<float>(stream, 4 * hidden_size)),
+          peepholes(read_values<float>(stream, 3 * hidden_size)),
+          initial(read_values<float>(stream, hidden_size)),
+          cell_initial(read_values<float>(stream, hidden_size)) {
+        // Keep the asset and its per-output-row quantization unchanged, then
+        // convert once to the Python processors' input-major kernel layout.
+        quantize(weights, width, mode);
+        quantize(recurrent, hidden_size, mode);
+        quantize(peepholes, hidden_size, mode);
+        transpose_gates(weights, width);
+        transpose_gates(recurrent, hidden_size);
+        require_finite(bias);
+        require_finite(initial);
+        require_finite(cell_initial);
+        reset();
+    }
+
+    void reset() {
+        std::copy(initial.begin(), initial.end(), hidden.begin());
+        std::copy(cell_initial.begin(), cell_initial.end(), cell.begin());
+    }
+
+    void describe(mm_nn_layer& layer) {
+        layer.kind = 2;
+        layer.inputs = width;
+        layer.outputs = hidden_size;
+        layer.activation = 1;
+        layer.hidden = hidden.data();
+        layer.cell = cell.data();
+        // Asset order: input, output, forget, cell. Kernel order: input,
+        // forget, cell, output. Only the candidate cell has no peepholes.
+        const size_t order[4] = {0, 2, 3, 1};
+        for (size_t k = 0; k < 4; ++k) {
+            const size_t gate = order[k];
+            layer.gates[k].weights = weights.data() + gate * hidden_size * width;
+            layer.gates[k].recurrent = recurrent.data() + gate * hidden_size * hidden_size;
+            layer.gates[k].bias = bias.data() + gate * hidden_size;
+            layer.gates[k].peepholes = gate == 3 ? NULL :
+                peepholes.data() + gate * hidden_size;
+            layer.gates[k].activation = gate == 3 ? 1 : 2;
+        }
+    }
+};
+
+struct RNN {
+    std::vector<LSTM> layers;
+    std::vector<float> output, bias;
+    bool simd;
+
+    RNN(std::ifstream& stream, int mode, bool use_simd) : simd(use_simd) {
+        layers.emplace_back(stream, 162, mode);
+        layers.emplace_back(stream, 25, mode);
+        layers.emplace_back(stream, 25, mode);
+        output = read_values<float>(stream, 25);
+        bias = read_values<float>(stream, 1);
+        quantize(output, 25, mode);
+        require_finite(bias);
+    }
+
+    void reset() {
+        for (size_t i = 0; i < layers.size(); ++i) {
+            layers[i].reset();
+        }
+    }
+
+    float run(const float* features) {
+        mm_nn_layer description[4] = {};
+        for (size_t i = 0; i < layers.size(); ++i) {
+            layers[i].describe(description[i]);
+        }
+        description[3].kind = 0;
+        description[3].inputs = hidden_size;
+        description[3].outputs = 1;
+        description[3].activation = 2;
+        description[3].gates[0].weights = output.data();
+        description[3].gates[0].bias = bias.data();
+        float result;
+        if (mm_nn_network_ex(features, 1, 162, description, 4, &result, simd ? 1 : 0) != 0) {
+            throw std::runtime_error("Native recurrent inference failed");
+        }
+        return result;
+    }
+};
+
+struct HMM {
+    std::vector<uint32_t> states, pointers, observation;
+    std::vector<double> weights, initial, previous, next;
+    double observation_lambda, max_bpm, last_beat, tempo;
+
+    explicit HMM(std::ifstream& stream) {
+        const std::vector<uint32_t> sizes = read_values<uint32_t>(stream, 2);
+        if (sizes[0] == 0 || sizes[0] > 100000 || sizes[1] > 1000000) {
+            throw std::runtime_error("Invalid DBN dimensions");
+        }
+        const std::vector<double> settings = read_values<double>(stream, 2);
+        observation_lambda = settings[0];
+        max_bpm = settings[1];
+        states = read_values<uint32_t>(stream, sizes[1]);
+        pointers = read_values<uint32_t>(stream, sizes[0] + 1);
+        weights = read_values<double>(stream, sizes[1]);
+        observation = read_values<uint32_t>(stream, sizes[0]);
+        initial = read_values<double>(stream, sizes[0]);
+        require_finite(settings);
+        require_finite(weights);
+        require_finite(initial);
+        if (pointers.front() != 0 || pointers.back() != states.size() ||
+            !std::is_sorted(pointers.begin(), pointers.end()) ||
+            observation_lambda <= 1 || max_bpm <= 0) {
+            throw std::runtime_error("Invalid DBN settings");
+        }
+        for (size_t i = 0; i < states.size(); ++i) {
+            if (states[i] >= initial.size() || weights[i] < 0) {
+                throw std::runtime_error("Invalid DBN transition");
+            }
+        }
+        double total = 0;
+        for (size_t i = 0; i < initial.size(); ++i) {
+            if (observation[i] > 1 || initial[i] < 0) {
+                throw std::runtime_error("Invalid DBN state");
+            }
+            total += initial[i];
+        }
+        if (std::abs(total - 1) > 1e-6) {
+            throw std::runtime_error("Invalid initial DBN distribution");
+        }
+        next.resize(initial.size());
+        reset();
+    }
+
+    void reset() {
+        previous = initial;
+        last_beat = tempo = 0;
+    }
+
+    bool run(float activation, double time) {
+        // The Python observation model takes float32 logarithms. Its HMM
+        // takes float64 exponentials of those rounded log densities.
+        const float nonbeat = (1.f - activation) /
+                              static_cast<float>(observation_lambda - 1);
+        const double density[2] = {
+            std::exp(static_cast<double>(std::log(nonbeat))),
+            std::exp(static_cast<double>(std::log(activation)))};
+        if (mm_hmm_forward_checked(states.data(), pointers.data(), weights.data(),
+                           previous.size(), states.size(), observation.data(),
+                           density, 1, 2, previous.data(), next.data()) != 0) {
+            throw std::runtime_error("DBN observation has zero or invalid probability");
+        }
+        const size_t best = std::max_element(next.begin(), next.end()) - next.begin();
+        previous.swap(next);
+        const bool beat = mm_beat_event(time, max_bpm, observation[best] == 1,
+                                        &last_beat, &tempo) != 0;
+        return beat;
+    }
+};
+
+struct Tracker {
+    std::unique_ptr<Frontend> frontend;
+    std::vector<RNN> networks;
+    std::unique_ptr<HMM> hmm;
+    // Duplicating the ring keeps every causal frame contiguous, including
+    // wraparound. Push never allocates or shifts audio samples.
+    std::array<float, 2 * frame_size> audio;
+    size_t produced, reference, frames;
+
+    Tracker(const char* path, int count, int mode, int simd) {
+        if (count < 1 || count > 8 || mode < 0 || mode > 2 ||
+            simd < 0 || simd > 1) {
+            throw std::runtime_error("Invalid native tracker option");
+        }
+        std::ifstream stream(path, std::ios::binary);
+        char magic[8];
+        stream.read(magic, sizeof(magic));
+        if (!stream || std::memcmp(magic, "MMONL001", sizeof(magic)) != 0) {
+            throw std::runtime_error("Invalid native model asset");
+        }
+        const std::vector<double> window = read_values<double>(stream, frame_size);
+        const std::vector<float> dense =
+            read_values<float>(stream, (frame_size / 2) * num_bands);
+        const std::vector<uint32_t> lag = read_values<uint32_t>(stream, 1);
+        if (lag[0] < 1 || lag[0] > 10) {
+            throw std::runtime_error("Invalid spectral difference lag");
+        }
+        frontend.reset(new Frontend(window.data(), dense.data(), lag[0]));
+        networks.reserve(count);
+        for (int i = 0; i < 8; ++i) {
+            RNN network(stream, mode, simd != 0);
+            if (i < count) {
+                networks.push_back(std::move(network));
+            }
+        }
+        hmm.reset(new HMM(stream));
+        if (stream.peek() != std::ifstream::traits_type::eof()) {
+            throw std::runtime_error("Trailing bytes in native model asset");
+        }
+        reset();
+    }
+
+    void reset() {
+        for (size_t i = 0; i < networks.size(); ++i) {
+            networks[i].reset();
+        }
+        hmm->reset();
+        frontend->reset();
+        audio.fill(0);
+        produced = reference = frames = 0;
+    }
+
+    void features(const float* frame, float* result) {
+        frontend->features(frame, result);
+    }
+
+    float network(const float* features) {
+        float activation = 0;
+        for (size_t i = 0; i < networks.size(); ++i) {
+            activation += networks[i].run(features);
+        }
+        return activation / networks.size();
+    }
+
+    void decode(float activation, double* result) {
+        const double time = frames / 100.;
+        const bool beat = hmm->run(activation, time);
+        result[0] = time;
+        result[1] = activation;
+        result[2] = beat;
+        result[3] = hmm->tempo;
+        ++frames;
+    }
+
+    int push(const float* pcm, size_t count, double* output, size_t capacity) {
+        if (count > 44100 || count > std::numeric_limits<size_t>::max() - produced) {
+            throw std::runtime_error("Native PCM chunk exceeds 44100 samples");
+        }
+        check_input(pcm, count, "Missing native PCM buffer");
+        const size_t end = produced + count;
+        const size_t rows = end > reference ? (end - 1 - reference) / hop_size + 1 : 0;
+        if (capacity < rows || (rows && !output)) {
+            throw std::runtime_error("Native output buffer is too small");
+        }
+        if (count == 0) {
+            return 0;
+        }
+        size_t row = 0;
+        for (size_t i = 0; i < count; ++i) {
+            const size_t position = produced % frame_size;
+            audio[position] = audio[position + frame_size] = pcm[i];
+            ++produced;
+            if (reference < produced) {
+                float values[num_bands * 2];
+                features(audio.data() + (produced % frame_size), values);
+                decode(network(values), output + 4 * row++);
+                reference += hop_size;
+            }
+        }
+        return static_cast<int>(row);
+    }
+};
+
+template <typename Function>
+int guard(void* handle, Function function) {
+    try {
+        if (!handle) {
+            throw std::runtime_error("Null native tracker handle");
+        }
+        return function(*static_cast<Tracker*>(handle));
+    } catch (const std::exception& exception) {
+        last_error = exception.what();
+    } catch (...) {
+        last_error = "Unknown native tracker error";
+    }
+    return -1;
+}
+} // namespace
+
+// The public tag remains incomplete in the C header.
+struct mm_engine {
+    std::string asset;
+    std::unique_ptr<Tracker> tracker;
+    std::vector<mm_engine_frame_v1> queue;
+    size_t head, pending;
+    uint64_t last_beat_sample;
+
+    explicit mm_engine(const char* path, const mm_engine_config_v1* config)
+        : asset(path), head(0), pending(0), last_beat_sample(MM_ENGINE_NO_SAMPLE) {
+        configure(config);
+    }
+
+    void configure(const mm_engine_config_v1* config) {
+        mm_engine_config_v1 defaults = {
+            sizeof(mm_engine_config_v1), MM_ENGINE_ABI_V1, 8, 0, 1, 1024, {0, 0}};
+        const mm_engine_config_v1& options = config ? *config : defaults;
+        if (options.struct_size != sizeof(mm_engine_config_v1) ||
+            options.abi_version != MM_ENGINE_ABI_V1 ||
+            options.network_count < 1 || options.network_count > 8 ||
+            options.weight_mode > 2 || options.use_simd > 1 ||
+            options.queue_capacity < 1 || options.queue_capacity > 8192 ||
+            options.reserved[0] || options.reserved[1]) {
+            throw std::runtime_error("Invalid engine ABI version or configuration");
+        }
+        std::unique_ptr<Tracker> replacement(new Tracker(
+            asset.c_str(), options.network_count, options.weight_mode,
+            options.use_simd));
+        std::vector<mm_engine_frame_v1> output(options.queue_capacity);
+        tracker.swap(replacement);
+        queue.swap(output);
+        head = pending = 0;
+        last_beat_sample = MM_ENGINE_NO_SAMPLE;
+    }
+};
+
+namespace {
+template <typename Handle, typename Function>
+int component_guard(Handle* handle, Function function) {
+    try {
+        if (!handle) {
+            throw std::runtime_error("Null native component handle");
+        }
+        return function(*handle);
+    } catch (const std::exception& exception) {
+        last_error = exception.what();
+    } catch (...) {
+        last_error = "Unknown native component error";
+    }
+    return -1;
+}
+} // namespace
+
+extern "C" {
+void* mm_frontend_create(const double* window, const float* bank, size_t lag) {
+    try {
+        if (!window || !bank || lag < 1 || lag > 100000) {
+            throw std::runtime_error("Invalid native frontend arrays or lag");
+        }
+        return new Frontend(window, bank, lag);
+    } catch (const std::exception& exception) {
+        last_error = exception.what();
+    } catch (...) {
+        last_error = "Unknown native frontend error";
+    }
+    return NULL;
+}
+
+void mm_frontend_destroy(void* handle) {
+    delete static_cast<Frontend*>(handle);
+}
+
+int mm_frontend_reset(void* handle) {
+    return component_guard(static_cast<Frontend*>(handle), [](Frontend& frontend) {
+        frontend.reset();
+        return 0;
+    });
+}
+
+int mm_frontend_history(void* handle, const float* values, size_t count) {
+    return component_guard(static_cast<Frontend*>(handle), [&](Frontend& frontend) {
+        frontend.seed(values, count);
+        return 0;
+    });
+}
+
+int mm_frontend_process(void* handle, const float* frames, size_t count,
+                        float* output) {
+    return component_guard(static_cast<Frontend*>(handle), [&](Frontend& frontend) {
+        if (count > std::numeric_limits<size_t>::max() / frame_size ||
+            (count && !output)) {
+            throw std::runtime_error("Invalid native frontend frame count or output");
+        }
+        check_input(frames, count * frame_size, "Missing native frontend frames");
+        for (size_t i = 0; i < count; ++i) {
+            frontend.features(frames + i * frame_size, output + i * 2 * num_bands);
+        }
+        return 0;
+    });
+}
+
+uint32_t mm_engine_version(void) {
+    return MM_ENGINE_ABI_V1;
+}
+
+const char* mm_engine_error(void) {
+    return last_error.c_str();
+}
+
+mm_engine* mm_engine_create(const char* asset, const mm_engine_config_v1* config) {
+    try {
+        if (!asset) {
+            throw std::runtime_error("Missing native model asset path");
+        }
+        return new mm_engine(asset, config);
+    } catch (const std::exception& exception) {
+        last_error = exception.what();
+    } catch (...) {
+        last_error = "Unknown native engine error";
+    }
+    return NULL;
+}
+
+int mm_engine_configure(mm_engine* engine, const mm_engine_config_v1* config) {
+    return component_guard(engine, [&](mm_engine& value) {
+        value.configure(config);
+        return 0;
+    });
+}
+
+void mm_engine_destroy(mm_engine* engine) {
+    delete engine;
+}
+
+int mm_engine_reset(mm_engine* engine) {
+    return component_guard(engine, [](mm_engine& value) {
+        value.tracker->reset();
+        value.head = value.pending = 0;
+        value.last_beat_sample = MM_ENGINE_NO_SAMPLE;
+        return 0;
+    });
+}
+
+int mm_engine_push(mm_engine* engine, const float* pcm, size_t count,
+                    size_t* accepted) {
+    if (accepted) {
+        *accepted = 0;
+    }
+    return component_guard(engine, [&](mm_engine& value) {
+        if (!accepted || count > 44100 ||
+            count > std::numeric_limits<size_t>::max() - value.tracker->produced -
+                    frame_size - hop_size) {
+            throw std::runtime_error("Invalid native input count or accepted output");
+        }
+        Tracker& tracker = *value.tracker;
+        const size_t end = tracker.produced + count;
+        const size_t rows = end > tracker.reference
+            ? (end - 1 - tracker.reference) / hop_size + 1 : 0;
+        if (rows > value.queue.size() - value.pending) {
+            return MM_ENGINE_FULL;
+        }
+        const size_t first_frame = tracker.frames;
+        double output[4 * 102];
+        const int produced = tracker.push(pcm, count, output, 102);
+        for (int i = 0; i < produced; ++i) {
+            const size_t position = (value.head + value.pending) % value.queue.size();
+            mm_engine_frame_v1& row = value.queue[position];
+            row.sample_index = static_cast<uint64_t>(first_frame + i) * hop_size;
+            row.activation = static_cast<float>(output[4 * i + 1]);
+            row.beat = output[4 * i + 2] != 0;
+            if (row.beat) {
+                value.last_beat_sample = row.sample_index;
+            }
+            ++value.pending;
+        }
+        *accepted = count;
+        return MM_ENGINE_OK;
+    });
+}
+
+int mm_engine_read(mm_engine* engine, mm_engine_frame_v1* output, size_t capacity) {
+    return component_guard(engine, [&](mm_engine& value) {
+        if (!output) {
+            if (capacity) {
+                throw std::runtime_error("Missing native engine frame output");
+            }
+            return static_cast<int>(value.pending);
+        }
+        const size_t count = std::min(capacity, value.pending);
+        for (size_t i = 0; i < count; ++i) {
+            output[i] = value.queue[(value.head + i) % value.queue.size()];
+        }
+        value.head = (value.head + count) % value.queue.size();
+        value.pending -= count;
+        return static_cast<int>(count);
+    });
+}
+
+int mm_engine_state(mm_engine* engine, mm_engine_state_v1* output) {
+    return component_guard(engine, [&](mm_engine& value) {
+        if (!output) {
+            throw std::runtime_error("Missing native engine state output");
+        }
+        const Tracker& tracker = *value.tracker;
+        const HMM& hmm = *tracker.hmm;
+        const std::vector<double>::const_iterator best =
+            std::max_element(hmm.previous.begin(), hmm.previous.end());
+        output->sample_index = tracker.frames
+            ? static_cast<uint64_t>(tracker.frames - 1) * hop_size : MM_ENGINE_NO_SAMPLE;
+        output->received_samples = tracker.produced;
+        output->last_beat_sample = value.last_beat_sample;
+        output->tempo_bpm = hmm.tempo;
+        output->reliability = *best;
+        output->state_index = static_cast<uint32_t>(best - hmm.previous.begin());
+        output->pending_frames = static_cast<uint32_t>(value.pending);
+        return MM_ENGINE_OK;
+    });
+}
+
+const char* mm_online_error(void) {
+    return last_error.c_str();
+}
+
+void* mm_online_create(const char* path, int count, int mode, int simd) {
+    try {
+        if (!path) {
+            throw std::runtime_error("Missing native model asset path");
+        }
+        return new Tracker(path, count, mode, simd);
+    } catch (const std::exception& exception) {
+        last_error = exception.what();
+    } catch (...) {
+        last_error = "Unknown native tracker error";
+    }
+    return NULL;
+}
+
+void mm_online_destroy(void* handle) {
+    delete static_cast<Tracker*>(handle);
+}
+
+int mm_online_reset(void* handle) {
+    return guard(handle, [](Tracker& tracker) { tracker.reset(); return 0; });
+}
+
+int mm_online_features(void* handle, const float* frame, float* output) {
+    return guard(handle, [&](Tracker& tracker) {
+        check_input(frame, frame_size, "Missing native frontend input");
+        if (!output) {
+            throw std::runtime_error("Missing native feature output");
+        }
+        tracker.features(frame, output);
+        return 0;
+    });
+}
+
+int mm_online_network(void* handle, const float* features, float* output) {
+    return guard(handle, [&](Tracker& tracker) {
+        check_input(features, 2 * num_bands, "Missing native network input");
+        if (!output) {
+            throw std::runtime_error("Missing native activation output");
+        }
+        *output = tracker.network(features);
+        return 0;
+    });
+}
+
+int mm_online_decode(void* handle, float activation, double* output) {
+    return guard(handle, [&](Tracker& tracker) {
+        if (!output || !std::isfinite(activation) || activation < 0 || activation > 1) {
+            throw std::runtime_error("Invalid native beat activation or output");
+        }
+        tracker.decode(activation, output);
+        return 0;
+    });
+}
+
+int mm_online_push(void* handle, const float* pcm, size_t count,
+                   double* output, size_t capacity) {
+    return guard(handle, [&](Tracker& tracker) {
+        return tracker.push(pcm, count, output, capacity);
+    });
+}
+
+int mm_online_decoder_state(void* handle, double* output, size_t capacity) {
+    return guard(handle, [&](Tracker& tracker) {
+        const std::vector<double>& state = tracker.hmm->previous;
+        if (output) {
+            if (capacity < state.size()) {
+                throw std::runtime_error("Native DBN state buffer is too small");
+            }
+            std::copy(state.begin(), state.end(), output);
+        }
+        return static_cast<int>(state.size());
+    });
+}
+
+int mm_online_summary(void* handle, double* output) {
+    return guard(handle, [&](Tracker& tracker) {
+        if (!output) {
+            throw std::runtime_error("Missing native DBN summary output");
+        }
+        const HMM& hmm = *tracker.hmm;
+        const std::vector<double>::const_iterator best =
+            std::max_element(hmm.previous.begin(), hmm.previous.end());
+        output[0] = hmm.tempo;
+        output[1] = hmm.last_beat;
+        output[2] = *best;
+        output[3] = best - hmm.previous.begin();
+        return 0;
+    });
+}
+} // extern "C"

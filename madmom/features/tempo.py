@@ -29,6 +29,16 @@ NO_TEMPO = np.nan
 
 
 # helper functions
+def _online_activations(activations):
+    """Accept one activation or a finite one-dimensional activation block."""
+    activations = np.atleast_1d(np.asarray(activations, dtype=float))
+    if activations.ndim != 1:
+        raise ValueError('Online tempo activations must be one-dimensional.')
+    if not np.all(np.isfinite(activations)):
+        raise ValueError('Online tempo activations must be finite.')
+    return activations
+
+
 def smooth_histogram(histogram, smooth):
     """
     Smooth the given histogram.
@@ -291,7 +301,10 @@ class TempoHistogramProcessor(OnlineProcessor):
         self.hist_buffer = hist_buffer
         self.fps = fps
         if self.online:
-            self._hist_buffer = BufferProcessor((int(hist_buffer * self.fps),
+            buffer_frames = int(hist_buffer * self.fps)
+            if buffer_frames < 1:
+                raise ValueError('hist_buffer must contain at least one frame.')
+            self._hist_buffer = BufferProcessor((buffer_frames,
                                                  len(self.intervals)))
 
     @property
@@ -311,7 +324,8 @@ class TempoHistogramProcessor(OnlineProcessor):
 
     def reset(self):
         """Reset the tempo histogram aggregation buffer."""
-        self._hist_buffer.reset()
+        if self.online:
+            self._hist_buffer.reset()
 
 
 class CombFilterTempoHistogramProcessor(TempoHistogramProcessor):
@@ -349,7 +363,8 @@ class CombFilterTempoHistogramProcessor(TempoHistogramProcessor):
     def reset(self):
         """Reset to initial state."""
         super(CombFilterTempoHistogramProcessor, self).reset()
-        self._comb_buffer.reset()
+        if self.online:
+            self._comb_buffer.reset()
 
     def process_offline(self, activations, **kwargs):
         """
@@ -379,8 +394,9 @@ class CombFilterTempoHistogramProcessor(TempoHistogramProcessor):
 
         Parameters
         ----------
-        activations : numpy float
-            Beat activation function.
+        activations : float or numpy array, shape (N,)
+            One beat activation or a block of beat activations. Empty input
+            returns the current histogram without advancing the state.
         reset : bool, optional
             Reset to initial state before processing.
 
@@ -392,8 +408,7 @@ class CombFilterTempoHistogramProcessor(TempoHistogramProcessor):
             Corresponding delays [frames].
 
         """
-        if not isinstance(activations, np.ndarray):
-            activations = np.array(activations, ndmin=1, dtype=float)
+        activations = _online_activations(activations)
         # reset to initial state
         if reset:
             self.reset()
@@ -413,9 +428,9 @@ class CombFilterTempoHistogramProcessor(TempoHistogramProcessor):
             bins = y_n * act_max
             # use a buffer to only keep a certain number of bins
             # shift buffer and put new bins at end of buffer
-            bins = self._hist_buffer(bins)
+            self._hist_buffer(bins)
         # build a histogram together with the intervals and return it
-        return np.sum(bins, axis=0), self.intervals
+        return np.sum(self._hist_buffer.data, axis=0), self.intervals
 
 
 class ACFTempoHistogramProcessor(TempoHistogramProcessor):
@@ -449,7 +464,8 @@ class ACFTempoHistogramProcessor(TempoHistogramProcessor):
     def reset(self):
         """Reset to initial state."""
         super(ACFTempoHistogramProcessor, self).reset()
-        self._act_buffer.reset()
+        if self.online:
+            self._act_buffer.reset()
 
     def process_offline(self, activations, **kwargs):
         """
@@ -480,8 +496,9 @@ class ACFTempoHistogramProcessor(TempoHistogramProcessor):
 
         Parameters
         ----------
-        activations : numpy float
-            Beat activation function.
+        activations : float or numpy array, shape (N,)
+            One beat activation or a block of beat activations. Empty input
+            returns the current histogram without advancing the state.
         reset : bool, optional
             Reset to initial state before processing.
 
@@ -493,6 +510,7 @@ class ACFTempoHistogramProcessor(TempoHistogramProcessor):
             Corresponding delays [frames].
 
         """
+        activations = _online_activations(activations)
         # reset to initial state
         if reset:
             self.reset()
@@ -505,9 +523,9 @@ class ACFTempoHistogramProcessor(TempoHistogramProcessor):
             self._act_buffer(act)
             # use a buffer to only keep a certain number of bins
             # shift buffer and put new bins at end of buffer
-            bins = self._hist_buffer(bins)
+            self._hist_buffer(bins)
         # build a histogram together with the intervals and return it
-        return np.sum(bins, axis=0), self.intervals
+        return np.sum(self._hist_buffer.data, axis=0), self.intervals
 
 
 class DBNTempoHistogramProcessor(TempoHistogramProcessor):
@@ -580,8 +598,9 @@ class DBNTempoHistogramProcessor(TempoHistogramProcessor):
 
         Parameters
         ----------
-        activations : numpy float
-            Beat activation function.
+        activations : float or numpy array, shape (N,)
+            One beat activation or a block of beat activations. Empty input
+            returns the current histogram without advancing the state.
         reset : bool, optional
             Reset DBN to initial state before processing.
 
@@ -593,21 +612,25 @@ class DBNTempoHistogramProcessor(TempoHistogramProcessor):
            Corresponding delays [frames].
 
         """
+        activations = _online_activations(activations)
         # reset to initial state
         if reset:
             self.reset()
-        # use forward path to get best state
-        fwd = self.dbn.hmm.forward(activations, reset=reset)
-        # choose the best state for each step
-        states = np.argmax(fwd, axis=1)
-        intervals = self.dbn.st.state_intervals[states]
-        # convert intervals to bins
-        bins = np.zeros((len(activations), len(self.intervals)))
-        bins[np.arange(len(activations)), intervals - self.min_interval] = 1
-        # shift buffer and put new bins at end of buffer
-        bins = self._hist_buffer(bins)
+        if not len(activations):
+            return np.sum(self._hist_buffer.data, axis=0), self.intervals
+        # Bound posterior storage independently of input length. The HMM
+        # carries its final forward state into each following block.
+        for start in range(0, len(activations), 64):
+            block = activations[start:start + 64]
+            fwd = self.dbn.hmm.forward(block, reset=False)
+            states = np.argmax(fwd, axis=1)
+            intervals = self.dbn.st.state_intervals[states]
+            # Convert the block's interval votes to histogram contributions.
+            bins = np.zeros((len(block), len(self.intervals)))
+            bins[np.arange(len(block)), intervals - self.min_interval] = 1
+            self._hist_buffer(bins)
         # build a histogram together with the intervals and return it
-        return np.sum(bins, axis=0), self.intervals
+        return np.sum(self._hist_buffer.data, axis=0), self.intervals
 
 
 class TCNTempoHistogramProcessor(TempoHistogramProcessor):

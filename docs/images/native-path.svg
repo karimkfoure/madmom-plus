@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="148" viewBox="0 0 800 148" role="img" aria-labelledby="title desc">
+  <title id="title">Native online beat path</title>
+  <desc id="desc">Mono audio at 44100 Hz enters causal spectral features, an LSTM ensemble, and forward DBN decoding. Outputs are beat events and raw tracker reliability.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#365066"/></marker></defs>
+  <rect width="800" height="148" rx="10" fill="#f5f8fb"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle" fill="#173047">
+    <text x="400" y="25" font-size="16" font-weight="bold">One C++ core · Python processors or direct C ABI</text>
+    <g stroke="#365066" fill="#fff" stroke-width="1.5">
+      <rect x="16" y="48" width="140" height="60" rx="6"/>
+      <rect x="188" y="48" width="144" height="60" rx="6"/>
+      <rect x="364" y="48" width="112" height="60" rx="6"/>
+      <rect x="508" y="48" width="122" height="60" rx="6"/>
+      <rect x="662" y="48" width="122" height="60" rx="6"/>
+    </g>
+    <text x="86" y="73">Mono audio</text><text x="86" y="94" font-size="12">44100 Hz · float32</text>
+    <text x="260" y="73">Causal spectral</text><text x="260" y="94">features</text>
+    <text x="420" y="73">LSTM</text><text x="420" y="94">ensemble</text>
+    <text x="569" y="73">Forward DBN</text><text x="569" y="94" font-size="12">state + event rule</text>
+    <text x="723" y="73">Beat events</text><text x="723" y="94" font-size="12">+ raw reliability</text>
+    <text x="400" y="131" font-size="12">Only current and past audio samples contribute to each frame.</text>
+  </g>
+  <g stroke="#365066" stroke-width="1.7" marker-end="url(#arrow)"><path d="M156 78H181"/><path d="M332 78H357"/><path d="M476 78H501"/><path d="M630 78H655"/></g>
+</svg>

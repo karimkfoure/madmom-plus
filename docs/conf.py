@@ -15,12 +15,12 @@
 import os
 import sys
 
-import pkg_resources
+from importlib.metadata import version as distribution_version
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../madmom'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- General configuration ------------------------------------------------
 
@@ -59,7 +59,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'madmom'
+project = u'madmom-plus'
 copyright = u'2015, madmom development team'
 author = u'madmom development team'
 
@@ -68,7 +68,7 @@ author = u'madmom development team'
 # built documents.
 #
 # The short X.Y version.
-version = pkg_resources.get_distribution("madmom").version
+version = distribution_version('madmom-plus')
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -77,7 +77,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -122,7 +122,6 @@ pygments_style = 'sphinx'
 if os.environ.get('READTHEDOCS') != 'True':
     import sphinx_rtd_theme
     html_theme = 'sphinx_rtd_theme'
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -155,7 +154,7 @@ if os.environ.get('READTHEDOCS') != 'True':
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied

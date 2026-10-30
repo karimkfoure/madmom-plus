@@ -8,6 +8,10 @@ Madmom documentation
 
    introduction
    installation
+   compatibility
+   native
+   native-reference
+   native-wheels
    usage
    tutorial
    development

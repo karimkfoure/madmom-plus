@@ -143,6 +143,8 @@ class TestSearchPathFunction(unittest.TestCase):
         result = search_path(DATA_PATH, 1)
         all_files = (FILE_LIST + AUDIO_FILES + ANNOTATION_FILES +
                      DETECTION_FILES + ACTIVATION_FILES)
+        all_files += [pj(DATA_PATH, 'native_0161', name) for name in
+                      ('metadata.json', 'sample.npz', 'sample2.npz', 'synthetic.npz')]
         self.assertEqual(result, sorted(all_files))
 
     def test_errors(self):

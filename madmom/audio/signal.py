@@ -1455,7 +1455,8 @@ class Stream(object):
                                    input_device_index=self.stream_input_device,
                                    start=True)
         # create a buffer
-        self.buffer = BufferProcessor(self.frame_size)
+        self.buffer = BufferProcessor(init=np.zeros(self.frame_size,
+                                                   dtype=self.dtype))
         # frame index counter
         self.frame_idx = 0
         # PyAudio flags
@@ -1469,7 +1470,7 @@ class Stream(object):
         # get the desired number of samples (block until all are present)
         data = self.stream.read(self.hop_size, exception_on_overflow=False)
         # convert it to a numpy array
-        data = np.fromstring(data, 'float32').astype(self.dtype, copy=False)
+        data = np.frombuffer(data, dtype='float32').astype(self.dtype, copy=False)
         # buffer the data (i.e. append hop_size samples and rotate)
         data = self.buffer(data)
         # wrap the last frame_size samples as a Signal

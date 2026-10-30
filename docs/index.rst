@@ -8,6 +8,12 @@ Madmom documentation
 
    introduction
    installation
+   compatibility
+   native
+   native-reference
+   native-wheels
+   online-processing
+   windowed-downbeats
    usage
    tutorial
    development

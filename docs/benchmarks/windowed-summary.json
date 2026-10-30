@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "purpose": "Optional processing cost; no music-accuracy claim",
+  "hardware": {
+    "cpu": "AMD Ryzen 9 5900X 12-Core Processor",
+    "architecture": "x86_64",
+    "affinity": [
+      3
+    ],
+    "blas_threads": "1",
+    "omp_threads": "1"
+  },
+  "input": {
+    "files": [
+      "sample.wav",
+      "sample2.wav"
+    ],
+    "copies": 3,
+    "sample_rate": 44100,
+    "chunk_samples": 441,
+    "audio_seconds": 20.552176870748298
+  },
+  "method": {
+    "fresh_process": true,
+    "alternating_order": true,
+    "warmup_runs": 1,
+    "trials_per_variant": 3,
+    "window_seconds": 6.0,
+    "hop_seconds": 2.0,
+    "background": false,
+    "cpu_excludes": "model construction, loading, warmup and reset",
+    "peak_includes": "largest process peak across trials; setup, models, audio and warmup"
+  },
+  "beat_times_equal": true,
+  "beat_count": 51,
+  "summary": {
+    "beats": {
+      "cpu_seconds": 0.5998372640000001,
+      "cpu_per_audio_second": 0.029186069571722224,
+      "peak_mib": 78.2890625
+    },
+    "windowed": {
+      "cpu_seconds": 1.790835945,
+      "cpu_per_audio_second": 0.08713607109662813,
+      "peak_mib": 131.52734375
+    }
+  },
+  "trials": [
+    {
+      "variant": "beats",
+      "audio_seconds": 20.552176870748298,
+      "cpu_seconds": 0.5998372640000001,
+      "wall_seconds": 3.568236635008361,
+      "cpu_per_audio_second": 0.029186069571722224,
+      "peak_mib": 78.2890625,
+      "beat_count": 51,
+      "versions": {
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "madmom_plus": "0.17.0.dev1"
+      },
+      "trial": 1,
+      "events_sha256": "4a57c5d8a55034fa1984d2e5f70252fc3e1ef489ff71da8bc95159ea933c6ec6"
+    },
+    {
+      "variant": "windowed",
+      "audio_seconds": 20.552176870748298,
+      "cpu_seconds": 1.817236646,
+      "wall_seconds": 34.20767297397833,
+      "cpu_per_audio_second": 0.08842064066636436,
+      "peak_mib": 131.0546875,
+      "beat_count": 51,
+      "versions": {
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "madmom_plus": "0.17.0.dev1"
+      },
+      "trial": 1,
+      "events_sha256": "4a57c5d8a55034fa1984d2e5f70252fc3e1ef489ff71da8bc95159ea933c6ec6"
+    },
+    {
+      "variant": "windowed",
+      "audio_seconds": 20.552176870748298,
+      "cpu_seconds": 1.790835945,
+      "wall_seconds": 5.094351800973527,
+      "cpu_per_audio_second": 0.08713607109662813,
+      "peak_mib": 131.06640625,
+      "beat_count": 51,
+      "versions": {
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "madmom_plus": "0.17.0.dev1"
+      },
+      "trial": 2,
+      "events_sha256": "4a57c5d8a55034fa1984d2e5f70252fc3e1ef489ff71da8bc95159ea933c6ec6"
+    },
+    {
+      "variant": "beats",
+      "audio_seconds": 20.552176870748298,
+      "cpu_seconds": 0.6110053200000001,
+      "wall_seconds": 1.7186487219878472,
+      "cpu_per_audio_second": 0.02972946972199513,
+      "peak_mib": 77.65625,
+      "beat_count": 51,
+      "versions": {
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "madmom_plus": "0.17.0.dev1"
+      },
+      "trial": 2,
+      "events_sha256": "4a57c5d8a55034fa1984d2e5f70252fc3e1ef489ff71da8bc95159ea933c6ec6"
+    },
+    {
+      "variant": "beats",
+      "audio_seconds": 20.552176870748298,
+      "cpu_seconds": 0.596254336,
+      "wall_seconds": 0.7559941859799437,
+      "cpu_per_audio_second": 0.029011736311429018,
+      "peak_mib": 77.65234375,
+      "beat_count": 51,
+      "versions": {
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "madmom_plus": "0.17.0.dev1"
+      },
+      "trial": 3,
+      "events_sha256": "4a57c5d8a55034fa1984d2e5f70252fc3e1ef489ff71da8bc95159ea933c6ec6"
+    },
+    {
+      "variant": "windowed",
+      "audio_seconds": 20.552176870748298,
+      "cpu_seconds": 1.779206223,
+      "wall_seconds": 6.279092736018356,
+      "cpu_per_audio_second": 0.0865702078271001,
+      "peak_mib": 131.52734375,
+      "beat_count": 51,
+      "versions": {
+        "python": "3.12.13",
+        "numpy": "2.4.6",
+        "scipy": "1.18.1",
+        "madmom_plus": "0.17.0.dev1"
+      },
+      "trial": 3,
+      "events_sha256": "4a57c5d8a55034fa1984d2e5f70252fc3e1ef489ff71da8bc95159ea933c6ec6"
+    }
+  ],
+  "source_revision": "2df1e30"
+}

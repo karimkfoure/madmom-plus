@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "runtime_revision": "20e6bc16a33a007166db398beff047e478254803",
+  "metadata_revision": "f30b211188862ad112415f3a368efedf68d0cf04",
+  "method": "Native GCC builds inside digest-pinned AlmaLinux 8 OCI root filesystems, executed by PRoot; ARM compiler and tests execute through QEMU.",
+  "system_libraries_bound_from_host": false,
+  "build": {
+    "gcc_gxx": "8.5.0",
+    "glibc": "2.28",
+    "python": [
+      "3.11.15",
+      "3.12.13"
+    ],
+    "numpy_headers": "2.4.6",
+    "cython": "3.3.0",
+    "setuptools": "84.2.1",
+    "wheel": "0.48.0",
+    "cflags": "-O3 -DNDEBUG -g0",
+    "cxxflags": "-O3 -DNDEBUG -g0 -std=c++17 -O3 -ffp-contract=off",
+    "maximum_workers": 2,
+    "build_cpu_affinity": [
+      0,
+      1
+    ]
+  },
+  "tools": {
+    "proot": {
+      "version": "5.5.0-25dc6a31",
+      "author": "PRoot contributors",
+      "source": "https://github.com/proot-me/proot/tree/25dc6a3134891f98a79f57ce1c2c1b23ff15cad1",
+      "binary_url": "https://github.com/proot-me/proot/releases/download/v5.5.0/proot",
+      "sha256": "db185300a9daabbce86aca7632d8c7fdc4249f6f153171954013b70c5f491ec0",
+      "verified_upstream_sha256sums": true
+    },
+    "skopeo": {
+      "version": "1.13.3",
+      "package": "1.13.3+ds1-2ubuntu0.24.04.3",
+      "source": "https://github.com/containers/skopeo"
+    },
+    "umoci": {
+      "version": "0.4.7",
+      "package": "0.4.7+ds-4ubuntu0.24.04.3",
+      "source": "https://github.com/opencontainers/umoci"
+    },
+    "qemu": {
+      "version": "8.2.2",
+      "source": "https://www.qemu.org/"
+    },
+    "auditwheel": {
+      "version": "6.8.2",
+      "source": "https://github.com/pypa/auditwheel"
+    }
+  },
+  "limits": {
+    "physical_aarch64_performance_measured": false,
+    "macos_and_windows_built": false,
+    "glibc_2_27_execution_tested": false,
+    "glibc_execution_versions": [
+      "2.28",
+      "2.36"
+    ]
+  },
+  "note": "Historical artifacts of the preserved implementation. Rebuild and verify wheels for each reviewed source revision.",
+  "original_report": "https://github.com/karimkfoure/madmom-plus/blob/a85af17/docs/benchmarks/container-wheels.json",
+  "wheels": [
+    {
+      "filename": "madmom_plus-0.17.0.dev1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "80f688cf959f85806fe9ea31d8b4b5514f77332b22651a313b7f027aa39088cb",
+      "size_bytes": 30384010,
+      "architecture": "x86_64",
+      "python_tag": "cp311",
+      "maximum_required_glibc": "GLIBC_2.27",
+      "maximum_required_glibcxx": "GLIBCXX_3.4.21",
+      "models_count": 92,
+      "model_bytes_match_source": true,
+      "private_build_path_files": [],
+      "verification": [
+        {
+          "architecture": "x86_64",
+          "glibc": "2.28",
+          "python": "3.11.15",
+          "numpy": "2.4.6",
+          "scipy": "1.17.1",
+          "native_abi_version": 65536,
+          "package_from_wheel": true,
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "distribution": "almalinux",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 14.60s",
+          "test_exit_code": 0,
+          "test_log_sha256": "ec406bb7ca773fad0dc5c73a51cd5bb50198ae78f9a1de37970e519002bf1404"
+        },
+        {
+          "architecture": "x86_64",
+          "glibc": "2.36",
+          "python": "3.11.15",
+          "numpy": "2.4.6",
+          "scipy": "1.17.1",
+          "native_abi_version": 65536,
+          "package_from_wheel": true,
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "distribution": "debian",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 13.91s",
+          "test_exit_code": 0,
+          "test_log_sha256": "f5e8e34aa0fb503be19bd9014cd88626258c73c40ad7e08fe56f889716e69d4d"
+        }
+      ]
+    },
+    {
+      "filename": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_aarch64.whl",
+      "sha256": "33ed40c8a35cb850350ea001c4992912e379dabc9fd2b168645bcfd348f87ac3",
+      "size_bytes": 30329546,
+      "architecture": "aarch64",
+      "python_tag": "cp312",
+      "maximum_required_glibc": "GLIBC_2.27",
+      "maximum_required_glibcxx": "GLIBCXX_3.4.21",
+      "models_count": 92,
+      "model_bytes_match_source": true,
+      "private_build_path_files": [],
+      "verification": [
+        {
+          "architecture": "aarch64",
+          "glibc": "2.28",
+          "python": "3.12.13",
+          "numpy": "2.4.6",
+          "scipy": "1.18.1",
+          "native_abi_version": 65536,
+          "package_from_wheel": true,
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "distribution": "almalinux",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 290.72s (0:04:50)",
+          "test_exit_code": 0,
+          "test_log_sha256": "b6120974e741626723e5517dab020505849c464b22063201b5cd69022d275abf"
+        },
+        {
+          "architecture": "aarch64",
+          "glibc": "2.36",
+          "python": "3.12.13",
+          "numpy": "2.4.6",
+          "scipy": "1.18.1",
+          "native_abi_version": 65536,
+          "package_from_wheel": true,
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "distribution": "debian",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 293.07s (0:04:53)",
+          "test_exit_code": 0,
+          "test_log_sha256": "25aec245e3047a313acb455a62a22bed5dcb77b8930ea817335ef8b8f58955fb"
+        },
+        {
+          "architecture": "aarch64",
+          "glibc": "2.28",
+          "python": "3.12.13",
+          "numpy": "1.26.4",
+          "scipy": "1.13.1",
+          "native_abi_version": 65536,
+          "package_from_wheel": true,
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "distribution": "almalinux",
+          "pytest_summary": "35 passed, 10 subtests passed in 27.09s",
+          "test_exit_code": 0,
+          "test_log_sha256": "472e4af663d1aec09a190b868e2541ee0bd757b55aa120be54fdbcf1cfaed874"
+        }
+      ]
+    },
+    {
+      "filename": "madmom_plus-0.17.0.dev1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "499a72c264d1034474bed82847151c8b4763d1bcdf1c4e792f57e26c550f62b5",
+      "size_bytes": 30366597,
+      "architecture": "x86_64",
+      "python_tag": "cp312",
+      "maximum_required_glibc": "GLIBC_2.27",
+      "maximum_required_glibcxx": "GLIBCXX_3.4.21",
+      "models_count": 92,
+      "model_bytes_match_source": true,
+      "private_build_path_files": [],
+      "verification": [
+        {
+          "architecture": "x86_64",
+          "glibc": "2.28",
+          "python": "3.12.13",
+          "numpy": "2.4.6",
+          "scipy": "1.18.1",
+          "native_abi_version": 65536,
+          "package_from_wheel": true,
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "distribution": "almalinux",
+          "pytest_summary": "377 passed, 30 warnings, 189 subtests passed in 11.49s",
+          "test_exit_code": 0,
+          "test_log_sha256": "db134573a9726e786352811d2ad08f8e340ab43ad199917b4f571e70612778c8"
+        },
+        {
+          "architecture": "x86_64",
+          "glibc": "2.36",
+          "python": "3.12.13",
+          "numpy": "2.4.6",
+          "scipy": "1.18.1",
+          "native_abi_version": 65536,
+          "package_from_wheel": true,
+          "engine_smoke": {
+            "frame_sample_indices": [
+              0,
+              441
+            ],
+            "queue_read_reset_and_configure": true,
+            "samples_accepted": 442
+          },
+          "distribution": "debian",
+          "pytest_summary": "1147 passed, 236 warnings, 217 subtests passed in 72.48s (0:01:12)",
+          "test_exit_code": 0,
+          "test_log_sha256": "e4d9c4981cb38c1398fad43e5f2a2ce5648a63b1ae64d0b9aa34d17cf03474ad"
+        }
+      ]
+    }
+  ],
+  "images": [
+    {
+      "distribution": "AlmaLinux 8.10",
+      "glibc": "2.28",
+      "architecture": "amd64",
+      "reference": "docker.io/library/almalinux@sha256:0e1d3a40acf7d9e24e7b7bc2ff3f0fd32955adb069b38c45428b628f14664532"
+    },
+    {
+      "distribution": "AlmaLinux 8.10",
+      "glibc": "2.28",
+      "architecture": "arm64",
+      "reference": "docker.io/library/almalinux@sha256:86d6a54ac3069de11423477832b81824d5b3a22566ddfbf009f15461a66210d7"
+    },
+    {
+      "distribution": "Debian 12 Bookworm",
+      "glibc": "2.36",
+      "architecture": "amd64",
+      "reference": "docker.io/library/debian@sha256:a3bba7dc7dbcc1f37c2856c51fc9a7fac96608f50cb87b1b4e4d8b8c85ae988e"
+    },
+    {
+      "distribution": "Debian 12 Bookworm",
+      "glibc": "2.36",
+      "architecture": "arm64",
+      "reference": "docker.io/library/debian@sha256:7ccb8b5b60c7654f5b795d94ee7d751cd0811500803f0b09cefcd555e755a55a"
+    }
+  ],
+  "shared_kernel_source_sha256": {
+    "madmom/audio/_native.py": "812ab51238f93937bd8aeb03706ffd76df91927fde95fc8f3693cfd4d0025b87",
+    "madmom/_native_decoders.py": "56eefc012960cf3a71aee78a5c4a44a3c3d103ef271e60c0b6876ce5ce638ed8",
+    "madmom/ml/nn/_native.py": "b1343259304ebfb0408c1782572d2056d71ca907c7a5532756124f64a6b5434d",
+    "native/src/bindings.cpp": "b75d153e301794745dd71f3f4e2286eadb991ead067d85f969d71391c5150e09",
+    "native/src/decoders.cpp": "3409028b863f7b33499419cb13ed26b95e6de581af6cc412d9c71a8650e31c73",
+    "native/src/nn.cpp": "0c39659fd087cb79854497b4a87e17aac45e85d7ec41762d5b1e70a25442860f",
+    "native/src/nn_bindings.cpp": "54b6189ebc5afa92d638e1e3aa2ad56fb01a0ccb4f4ffc5c250304b26573a84a",
+    "native/src/online.cpp": "8d486bf13a81feea0bee9564d316a15ebc26f0dd319519846ddc46c3d9e6a0f7",
+    "native/include/madmom_decoders.h": "6c0e88c885fb95b2a46a30fe7120c3a2de3aad65092261054ade0557ef0e2c12",
+    "native/include/madmom_engine.h": "f1e4eb91cdc21962de896b80b680afec8553ee4cc437284c3f5e6e247d0dbd70",
+    "native/include/madmom_exports.h": "dbc41b7b0db9ea74ca1c34d4c5c7aad21e8271ee778aa447f6666172cbc65a93",
+    "native/include/madmom_native.h": "3816498f67b0ba9b5fb880e8a009073f7b4c679ff2fa1baf8e4705e1d094b342",
+    "native/include/madmom_nn.h": "f36a24a351f566d97082c1c7dd77746cb0ee8adf34685caa53567a9ee9e5cb4a",
+    "native/include/madmom_nn_bindings.h": "605328d57fa28585bf4b53d2d02740a80ce062efaa0664142a0f3f799235fb5c"
+  },
+  "shared_kernel_sources_match_review_branch": true
+}

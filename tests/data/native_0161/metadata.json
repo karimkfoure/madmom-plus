@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "source": {
+    "url": "https://github.com/CPJKU/madmom",
+    "author": "Sebastian Böck and the madmom contributors",
+    "tag": "v0.16.1",
+    "commit": "6545fbb3ecdae0aac336a95ec591f642e0b74f3e",
+    "sha256": {
+      "madmom/audio/signal.py": "dfe85a7f26c5e4777b960af96905b07818dbe57f18b2bed93e5c1a23e7905a44",
+      "madmom/audio/stft.py": "0750342cba71011a4012724a1c917458601bfe3d09e6bab1bc21da1cd1bfa6d1",
+      "madmom/audio/filters.py": "7f739d5d0c44c7581185f7fc9ba12ba94c27d17811303fcbd1f6fbf3bbbb35dc",
+      "madmom/audio/spectrogram.py": "f2b9c482a603cba9883ead08f0aa4547467c43effe3671158c1cba393e11eef8",
+      "madmom/features/beats.py": "336066f51f7b568a67a70ba6d2357c7e7f86cb9ba3bc4bfaa0cee6ee7d0aa664",
+      "madmom/features/beats_hmm.py": "7a655867c1bb951e165ebda06cb8b5c8bf98910d57be57303ab3d589496f008b",
+      "madmom/features/onsets.py": "9f3e6d80dc0579fb6b0c70495479a7f2f7d0645f4036974afa4a48b4d5dcb6c3",
+      "madmom/ml/hmm.pyx": "b30e0fa7409a2f7fe67c1ba1f3e467983b37b41d695cc043b2a2587dcaa49b1b",
+      "madmom/ml/nn/layers.py": "82b15c2dc4960c66ea7b3c694829b12bceedd28967d7968c3f5266d886da9dd0",
+      "madmom/ml/nn/activations.py": "55c69af13b5c66fc005a93e2f5f70832aaaa27e8ad07c90420584d4042e67186"
+    }
+  },
+  "models": {
+    "url": "https://github.com/CPJKU/madmom_models",
+    "author": "Sebastian Böck and contributors",
+    "commit": "31fe6ce52affb794c2e3511908fbeccfd68f6925",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": {
+      "madmom/models/beats/2016/beats_lstm_1.pkl": "baab78a188d220d6972fdb91040f375ae711d96489bdb471ff7268124cc47725",
+      "madmom/models/beats/2016/beats_lstm_2.pkl": "af222e0cb79f49b680a87952e13dd755b71f5b81128b3318d4e99bdd458dba26",
+      "madmom/models/beats/2016/beats_lstm_3.pkl": "fc54ea5248fca54385312e17974cac07ca4a1a97432dc1dd1c02c364b4cd717a",
+      "madmom/models/beats/2016/beats_lstm_4.pkl": "7a355cf7167607f3543e73b8b2ba06ffa481d1cd7443376d4e3378ef6d28f1ae",
+      "madmom/models/beats/2016/beats_lstm_5.pkl": "849d563129e1b77df72c9b5e0d13a02f5a3eeffe3189b91a3edb73f864dc19c9",
+      "madmom/models/beats/2016/beats_lstm_6.pkl": "cae69664e3058ad3fed74dcd53414284096913cae8c9b2726375a555701202c8",
+      "madmom/models/beats/2016/beats_lstm_7.pkl": "bbc47b60c3c7e3f2026e234847aa91b41d3faf8cc61f81b8f523c4567a7b6c46",
+      "madmom/models/beats/2016/beats_lstm_8.pkl": "78459e9ef8af334ffa88eb8a36ababf04e51d7abdad2daaabd56dd99ccad2f3e"
+    }
+  },
+  "environment": {
+    "python": "3.11.15",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1",
+    "cython": "0.29.37",
+    "blas_threads": 1
+  },
+  "compatibility": [
+    "Runtime alias collections.MutableSequence to collections.abc.MutableSequence.",
+    "Runtime aliases np.float, np.int, np.complex, and np.bool to the original Python builtin types.",
+    "Add distribution metadata for madmom 0.16.1; do not modify upstream source.",
+    "Compile the four original extensions with Cython language_level=2."
+  ],
+  "settings": {
+    "sample_rate": 44100,
+    "fps": 100,
+    "frame_size": 2048,
+    "hop_size": 441,
+    "origin": "online",
+    "networks": 8
+  },
+  "tolerances": {
+    "features": {
+      "atol": 2e-06,
+      "rtol": 2e-05
+    },
+    "activations": {
+      "atol": 2e-05,
+      "rtol": 0.0002
+    },
+    "forward": {
+      "atol": 1e-09,
+      "rtol": 2e-06
+    },
+    "beat_seconds": {
+      "atol": 0.01,
+      "rtol": 0
+    },
+    "peak_seconds": {
+      "atol": 0,
+      "rtol": 0
+    }
+  },
+  "clips": [
+    {
+      "audio": "sample.wav",
+      "audio_sha256": "d06b3c39384c4a0cf59f0bd326eda2443edf668fbb90647e37c801e59602866c",
+      "samples": 123481,
+      "frames": 281,
+      "fixture": "sample.npz",
+      "fixture_sha256": "781c3b9400bc94c5444ee89f7bf5b8d59626a8d0bffcf64119ffb10d9ebd2bfe"
+    },
+    {
+      "audio": "sample2.wav",
+      "audio_sha256": "b1f19c0a668a6db867d9e277e72dce279830eb93e73e78751645698d8eb9caf5",
+      "samples": 178636,
+      "frames": 406,
+      "fixture": "sample2.npz",
+      "fixture_sha256": "5e2c7dd798d3316d3106a915e0cb9d607a2de24df46a6a08bc247f727c594c2e"
+    }
+  ],
+  "synthetic": {
+    "fixture": "synthetic.npz",
+    "fixture_sha256": "c50ddd086c7d54c88ef0cc01b6bd763fb3e642b8e161ea8f05914981220917d3",
+    "threshold": 0.2,
+    "smooth": 0,
+    "post_avg": 0,
+    "post_max": 0
+  }
+}

@@ -7,6 +7,7 @@ This file contains the setup for setuptools to distribute everything as a
 """
 
 import glob
+import sys
 from pathlib import Path
 from runpy import run_path
 
@@ -41,6 +42,20 @@ extensions = [
         'madmom.ml.nn.layers', ['madmom/ml/nn/layers.py'], include_dirs=include_dirs
     ),
 ]
+
+# The online Python processors use this core. A failed native build must fail
+# installation, as it does for the existing Cython extensions.
+extensions.append(Extension(
+    'madmom._native',
+    ['native/src/online.cpp', 'native/src/nn.cpp',
+     'native/src/decoders.cpp', 'native/src/bindings.cpp',
+     'native/src/nn_bindings.cpp'],
+    include_dirs=['native/include'],
+    define_macros=[('MADMOM_NATIVE_BUILD', '1')],
+    language='c++',
+    extra_compile_args=(['/std:c++17', '/O2', '/fp:strict'] if sys.platform == 'win32'
+                        else ['-std=c++17', '-O3', '-ffp-contract=off']),
+))
 
 # define scripts to be installed by the PyPI package
 scripts = glob.glob('bin/*')

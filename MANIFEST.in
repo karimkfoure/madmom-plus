@@ -1,6 +1,10 @@
 prune docs
 prune tests
 include CHANGES.rst
+include tools/build_core_wheel.py
+include tools/container_wheels.py
+include tools/verify_container_wheel.py
 recursive-include madmom/ *.pyx
 recursive-include madmom/ *.pxd
 recursive-exclude madmom/ *.c
+recursive-include native/ *.cpp *.h *.md CMakeLists.txt
